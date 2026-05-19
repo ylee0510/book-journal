@@ -391,7 +391,7 @@
     overflow: visible;
   }
 
-  .book-memo-inline:not(.expanded):not(:empty)::after {
+  .book-memo-inline.is-clamped::after {
     content: '…もっと読む';
     position: absolute;
     bottom: 0;
@@ -1408,18 +1408,18 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    background: transparent;
-    border: 1px solid var(--line);
+    background: var(--accent);
+    border: none;
     border-radius: 999px;
-    padding: 0.3rem 0.8rem 0.3rem 0.3rem;
+    padding: 0.3rem 0.9rem 0.3rem 0.35rem;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background 0.2s;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.65rem;
     letter-spacing: 0.1em;
-    color: var(--ink-soft);
+    color: white;
   }
-  .btn-mypage:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-mypage:hover { background: var(--ink); }
 
   /* ==================== MY PAGE ==================== */
   .mypage-view {
@@ -1603,7 +1603,7 @@
     <div class="header-top">
       <div>
         <h1 class="logo">Shelf<em>.</em></h1>
-        <p class="tagline">A Shared Reading Journal — みんなの読書記録</p>
+        <p class="tagline">A Shared Reading Journal</p>
       </div>
       <div style="display:flex;align-items:center;gap:1rem;">
         <div class="meta-info">
@@ -1616,24 +1616,12 @@
       </div>
     </div>
 
-    <!-- Stats -->
-    <div class="stats">
-      <div class="stat">
-        <div class="stat-label">Finished</div>
-        <div class="stat-value"><span id="statFinished">0</span><span class="unit">冊</span></div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Reading Now</div>
-        <div class="stat-value"><span id="statReading">0</span><span class="unit">冊</span></div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Wishlist</div>
-        <div class="stat-value"><span id="statWishlist">0</span><span class="unit">冊</span></div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Avg. Rating</div>
-        <div class="stat-value"><span id="statAvg">—</span></div>
-      </div>
+    <!-- Stats (hidden, kept for JS updates) -->
+    <div style="display:none;">
+      <span id="statFinished">0</span>
+      <span id="statReading">0</span>
+      <span id="statWishlist">0</span>
+      <span id="statAvg">—</span>
     </div>
 
     <!-- Action Bar -->
@@ -1646,9 +1634,8 @@
       </div>
       <div class="reader-filter-wrap">
         <div class="category-filter-wrap">
-          <label class="reader-filter-label">カテゴリ</label>
           <select class="reader-filter" id="categoryFilter" onchange="onCategoryFilterChange(this.value)">
-            <option value="all">すべて</option>
+            <option value="all">カテゴリ：すべて</option>
             <option value="わくわく🤩">わくわく🤩</option>
             <option value="感動した🥺">感動した🥺</option>
             <option value="おもしろい😆">おもしろい😆</option>
@@ -1659,9 +1646,8 @@
             <option value="人生のバイブル📖">人生のバイブル📖</option>
           </select>
         </div>
-        <label class="reader-filter-label">Reader</label>
         <select class="reader-filter" id="readerFilter" onchange="onReaderFilterChange(this.value)">
-          <option value="all">すべての人</option>
+          <option value="all">Reader：すべて</option>
         </select>
       </div>
       <button class="btn-add" onclick="openModal()">
@@ -2513,6 +2499,19 @@
     });
 
     adjustTitleFontSizes();
+    detectClampedMemos();
+  }
+
+  function detectClampedMemos() {
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.book-memo-inline:not(.expanded)').forEach(el => {
+        if (el.scrollHeight > el.clientHeight + 2) {
+          el.classList.add('is-clamped');
+        } else {
+          el.classList.remove('is-clamped');
+        }
+      });
+    });
   }
 
   function adjustTitleFontSizes() {
@@ -2601,7 +2600,7 @@
     const currentValue = select.value || currentReaderFilter;
     
     // Rebuild options
-    select.innerHTML = '<option value="all">すべての人</option>' + 
+    select.innerHTML = '<option value="all">Reader：すべて</option>' +
       sortedReaders.map(r => 
         `<option value="${escapeHtml(r)}"${r === currentValue ? ' selected' : ''}>${escapeHtml(r)}</option>`
       ).join('');

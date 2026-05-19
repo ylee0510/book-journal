@@ -1068,27 +1068,33 @@
     font-style: italic;
   }
 
+  .isbn-input-wrap {
+    margin-bottom: 0.6rem;
+  }
+
+  .isbn-input-wrap input {
+    width: 100%;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
   .isbn-search-row {
     display: flex;
     gap: 0.5rem;
   }
 
-  .isbn-search-row input {
-    flex-grow: 1;
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 0.05em;
-  }
-
   .btn-isbn {
+    flex: 1;
     background: var(--ink);
     color: var(--bg);
     border: none;
-    padding: 0 1.2rem;
+    padding: 0.7rem 1rem;
     font-family: 'Noto Serif JP', serif;
     font-size: 0.85rem;
     cursor: pointer;
     transition: background 0.2s ease;
     white-space: nowrap;
+    border-radius: 2px;
   }
 
   .btn-isbn:hover { background: var(--accent); }
@@ -1108,18 +1114,21 @@
 
   /* ---- Barcode Scanner ---- */
   .btn-scan {
+    flex: 1;
     background: var(--bg-deep);
     border: 1px solid var(--line);
     color: var(--ink-soft);
-    padding: 0 0.9rem;
-    font-size: 1rem;
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
     cursor: pointer;
     border-radius: 2px;
     transition: all 0.2s;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
     white-space: nowrap;
-    flex-shrink: 0;
+    font-family: 'Noto Serif JP', serif;
   }
   .btn-scan:hover { border-color: var(--accent); color: var(--accent); }
 
@@ -2191,9 +2200,11 @@
           <span class="isbn-label">ISBNから自動入力</span>
           <span class="isbn-hint">本の裏表紙のバーコード下の13桁を入力</span>
         </div>
-        <div class="isbn-search-row">
+        <div class="isbn-input-wrap">
           <input type="text" class="form-input" id="inputIsbn" placeholder="例:9784101001012" autocomplete="off" maxlength="17">
-          <button type="button" class="btn-scan" onclick="openScanner()" title="カメラでバーコードを読み取る">📷</button>
+        </div>
+        <div class="isbn-search-row">
+          <button type="button" class="btn-scan" onclick="openScanner()">📷 カメラで読み取る</button>
           <button type="button" class="btn-isbn" id="btnIsbnSearch" onclick="searchByIsbn()">検索</button>
         </div>
         <div class="isbn-status" id="isbnStatus"></div>
@@ -3476,17 +3487,26 @@
     }
 
     html5Scanner = new Html5Qrcode('html5-qrcode-reader');
+
+    // qrbox をビューポート幅に合わせて動的計算（余裕を持たせてピントが合いやすく）
+    const viewportW = Math.min(window.innerWidth, 420);
+    const boxW = Math.round(viewportW * 0.78);
+    const boxH = Math.round(boxW * 0.38);
+
     html5Scanner.start(
-      { facingMode: 'environment' },
       {
-        fps: 10,
-        qrbox: { width: 260, height: 90 },
+        facingMode: 'environment',
+        advanced: [{ focusMode: 'continuous' }], // オートフォーカス継続
+      },
+      {
+        fps: 12,
+        qrbox: { width: boxW, height: boxH },
         formatsToSupport: [
           Html5QrcodeSupportedFormats.EAN_13,
           Html5QrcodeSupportedFormats.EAN_8,
           Html5QrcodeSupportedFormats.UPC_A,
         ],
-        aspectRatio: 1.5,
+        // aspectRatio は指定しない（ブラウザに任せる方が安定）
       },
       (decodedText) => {
         // EAN-13 バーコードを取得したらISBN欄に入力して検索

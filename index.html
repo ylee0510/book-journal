@@ -1645,7 +1645,7 @@
           <div class="comments-section" id="comments-${book.id}">
             ${renderComments(book)}
             <div class="comment-form">
-              <input type="text" class="comment-input" id="comment-input-${book.id}" placeholder="コメントを追加..." onkeydown="if(event.key==='Enter'){event.preventDefault();addComment('${book.id}');}">
+              <input type="text" class="comment-input" id="comment-input-${book.id}" placeholder="コメントを追加...">
               <button class="comment-submit" onclick="addComment('${book.id}')">送信</button>
             </div>
           </div>

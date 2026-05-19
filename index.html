@@ -1360,7 +1360,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    background: var(--ink);
+    background: var(--accent);
     color: white;
     border: none;
     border-radius: 3px;
@@ -1372,7 +1372,7 @@
     transition: background 0.2s;
     white-space: nowrap;
   }
-  .btn-login:hover { background: var(--accent); }
+  .btn-login:hover { background: var(--ink); }
   .btn-login svg { width: 14px; height: 14px; flex-shrink: 0; }
 
   .auth-avatar {
@@ -1403,6 +1403,23 @@
     transition: border-color 0.2s;
   }
   .auth-avatar-placeholder:hover { border-color: var(--line); }
+
+  .btn-mypage {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.3rem 0.8rem 0.3rem 0.3rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+  }
+  .btn-mypage:hover { border-color: var(--accent); color: var(--accent); }
 
   /* ==================== MY PAGE ==================== */
   .mypage-view {
@@ -1770,7 +1787,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import {
-    getFirestore, collection, doc, getDocs, setDoc, deleteDoc, onSnapshot, query, orderBy
+    getFirestore, collection, doc, getDoc, getDocs, setDoc, deleteDoc, onSnapshot, query, orderBy
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import {
     getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut
@@ -1803,9 +1820,8 @@
       return onAuthStateChanged(auth, callback);
     },
     async getProfile(uid) {
-      const snap = await getDocs(collection(db, 'users'));
-      const found = snap.docs.find(d => d.id === uid);
-      return found ? found.data() : null;
+      const snap = await getDoc(doc(db, 'users', uid));
+      return snap.exists() ? snap.data() : null;
     },
     async saveProfile(uid, data) {
       await setDoc(doc(db, 'users', uid), { ...data, updatedAt: Date.now() }, { merge: true });
@@ -1852,11 +1868,14 @@
     if (!area) return;
     if (currentUser) {
       const initial = (currentUser.displayName || 'U')[0].toUpperCase();
-      if (currentUser.photoURL) {
-        area.innerHTML = `<img class="auth-avatar" src="${currentUser.photoURL}" alt="${initial}" onclick="showMyPage()" title="マイページ">`;
-      } else {
-        area.innerHTML = `<div class="auth-avatar-placeholder" onclick="showMyPage()" title="マイページ">${initial}</div>`;
-      }
+      const avatarHtml = currentUser.photoURL
+        ? `<img class="auth-avatar" src="${currentUser.photoURL}" alt="${initial}">`
+        : `<div class="auth-avatar-placeholder">${initial}</div>`;
+      area.innerHTML = `
+        <button class="btn-mypage" onclick="showMyPage()" title="マイページ">
+          ${avatarHtml}
+          <span>My Page</span>
+        </button>`;
     } else {
       area.innerHTML = `
         <button class="btn-login" onclick="handleSignIn()">

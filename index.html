@@ -1354,11 +1354,60 @@
     font-size: 1.2rem;
     margin: 1rem 0;
   }
+
+  /* ==================== AUTH UI ==================== */
+  .btn-login {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--ink);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 0.45rem 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .btn-login:hover { background: var(--accent); }
+  .btn-login svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  .auth-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid var(--line);
+    transition: border-color 0.2s;
+  }
+  .auth-avatar:hover { border-color: var(--accent); }
+
+  .auth-avatar-placeholder {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .auth-avatar-placeholder:hover { border-color: var(--line); }
 </style>
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="mainView">
 
   <!-- Header -->
   <header>
@@ -1367,9 +1416,14 @@
         <h1 class="logo">Shelf<em>.</em></h1>
         <p class="tagline">A Shared Reading Journal — みんなの読書記録</p>
       </div>
-      <div class="meta-info">
-        <div class="date" id="currentDate"></div>
-        <div id="storageMode">Est. 2026 — Personal Library</div>
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <div class="meta-info">
+          <div class="date" id="currentDate"></div>
+          <div id="storageMode">Est. 2026 — Personal Library</div>
+        </div>
+        <div id="authArea">
+          <!-- JS で描画 -->
+        </div>
       </div>
     </div>
 
@@ -1531,9 +1585,12 @@
 <!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { 
+  import {
     getFirestore, collection, doc, getDocs, setDoc, deleteDoc, onSnapshot, query, orderBy
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import {
+    getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCdB46Ch67KosgVZewtV7rJBhLU4bWLesQ",
@@ -1546,7 +1603,30 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const auth = getAuth(app);
   const booksCollection = collection(db, 'books');
+
+  // Auth APIをグローバルに公開
+  window.firebaseAuth = {
+    async signInWithGoogle() {
+      const provider = new GoogleAuthProvider();
+      return signInWithPopup(auth, provider);
+    },
+    async signOut() {
+      return signOut(auth);
+    },
+    onAuthStateChanged(callback) {
+      return onAuthStateChanged(auth, callback);
+    },
+    async getProfile(uid) {
+      const snap = await getDocs(collection(db, 'users'));
+      const found = snap.docs.find(d => d.id === uid);
+      return found ? found.data() : null;
+    },
+    async saveProfile(uid, data) {
+      await setDoc(doc(db, 'users', uid), { ...data, updatedAt: Date.now() }, { merge: true });
+    }
+  };
 
   // Expose Firebase-based storage API globally for legacy code
   window.firebaseStorage = {
@@ -1580,6 +1660,50 @@
 </script>
 
 <script>
+  let currentUser = null;
+  let userProfile = null;
+
+  function updateAuthUI() {
+    const area = document.getElementById('authArea');
+    if (!area) return;
+    if (currentUser) {
+      const initial = (currentUser.displayName || 'U')[0].toUpperCase();
+      if (currentUser.photoURL) {
+        area.innerHTML = `<img class="auth-avatar" src="${currentUser.photoURL}" alt="${initial}" onclick="showMyPage()" title="マイページ">`;
+      } else {
+        area.innerHTML = `<div class="auth-avatar-placeholder" onclick="showMyPage()" title="マイページ">${initial}</div>`;
+      }
+    } else {
+      area.innerHTML = `
+        <button class="btn-login" onclick="handleSignIn()">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Googleでログイン
+        </button>`;
+    }
+  }
+
+  async function handleSignIn() {
+    if (!window.firebaseAuth) { showToast('認証サービス準備中...'); return; }
+    try {
+      await window.firebaseAuth.signInWithGoogle();
+    } catch (e) {
+      if (e.code !== 'auth/popup-closed-by-user') {
+        showToast('ログインに失敗しました: ' + (e.message || e));
+      }
+    }
+  }
+
+  async function handleSignOut() {
+    if (!window.firebaseAuth) return;
+    await window.firebaseAuth.signOut();
+    hideMyPage();
+  }
+
   let books = [];
   let currentFilter = 'all';
   let currentReaderFilter = 'all';
@@ -1673,6 +1797,14 @@
   document.addEventListener('DOMContentLoaded', updateStorageModeIndicator);
   window.addEventListener('resize', adjustTitleFontSizes);
   window.addEventListener('firebaseReady', updateStorageModeIndicator);
+  window.addEventListener('firebaseReady', () => {
+    if (window.firebaseAuth) {
+      window.firebaseAuth.onAuthStateChanged((user) => {
+        currentUser = user;
+        updateAuthUI();
+      });
+    }
+  });
 
   // Date display
   const now = new Date();

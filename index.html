@@ -1493,6 +1493,28 @@
     .mypage-container { padding: 1.2rem; gap: 1.2rem; }
     .mypage-section { padding: 1rem; }
   }
+
+  /* ---- Profile Section ---- */
+  .mp-profile-wrap { display: flex; align-items: flex-start; gap: 1.2rem; }
+  .mp-avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid var(--line); flex-shrink: 0; }
+  .mp-avatar-placeholder { width: 64px; height: 64px; border-radius: 50%; background: var(--accent); color: white; font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .mp-profile-info { flex: 1; }
+  .mp-name { font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 700; color: var(--ink); margin-bottom: 0.3rem; }
+  .mp-bio { font-size: 0.85rem; color: var(--ink-soft); margin-bottom: 0.6rem; line-height: 1.5; font-style: italic; }
+  .mp-genres { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.6rem; }
+  .mp-genre-pill { background: var(--bg-deep); border: 1px solid var(--line); border-radius: 999px; padding: 0.2rem 0.65rem; font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--ink-soft); letter-spacing: 0.05em; }
+  .mp-sns { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+  .mp-sns a { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; color: var(--ink-fade); text-decoration: none; letter-spacing: 0.05em; transition: color 0.2s; }
+  .mp-sns a:hover { color: var(--accent); }
+  .mp-edit-btn { margin-top: 1rem; background: transparent; border: 1px solid var(--line); border-radius: 2px; padding: 0.35rem 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em; color: var(--ink-fade); cursor: pointer; transition: all 0.2s; }
+  .mp-edit-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .mp-edit-form { display: flex; flex-direction: column; gap: 0.9rem; margin-top: 0.5rem; }
+  .mp-edit-form input, .mp-edit-form textarea { width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 2px; padding: 0.5rem 0.7rem; font-family: 'Noto Serif JP', serif; font-size: 0.85rem; color: var(--ink); outline: none; transition: border-color 0.2s; }
+  .mp-edit-form input:focus, .mp-edit-form textarea:focus { border-color: var(--accent); }
+  .mp-edit-form textarea { min-height: 60px; resize: vertical; }
+  .mp-edit-label { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-fade); display: block; margin-bottom: 0.3rem; }
+  .mp-save-btn { background: var(--ink); color: white; border: none; border-radius: 2px; padding: 0.5rem 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; cursor: pointer; align-self: flex-start; transition: background 0.2s; }
+  .mp-save-btn:hover { background: var(--accent); }
 </style>
 </head>
 <body>
@@ -1834,10 +1856,96 @@
     renderMpWishlist(myBooks);
   }
 
-  // プレースホルダー（Task 4-7 で実装）
-  function renderMpProfile(editing) {
-    document.getElementById('mpProfile').innerHTML =
-      `<div class="mypage-section-title">Profile</div><p style="color:var(--ink-fade);font-size:0.85rem;">（実装中）</p>`;
+  function renderMpProfile(editing = false) {
+    const el = document.getElementById('mpProfile');
+    const p = userProfile || {};
+    const avatarHtml = currentUser.photoURL
+      ? `<img class="mp-avatar" src="${escapeHtml(currentUser.photoURL)}" alt="">`
+      : `<div class="mp-avatar-placeholder">${(currentUser.displayName || 'U')[0].toUpperCase()}</div>`;
+
+    if (editing) {
+      const genres = (p.genres || []).join(', ');
+      const sns = p.snsLinks || {};
+      el.innerHTML = `
+        <div class="mypage-section-title">Profile</div>
+        <div class="mp-profile-wrap">
+          ${avatarHtml}
+          <div class="mp-profile-info">
+            <div class="mp-edit-form">
+              <div>
+                <label class="mp-edit-label">表示名</label>
+                <input id="mpInputName" type="text" value="${escapeHtml(p.displayName || currentUser.displayName || '')}" maxlength="30">
+              </div>
+              <div>
+                <label class="mp-edit-label">一言コメント</label>
+                <textarea id="mpInputBio" maxlength="100">${escapeHtml(p.bio || '')}</textarea>
+              </div>
+              <div>
+                <label class="mp-edit-label">好きなジャンル（カンマ区切り）</label>
+                <input id="mpInputGenres" type="text" value="${escapeHtml(genres)}" placeholder="例: ビジネス, SF, 哲学">
+              </div>
+              <div>
+                <label class="mp-edit-label">X (Twitter) URL</label>
+                <input id="mpInputX" type="url" value="${escapeHtml(sns.x || '')}" placeholder="https://x.com/yourname">
+              </div>
+              <div>
+                <label class="mp-edit-label">Instagram URL</label>
+                <input id="mpInputIg" type="url" value="${escapeHtml(sns.instagram || '')}" placeholder="https://instagram.com/yourname">
+              </div>
+              <div>
+                <label class="mp-edit-label">ブログ URL</label>
+                <input id="mpInputBlog" type="url" value="${escapeHtml(sns.blog || '')}" placeholder="https://yourblog.com">
+              </div>
+              <div style="display:flex;gap:0.6rem;">
+                <button class="mp-save-btn" onclick="saveMpProfile()">保存</button>
+                <button class="mp-edit-btn" onclick="renderMpProfile(false)">キャンセル</button>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    } else {
+      const genrePills = (p.genres || []).map(g =>
+        `<span class="mp-genre-pill">${escapeHtml(g)}</span>`).join('');
+      const sns = p.snsLinks || {};
+      const snsLinks = [
+        sns.x ? `<a href="${escapeHtml(sns.x)}" target="_blank" rel="noopener">X</a>` : '',
+        sns.instagram ? `<a href="${escapeHtml(sns.instagram)}" target="_blank" rel="noopener">Instagram</a>` : '',
+        sns.blog ? `<a href="${escapeHtml(sns.blog)}" target="_blank" rel="noopener">Blog</a>` : '',
+      ].filter(Boolean).join('');
+
+      el.innerHTML = `
+        <div class="mypage-section-title">Profile</div>
+        <div class="mp-profile-wrap">
+          ${avatarHtml}
+          <div class="mp-profile-info">
+            <div class="mp-name">${escapeHtml(p.displayName || currentUser.displayName || '')}</div>
+            ${p.bio ? `<div class="mp-bio">${escapeHtml(p.bio)}</div>` : ''}
+            ${genrePills ? `<div class="mp-genres">${genrePills}</div>` : ''}
+            ${snsLinks ? `<div class="mp-sns">${snsLinks}</div>` : ''}
+            <button class="mp-edit-btn" onclick="renderMpProfile(true)">編集</button>
+          </div>
+        </div>`;
+    }
+  }
+
+  async function saveMpProfile() {
+    const name = document.getElementById('mpInputName').value.trim();
+    const bio = document.getElementById('mpInputBio').value.trim();
+    const genresRaw = document.getElementById('mpInputGenres').value;
+    const genres = genresRaw.split(',').map(s => s.trim()).filter(Boolean);
+    const sns = {
+      x: document.getElementById('mpInputX').value.trim(),
+      instagram: document.getElementById('mpInputIg').value.trim(),
+      blog: document.getElementById('mpInputBlog').value.trim(),
+    };
+    userProfile = { ...userProfile, displayName: name, bio, genres, snsLinks: sns };
+    try {
+      await window.firebaseAuth.saveProfile(currentUser.uid, userProfile);
+      renderMpProfile(false);
+      showToast('プロフィールを保存しました ✓');
+    } catch (e) {
+      showToast('保存に失敗: ' + (e.message || e));
+    }
   }
   function renderMpGoal(myBooks) {
     document.getElementById('mpGoal').innerHTML =

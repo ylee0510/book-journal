@@ -1079,16 +1079,16 @@
   }
 
   .isbn-search-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto;
     gap: 0.5rem;
   }
 
   .btn-isbn {
-    flex: 1;
     background: var(--ink);
     color: var(--bg);
     border: none;
-    padding: 0.7rem 1rem;
+    padding: 0.7rem 1.2rem;
     font-family: 'Noto Serif JP', serif;
     font-size: 0.85rem;
     cursor: pointer;
@@ -1114,7 +1114,6 @@
 
   /* ---- Barcode Scanner ---- */
   .btn-scan {
-    flex: 1;
     background: var(--bg-deep);
     border: 1px solid var(--line);
     color: var(--ink-soft);
@@ -3494,10 +3493,7 @@
     const boxH = Math.round(boxW * 0.38);
 
     html5Scanner.start(
-      {
-        facingMode: 'environment',
-        advanced: [{ focusMode: 'continuous' }], // オートフォーカス継続
-      },
+      { facingMode: 'environment' },
       {
         fps: 12,
         qrbox: { width: boxW, height: boxH },
@@ -4126,7 +4122,7 @@
     document.querySelector('.modal-title').innerHTML = '新しい記録<em>.</em>';
     document.getElementById('submitBtn').textContent = '記録する';
     document.getElementById('modal').classList.add('active');
-    document.getElementById('inputTitle').focus();
+    setTimeout(() => document.getElementById('inputIsbn').focus(), 100);
   }
 
   window.openEditModal = function(event, id) {

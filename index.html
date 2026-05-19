@@ -1403,6 +1403,96 @@
     transition: border-color 0.2s;
   }
   .auth-avatar-placeholder:hover { border-color: var(--line); }
+
+  /* ==================== MY PAGE ==================== */
+  .mypage-view {
+    display: none;
+    min-height: 100vh;
+    background: var(--bg);
+    position: relative;
+    z-index: 2;
+  }
+  .mypage-view.active { display: block; }
+
+  .mypage-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg-deep);
+    border-bottom: 1px solid var(--line);
+    padding: 1rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .mypage-back {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink-fade);
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.2s;
+  }
+  .mypage-back:hover { color: var(--ink); }
+
+  .mypage-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.2rem;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    color: var(--accent);
+  }
+
+  .mypage-signout {
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 0.3rem 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-fade);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mypage-signout:hover { border-color: var(--accent); color: var(--accent); }
+
+  .mypage-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .mypage-section {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1.5rem;
+  }
+
+  .mypage-section-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--ink-fade);
+    margin-bottom: 1.2rem;
+  }
+
+  @media (max-width: 640px) {
+    .mypage-header { padding: 0.8rem 1.2rem; }
+    .mypage-container { padding: 1.2rem; gap: 1.2rem; }
+    .mypage-section { padding: 1rem; }
+  }
 </style>
 </head>
 <body>
@@ -1487,6 +1577,18 @@
     <div class="loading">Loading shared library</div>
   </main>
 
+</div>
+
+<!-- My Page (full-screen) -->
+<div class="mypage-view" id="mypageView">
+  <div class="mypage-header">
+    <button class="mypage-back" onclick="hideMyPage()">← 本棚</button>
+    <span class="mypage-title">My Page</span>
+    <button class="mypage-signout" onclick="handleSignOut()">ログアウト</button>
+  </div>
+  <div class="mypage-container" id="mypageContainer">
+    <!-- JS で描画 -->
+  </div>
 </div>
 
 <!-- Modal -->
@@ -1702,6 +1804,68 @@
     if (!window.firebaseAuth) return;
     await window.firebaseAuth.signOut();
     hideMyPage();
+  }
+
+  function showMyPage() {
+    if (!currentUser) { handleSignIn(); return; }
+    document.getElementById('mainView').style.display = 'none';
+    document.getElementById('mypageView').classList.add('active');
+    renderMyPage();
+  }
+
+  function hideMyPage() {
+    document.getElementById('mypageView').classList.remove('active');
+    document.getElementById('mainView').style.display = '';
+  }
+
+  async function renderMyPage() {
+    const myBooks = books.filter(isMyBook);
+    const container = document.getElementById('mypageContainer');
+    container.innerHTML = `
+      <div id="mpProfile" class="mypage-section"></div>
+      <div id="mpGoal" class="mypage-section"></div>
+      <div id="mpShelf" class="mypage-section"></div>
+      <div id="mpWishlist" class="mypage-section"></div>
+    `;
+    await loadUserProfile(currentUser.uid);
+    renderMpProfile();
+    renderMpGoal(myBooks);
+    renderMpShelf(myBooks);
+    renderMpWishlist(myBooks);
+  }
+
+  // プレースホルダー（Task 4-7 で実装）
+  function renderMpProfile(editing) {
+    document.getElementById('mpProfile').innerHTML =
+      `<div class="mypage-section-title">Profile</div><p style="color:var(--ink-fade);font-size:0.85rem;">（実装中）</p>`;
+  }
+  function renderMpGoal(myBooks) {
+    document.getElementById('mpGoal').innerHTML =
+      `<div class="mypage-section-title">読書目標</div><p style="color:var(--ink-fade);font-size:0.85rem;">（実装中）</p>`;
+  }
+  function renderMpShelf(myBooks) {
+    document.getElementById('mpShelf').innerHTML =
+      `<div class="mypage-section-title">マイ本棚</div><p style="color:var(--ink-fade);font-size:0.85rem;">（実装中）</p>`;
+  }
+  function renderMpWishlist(myBooks) {
+    document.getElementById('mpWishlist').innerHTML =
+      `<div class="mypage-section-title">また読みたい</div><p style="color:var(--ink-fade);font-size:0.85rem;">（実装中）</p>`;
+  }
+
+  async function loadUserProfile(uid) {
+    if (!window.firebaseAuth) return;
+    userProfile = await window.firebaseAuth.getProfile(uid);
+    if (!userProfile) {
+      userProfile = {
+        uid,
+        displayName: currentUser.displayName || '',
+        photoURL: currentUser.photoURL || '',
+        bio: '',
+        genres: [],
+        snsLinks: { x: '', instagram: '', blog: '' },
+        goalYear: 20,
+      };
+    }
   }
 
   let books = [];

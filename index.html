@@ -2178,7 +2178,7 @@
         <div class="scanner-aim-bl"></div>
       </div>
     </div>
-    <div class="scanner-guide">本の裏表紙のバーコードを枠内に合わせてください</div>
+    <div class="scanner-guide">本の裏表紙の上部のバーコード(ISBN)を枠内に合わせてください</div>
   </div>
 </div>
 
@@ -2195,16 +2195,14 @@
       <div class="isbn-search">
         <div class="isbn-search-header">
           <span class="isbn-label">ISBNから自動入力</span>
-          <span class="isbn-hint">本の裏表紙のバーコード下の13桁を入力</span>
+          <span class="isbn-hint">本の裏表紙の上部のバーコード(ISBN)の数字を入力</span>
         </div>
         <div class="isbn-search-row">
-          <input type="text" class="form-input" id="inputIsbn" placeholder="例:9784101001012" autocomplete="off" maxlength="17" style="flex:1;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">
+          <input type="text" class="form-input" id="inputIsbn" placeholder="例:9784101001012" autocomplete="off" maxlength="17" style="flex:1;min-width:0;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">
           <button type="button" class="btn-isbn" id="btnIsbnSearch" onclick="searchByIsbn()">検索</button>
         </div>
-        <div class="isbn-scan-row">
-          <button type="button" class="btn-scan" onclick="openScanner()">📷 スキャン</button>
-          <button type="button" class="btn-scan" onclick="openPhotoScan()">🖼 写真から読み取る</button>
-          <input type="file" id="photoScanInput" accept="image/*" capture="environment" style="display:none;" onchange="handlePhotoScan(this)">
+        <div style="margin-top:0.5rem;">
+          <button type="button" class="btn-scan" onclick="openScanner()" style="width:100%;">📷 スキャン</button>
         </div>
         <div class="isbn-status" id="isbnStatus"></div>
       </div>
@@ -3489,8 +3487,8 @@
 
     // qrbox をビューポート幅に合わせて動的計算（余裕を持たせてピントが合いやすく）
     const viewportW = Math.min(window.innerWidth, 420);
-    const boxW = Math.round(viewportW * 0.78);
-    const boxH = Math.round(boxW * 0.38);
+    const boxW = Math.round(viewportW * 0.55);
+    const boxH = Math.round(boxW * 0.45);
 
     html5Scanner.start(
       { facingMode: 'environment' },

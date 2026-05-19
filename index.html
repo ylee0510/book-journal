@@ -1592,6 +1592,218 @@
   .mp-wishlist-info { flex: 1; min-width: 0; }
   .mp-wishlist-title { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.8rem; color: var(--accent); line-height: 1.3; margin-bottom: 0.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .mp-wishlist-author { font-size: 0.75rem; color: var(--ink-soft); font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ==================== GUIDE PAGE ==================== */
+  .btn-guide {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1.5px solid var(--line);
+    background: transparent;
+    color: var(--ink-fade);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .btn-guide:hover { border-color: var(--accent); color: var(--accent); }
+
+  .guide-view {
+    display: none;
+    min-height: 100vh;
+    background: var(--bg);
+    position: relative;
+    z-index: 2;
+  }
+  .guide-view.active { display: block; }
+
+  .guide-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg-deep);
+    border-bottom: 1px solid var(--line);
+    padding: 1rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .guide-back {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink-fade);
+    letter-spacing: 0.1em;
+    transition: color 0.2s;
+  }
+  .guide-back:hover { color: var(--ink); }
+
+  .guide-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.2rem;
+    font-weight: 300;
+    color: var(--accent);
+  }
+
+  .guide-container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .guide-hero {
+    text-align: center;
+    padding: 2rem 0 1rem;
+  }
+  .guide-hero-title {
+    font-family: 'Fraunces', serif;
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--ink);
+    margin-bottom: 0.6rem;
+  }
+  .guide-hero-title em { font-style: italic; color: var(--accent); }
+  .guide-hero-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--ink-fade);
+    text-transform: uppercase;
+  }
+
+  .guide-section {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .guide-section-header {
+    background: var(--bg-deep);
+    border-bottom: 1px solid var(--line);
+    padding: 0.9rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+  .guide-section-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+  .guide-section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-soft);
+  }
+
+  .guide-items {
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .guide-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .guide-item-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--accent);
+    background: rgba(184,67,42,0.08);
+    border-radius: 2px;
+    padding: 0.2rem 0.45rem;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    letter-spacing: 0.05em;
+  }
+  .guide-item-body {}
+  .guide-item-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.25rem;
+  }
+  .guide-item-desc {
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    line-height: 1.65;
+  }
+  .guide-item-desc em {
+    font-style: normal;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    background: rgba(184,67,42,0.07);
+    padding: 0.05rem 0.3rem;
+    border-radius: 2px;
+  }
+
+  .guide-login-banner {
+    background: linear-gradient(135deg, rgba(184,67,42,0.08) 0%, rgba(166,138,63,0.08) 100%);
+    border: 1px solid rgba(184,67,42,0.2);
+    border-radius: 4px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .guide-login-icon {
+    font-size: 1.8rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .guide-login-text {}
+  .guide-login-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+  .guide-login-desc {
+    font-size: 0.83rem;
+    color: var(--ink-soft);
+    line-height: 1.7;
+  }
+  .guide-login-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.8rem;
+  }
+  .guide-login-pill {
+    background: white;
+    border: 1px solid rgba(184,67,42,0.25);
+    border-radius: 999px;
+    padding: 0.25rem 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 640px) {
+    .guide-header { padding: 0.8rem 1.2rem; }
+    .guide-container { padding: 1.5rem 1rem 3rem; gap: 1.2rem; }
+    .guide-items { padding: 1rem; }
+    .guide-section-header { padding: 0.8rem 1rem; }
+  }
 </style>
 </head>
 <body>
@@ -1610,6 +1822,7 @@
           <div class="date" id="currentDate"></div>
           <div id="storageMode">Est. 2026 — Personal Library</div>
         </div>
+        <button class="btn-guide" onclick="showGuide()" title="使い方ガイド">?</button>
         <div id="authArea">
           <!-- JS で描画 -->
         </div>
@@ -1673,6 +1886,123 @@
   </div>
   <div class="mypage-container" id="mypageContainer">
     <!-- JS で描画 -->
+  </div>
+</div>
+
+<!-- Guide Page (full-screen) -->
+<div class="guide-view" id="guideView">
+  <div class="guide-header">
+    <button class="guide-back" onclick="hideGuide()">← 本棚</button>
+    <span class="guide-title">Guide</span>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="guide-container">
+
+    <div class="guide-hero">
+      <div class="guide-hero-title">Shelf<em>.</em> の使い方</div>
+      <div class="guide-hero-sub">How to use this reading journal</div>
+    </div>
+
+    <!-- 基本の使い方 -->
+    <div class="guide-section">
+      <div class="guide-section-header">
+        <span class="guide-section-icon">📖</span>
+        <span class="guide-section-label">基本の使い方</span>
+      </div>
+      <div class="guide-items">
+        <div class="guide-item">
+          <span class="guide-item-num">01</span>
+          <div class="guide-item-body">
+            <div class="guide-item-title">本を記録する</div>
+            <div class="guide-item-desc">右上の <em>本を記録する</em> ボタンから本のタイトル・著者・感想などを入力して記録できます。読書状態は <em>読書中</em> / <em>読了</em> / <em>また読みたい</em> から選べます。</div>
+          </div>
+        </div>
+        <div class="guide-item">
+          <span class="guide-item-num">02</span>
+          <div class="guide-item-body">
+            <div class="guide-item-title">カテゴリで分類する</div>
+            <div class="guide-item-desc">記録時に <em>わくわく🤩</em> <em>感動した🥺</em> などのカテゴリを最大3つまで選択できます。カードにタグとして表示され、フィルターで絞り込みもできます。</div>
+          </div>
+        </div>
+        <div class="guide-item">
+          <span class="guide-item-num">03</span>
+          <div class="guide-item-body">
+            <div class="guide-item-title">感想を読む / 展開する</div>
+            <div class="guide-item-desc">長い感想は自動的に折りたたまれます。<em>…もっと読む</em> が表示されたカードをタップすると全文が読めます。</div>
+          </div>
+        </div>
+        <div class="guide-item">
+          <span class="guide-item-num">04</span>
+          <div class="guide-item-body">
+            <div class="guide-item-title">絞り込み・フィルター</div>
+            <div class="guide-item-desc">ステータスタブ（すべて / 読書中 / 読了 / また読みたい）で切り替えられます。<em>カテゴリ：すべて</em> と <em>Reader：すべて</em> のプルダウンで組み合わせて絞り込みもできます。</div>
+          </div>
+        </div>
+        <div class="guide-item">
+          <span class="guide-item-num">05</span>
+          <div class="guide-item-body">
+            <div class="guide-item-title">いいね・コメント</div>
+            <div class="guide-item-desc">カード下部の <em>♡</em> でいいねできます。<em>💬</em> でコメント欄が開き、みんなで感想を共有できます。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ログイン後にできること -->
+    <div class="guide-login-banner">
+      <div class="guide-login-icon">🔑</div>
+      <div class="guide-login-text">
+        <div class="guide-login-title">Googleログイン後にできること</div>
+        <div class="guide-login-desc">右上の <strong style="color:var(--accent);">Googleでログイン</strong> ボタンからログインすると、自分専用のマイページが使えるようになります。</div>
+        <div class="guide-login-features">
+          <span class="guide-login-pill">プロフィール設定</span>
+          <span class="guide-login-pill">読書目標の管理</span>
+          <span class="guide-login-pill">月別読書グラフ</span>
+          <span class="guide-login-pill">カテゴリ内訳</span>
+          <span class="guide-login-pill">マイ本棚サムネ</span>
+          <span class="guide-login-pill">また読みたいリスト</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- マイページの使い方 -->
+    <div class="guide-section">
+      <div class="guide-section-header">
+        <span class="guide-section-icon">👤</span>
+        <span class="guide-section-label">マイページの使い方</span>
+      </div>
+      <div class="guide-items">
+        <div class="guide-item">
+          <span class="guide-item-num">01</span>
+          <div class="guide-item-body">
+            <div class="guide-item-title">プロフィール</div>
+            <div class="guide-item-desc">表示名・一言コメント・好きなジャンル・SNSリンクを設定できます。<em>編集</em> ボタンから変更して保存すると次回以降も維持されます。</div>
+          </div>
+        </div>
+        <div class="guide-item">
+          <span class="guide-item-num">02</span>
+          <div class="guide-item-body">
+            <div class="guide-item-title">読書目標</div>
+            <div class="guide-item-desc">年間の読了冊数目標を設定できます。読了数・読書中数・達成率のプログレスバー、月別の棒グラフ、よく読むカテゴリの内訳が一目でわかります。</div>
+          </div>
+        </div>
+        <div class="guide-item">
+          <span class="guide-item-num">03</span>
+          <div class="guide-item-body">
+            <div class="guide-item-title">マイ本棚</div>
+            <div class="guide-item-desc">自分が記録した本の表紙がグリッドで並びます。サムネをタップするとタイトル・著者・評価・感想の冒頭が確認できます。</div>
+          </div>
+        </div>
+        <div class="guide-item">
+          <span class="guide-item-num">04</span>
+          <div class="guide-item-body">
+            <div class="guide-item-title">また読みたいリスト</div>
+            <div class="guide-item-desc">ステータスを <em>また読みたい</em> にして記録した本が一覧表示されます。読み返したい本の管理に使えます。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1902,6 +2232,16 @@
 
   function hideMyPage() {
     document.getElementById('mypageView').classList.remove('active');
+    document.getElementById('mainView').style.display = '';
+  }
+
+  function showGuide() {
+    document.getElementById('mainView').style.display = 'none';
+    document.getElementById('guideView').classList.add('active');
+  }
+
+  function hideGuide() {
+    document.getElementById('guideView').classList.remove('active');
     document.getElementById('mainView').style.display = '';
   }
 

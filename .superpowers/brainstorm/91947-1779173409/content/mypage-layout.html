@@ -1,0 +1,152 @@
+<h2>マイページのレイアウト</h2>
+<p class="subtitle">どのような形でマイページを表示しますか？</p>
+
+<div class="cards">
+
+  <!-- Option A -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f4f1ea;padding:1rem;">
+      <div style="background:#ebe6db;border-radius:4px;padding:0.5rem 0.8rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+        <span style="font-weight:700;font-size:0.9rem;">Shelf</span>
+        <div style="display:flex;gap:0.4rem;align-items:center;">
+          <div style="width:28px;height:28px;border-radius:50%;background:#b8432a;display:flex;align-items:center;justify-content:center;color:white;font-size:0.65rem;font-weight:700;">よ</div>
+        </div>
+      </div>
+      <!-- 本棚グリッド（背景） -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:3px;opacity:0.35;">
+        <div style="height:38px;background:#d4cdbe;border-radius:2px;"></div>
+        <div style="height:38px;background:#d4cdbe;border-radius:2px;"></div>
+        <div style="height:38px;background:#d4cdbe;border-radius:2px;"></div>
+        <div style="height:38px;background:#d4cdbe;border-radius:2px;"></div>
+      </div>
+      <!-- サイドパネル -->
+      <div style="position:absolute;right:0;top:0;bottom:0;width:55%;background:white;box-shadow:-4px 0 16px rgba(0,0,0,0.12);border-radius:0 4px 4px 0;padding:0.75rem;font-size:0.7rem;">
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.6rem;">
+          <div style="width:32px;height:32px;border-radius:50%;background:#b8432a;display:flex;align-items:center;justify-content:center;color:white;font-size:0.75rem;font-weight:700;">よ</div>
+          <div>
+            <div style="font-weight:700;font-size:0.75rem;">よん</div>
+            <div style="color:#8a7e70;font-size:0.6rem;">ylee@gmail.com</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:0.6rem;">
+          <div style="background:#f4f1ea;border-radius:3px;padding:4px;text-align:center;">
+            <div style="font-weight:700;font-size:0.85rem;color:#b8432a;">12</div>
+            <div style="font-size:0.55rem;color:#8a7e70;">読了</div>
+          </div>
+          <div style="background:#f4f1ea;border-radius:3px;padding:4px;text-align:center;">
+            <div style="font-weight:700;font-size:0.85rem;color:#a68a3f;">20</div>
+            <div style="font-size:0.55rem;color:#8a7e70;">目標</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:2px;">
+          <div style="height:28px;background:#d4cdbe;border-radius:2px;"></div>
+          <div style="height:28px;background:#d4cdbe;border-radius:2px;"></div>
+          <div style="height:28px;background:#d4cdbe;border-radius:2px;"></div>
+          <div style="height:28px;background:#d4cdbe;border-radius:2px;"></div>
+          <div style="height:28px;background:#d4cdbe;border-radius:2px;opacity:0.4;"></div>
+        </div>
+      </div>
+      <style>.card-image{position:relative;overflow:hidden;}</style>
+    </div>
+    <div class="card-body">
+      <h3>A. サイドパネル</h3>
+      <p>右からスライドイン。メイン画面を残したまま確認できる。閉じるボタンで戻る。</p>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f4f1ea;padding:1rem;">
+      <div style="background:#ebe6db;border-radius:4px;padding:0.5rem 0.8rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <span style="font-size:0.65rem;color:#8a7e70;cursor:pointer;">← 本棚へ</span>
+        </div>
+        <span style="font-weight:700;font-size:0.9rem;color:#b8432a;">My Page</span>
+        <div style="width:28px;"></div>
+      </div>
+      <!-- マイページ全画面 -->
+      <div style="background:white;border-radius:4px;padding:0.75rem;font-size:0.7rem;">
+        <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.8rem;padding-bottom:0.6rem;border-bottom:1px solid #d4cdbe;">
+          <div style="width:40px;height:40px;border-radius:50%;background:#b8432a;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;">よ</div>
+          <div>
+            <div style="font-weight:700;">よん</div>
+            <div style="color:#8a7e70;font-size:0.6rem;">2026年の目標：20冊</div>
+          </div>
+          <div style="margin-left:auto;font-size:0.6rem;color:#b8432a;border:1px solid #b8432a;padding:2px 6px;border-radius:3px;">編集</div>
+        </div>
+        <div style="font-size:0.6rem;color:#8a7e70;margin-bottom:0.3rem;letter-spacing:0.1em;">マイ本棚</div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:2px;margin-bottom:0.6rem;">
+          <div style="height:30px;background:#d4cdbe;border-radius:2px;"></div>
+          <div style="height:30px;background:#d4cdbe;border-radius:2px;"></div>
+          <div style="height:30px;background:#d4cdbe;border-radius:2px;"></div>
+          <div style="height:30px;background:#d4cdbe;border-radius:2px;"></div>
+          <div style="height:30px;background:#d4cdbe;border-radius:2px;"></div>
+        </div>
+        <div style="font-size:0.6rem;color:#8a7e70;margin-bottom:0.3rem;letter-spacing:0.1em;">読書進捗</div>
+        <div style="background:#f4f1ea;border-radius:3px;padding:5px 8px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:0.65rem;">
+            <span>12 / 20冊</span><span style="color:#a68a3f;">60%</span>
+          </div>
+          <div style="background:#d4cdbe;border-radius:99px;height:5px;">
+            <div style="background:#b8432a;width:60%;height:100%;border-radius:99px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. 全画面切り替え</h3>
+      <p>ヘッダーのアイコンでページ全体がマイページに切り替わる。「← 本棚へ」で戻る。</p>
+    </div>
+  </div>
+
+  <!-- Option C -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f4f1ea;padding:1rem;position:relative;">
+      <!-- 背景 -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:3px;opacity:0.25;margin-bottom:0.4rem;">
+        <div style="height:35px;background:#d4cdbe;border-radius:2px;"></div>
+        <div style="height:35px;background:#d4cdbe;border-radius:2px;"></div>
+        <div style="height:35px;background:#d4cdbe;border-radius:2px;"></div>
+        <div style="height:35px;background:#d4cdbe;border-radius:2px;"></div>
+      </div>
+      <!-- モーダル -->
+      <div style="position:absolute;inset:0.5rem;background:white;border-radius:6px;box-shadow:0 8px 32px rgba(0,0,0,0.18);padding:0.75rem;font-size:0.7rem;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6rem;">
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <div style="width:34px;height:34px;border-radius:50%;background:#b8432a;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;">よ</div>
+            <div>
+              <div style="font-weight:700;">よん</div>
+              <div style="font-size:0.6rem;color:#8a7e70;">ylee@gmail.com</div>
+            </div>
+          </div>
+          <span style="color:#8a7e70;font-size:1rem;cursor:pointer;">✕</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:0.6rem;">
+          <div style="background:#f4f1ea;border-radius:3px;padding:4px;text-align:center;">
+            <div style="font-weight:700;color:#b8432a;">12</div><div style="font-size:0.55rem;color:#8a7e70;">読了</div>
+          </div>
+          <div style="background:#f4f1ea;border-radius:3px;padding:4px;text-align:center;">
+            <div style="font-weight:700;color:#4a3f36;">3</div><div style="font-size:0.55rem;color:#8a7e70;">読書中</div>
+          </div>
+          <div style="background:#f4f1ea;border-radius:3px;padding:4px;text-align:center;">
+            <div style="font-weight:700;color:#a68a3f;">20</div><div style="font-size:0.55rem;color:#8a7e70;">目標</div>
+          </div>
+        </div>
+        <div style="font-size:0.6rem;color:#8a7e70;margin-bottom:0.3rem;letter-spacing:0.1em;">マイ本棚</div>
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:2px;">
+          <div style="height:24px;background:#d4cdbe;border-radius:2px;"></div>
+          <div style="height:24px;background:#d4cdbe;border-radius:2px;"></div>
+          <div style="height:24px;background:#d4cdbe;border-radius:2px;"></div>
+          <div style="height:24px;background:#d4cdbe;border-radius:2px;"></div>
+          <div style="height:24px;background:#d4cdbe;border-radius:2px;"></div>
+          <div style="height:24px;background:#d4cdbe;border-radius:2px;opacity:0.4;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. モーダル</h3>
+      <p>背景をオーバーレイして中央にポップアップ。コンパクトで軽快な印象。</p>
+    </div>
+  </div>
+
+</div>

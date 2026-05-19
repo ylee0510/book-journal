@@ -1,0 +1,203 @@
+<h2>設計まとめ — マイページ全体像</h2>
+<p class="subtitle">スマホ画面で3つの主要セクションを確認してください</p>
+
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;max-width:960px;margin:0 auto;">
+
+  <!-- Screen 1: ログイン -->
+  <div style="display:flex;flex-direction:column;align-items:center;gap:0.75rem;">
+    <div class="label">① ログイン画面</div>
+    <div style="width:150px;height:280px;background:#1a1714;border-radius:20px;padding:3px;box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+      <div style="width:100%;height:100%;background:#f4f1ea;border-radius:17px;overflow:hidden;display:flex;flex-direction:column;">
+        <div style="background:#ebe6db;height:18px;display:flex;align-items:center;justify-content:space-between;padding:0 8px;flex-shrink:0;">
+          <span style="font-size:6px;font-weight:700;">9:41</span><span style="font-size:6px;">●●●</span>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:12px;">
+          <div style="font-size:20px;">📚</div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:0.05em;">Shelf</div>
+          <div style="font-size:6px;color:#8a7e70;text-align:center;line-height:1.6;">読書の記録を<br>みんなで共有</div>
+          <div style="width:100%;background:#1a1714;border-radius:4px;padding:7px 6px;display:flex;align-items:center;justify-content:center;gap:5px;margin-top:4px;">
+            <div style="width:10px;height:10px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:6px;">G</div>
+            <span style="font-size:6.5px;color:white;font-weight:700;">Googleでログイン</span>
+          </div>
+          <div style="font-size:5.5px;color:#8a7e70;text-align:center;line-height:1.5;">ログインしなくても<br>閲覧できます</div>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:0.78rem;color:#4a3f36;text-align:center;max-width:150px;">Googleワンタップ。未ログインでも全カードは閲覧可能。</p>
+  </div>
+
+  <!-- Screen 2: マイページ上部 -->
+  <div style="display:flex;flex-direction:column;align-items:center;gap:0.75rem;">
+    <div class="label">② マイページ（上部）</div>
+    <div style="width:150px;height:280px;background:#1a1714;border-radius:20px;padding:3px;box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+      <div style="width:100%;height:100%;background:#f4f1ea;border-radius:17px;overflow:hidden;display:flex;flex-direction:column;">
+        <div style="background:#ebe6db;height:18px;display:flex;align-items:center;justify-content:space-between;padding:0 8px;flex-shrink:0;">
+          <span style="font-size:6px;font-weight:700;">9:41</span><span style="font-size:6px;">●●●</span>
+        </div>
+        <div style="background:#ebe6db;padding:5px 8px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #d4cdbe;flex-shrink:0;">
+          <span style="font-size:6px;color:#8a7e70;">← 本棚</span>
+          <span style="font-size:7.5px;font-weight:800;color:#b8432a;">My Page</span>
+          <span style="font-size:6px;color:#8a7e70;">編集</span>
+        </div>
+        <div style="flex:1;overflow:hidden;padding:5px;display:flex;flex-direction:column;gap:4px;">
+          <!-- profile card -->
+          <div style="background:white;border-radius:5px;padding:6px;">
+            <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px;">
+              <div style="width:26px;height:26px;border-radius:50%;background:#b8432a;display:flex;align-items:center;justify-content:center;color:white;font-size:9px;font-weight:700;flex-shrink:0;">よ</div>
+              <div style="flex:1;">
+                <div style="font-size:7.5px;font-weight:800;">よん</div>
+                <div style="font-size:5.5px;color:#8a7e70;font-style:italic;">読書で人生を豊かに 📖</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:3px;flex-wrap:wrap;">
+              <span style="background:#f4f1ea;border-radius:99px;padding:1px 5px;font-size:4.5px;color:#4a3f36;">ビジネス</span>
+              <span style="background:#f4f1ea;border-radius:99px;padding:1px 5px;font-size:4.5px;color:#4a3f36;">哲学</span>
+              <span style="background:#f4f1ea;border-radius:99px;padding:1px 5px;font-size:4.5px;color:#4a3f36;">SF</span>
+            </div>
+          </div>
+          <!-- reading goal -->
+          <div style="background:white;border-radius:5px;padding:5px;">
+            <div style="font-size:5px;color:#8a7e70;letter-spacing:0.1em;margin-bottom:3px;">読書目標 2026</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:4px;">
+              <div style="background:#f4f1ea;border-radius:2px;padding:2px;text-align:center;">
+                <div style="font-size:9px;font-weight:800;color:#b8432a;">12</div>
+                <div style="font-size:4px;color:#8a7e70;">読了</div>
+              </div>
+              <div style="background:#f4f1ea;border-radius:2px;padding:2px;text-align:center;">
+                <div style="font-size:9px;font-weight:800;color:#4a3f36;">3</div>
+                <div style="font-size:4px;color:#8a7e70;">読書中</div>
+              </div>
+              <div style="background:#f4f1ea;border-radius:2px;padding:2px;text-align:center;">
+                <div style="font-size:9px;font-weight:800;color:#a68a3f;">20</div>
+                <div style="font-size:4px;color:#8a7e70;">目標</div>
+              </div>
+            </div>
+            <div style="background:#d4cdbe;border-radius:99px;height:3px;margin-bottom:2px;">
+              <div style="background:#b8432a;width:60%;height:100%;border-radius:99px;"></div>
+            </div>
+            <!-- monthly mini bars -->
+            <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:1px;margin-top:4px;align-items:flex-end;height:16px;">
+              <div style="background:#b8432a;border-radius:1px;height:60%;"></div>
+              <div style="background:#b8432a;border-radius:1px;height:80%;"></div>
+              <div style="background:#b8432a;border-radius:1px;height:40%;"></div>
+              <div style="background:#b8432a;border-radius:1px;height:100%;"></div>
+              <div style="background:#b8432a;border-radius:1px;height:60%;"></div>
+              <div style="background:#d4cdbe;border-radius:1px;height:20%;"></div>
+              <div style="background:#d4cdbe;border-radius:1px;height:10%;"></div>
+              <div style="background:#d4cdbe;border-radius:1px;height:10%;"></div>
+              <div style="background:#d4cdbe;border-radius:1px;height:10%;"></div>
+              <div style="background:#d4cdbe;border-radius:1px;height:10%;"></div>
+              <div style="background:#d4cdbe;border-radius:1px;height:10%;"></div>
+              <div style="background:#d4cdbe;border-radius:1px;height:10%;"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:1px;margin-top:1px;">
+              <div style="font-size:3px;color:#8a7e70;text-align:center;">1</div>
+              <div style="font-size:3px;color:#8a7e70;text-align:center;">2</div>
+              <div style="font-size:3px;color:#8a7e70;text-align:center;">3</div>
+              <div style="font-size:3px;color:#8a7e70;text-align:center;">4</div>
+              <div style="font-size:3px;color:#8a7e70;text-align:center;">5</div>
+              <div style="font-size:3px;color:#8a7e70;text-align:center;">6</div>
+              <div style="font-size:3px;color:#8a7e70;text-align:center;">7</div>
+              <div style="font-size:3px;color:#8a7e70;text-align:center;">8</div>
+              <div style="font-size:3px;color:#8a7e70;text-align:center;">9</div>
+              <div style="font-size:3px;color:#8a7e70;text-align:center;">10</div>
+              <div style="font-size:3px;color:#8a7e70;text-align:center;">11</div>
+              <div style="font-size:3px;color:#8a7e70;text-align:center;">12</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:0.78rem;color:#4a3f36;text-align:center;max-width:150px;">プロフィール＋年間進捗＋月別棒グラフ</p>
+  </div>
+
+  <!-- Screen 3: マイページ下部（本棚） -->
+  <div style="display:flex;flex-direction:column;align-items:center;gap:0.75rem;">
+    <div class="label">③ マイページ（下部）</div>
+    <div style="width:150px;height:280px;background:#1a1714;border-radius:20px;padding:3px;box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+      <div style="width:100%;height:100%;background:#f4f1ea;border-radius:17px;overflow:hidden;display:flex;flex-direction:column;">
+        <div style="background:#ebe6db;height:18px;display:flex;align-items:center;justify-content:space-between;padding:0 8px;flex-shrink:0;">
+          <span style="font-size:6px;font-weight:700;">9:41</span><span style="font-size:6px;">●●●</span>
+        </div>
+        <div style="background:#ebe6db;padding:5px 8px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #d4cdbe;flex-shrink:0;">
+          <span style="font-size:6px;color:#8a7e70;">← 本棚</span>
+          <span style="font-size:7.5px;font-weight:800;color:#b8432a;">My Page</span>
+          <span style="font-size:6px;color:#8a7e70;">編集</span>
+        </div>
+        <div style="flex:1;overflow:hidden;padding:5px;display:flex;flex-direction:column;gap:4px;">
+          <!-- category breakdown -->
+          <div style="background:white;border-radius:5px;padding:5px;">
+            <div style="font-size:5px;color:#8a7e70;letter-spacing:0.1em;margin-bottom:3px;">カテゴリ内訳</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <div style="display:flex;align-items:center;gap:3px;">
+                <span style="font-size:5px;width:28px;flex-shrink:0;">タメになる</span>
+                <div style="flex:1;background:#d4cdbe;border-radius:99px;height:4px;">
+                  <div style="background:#b8432a;width:75%;height:100%;border-radius:99px;"></div>
+                </div>
+                <span style="font-size:5px;color:#8a7e70;">9</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:3px;">
+                <span style="font-size:5px;width:28px;flex-shrink:0;">わくわく</span>
+                <div style="flex:1;background:#d4cdbe;border-radius:99px;height:4px;">
+                  <div style="background:#a68a3f;width:50%;height:100%;border-radius:99px;"></div>
+                </div>
+                <span style="font-size:5px;color:#8a7e70;">6</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:3px;">
+                <span style="font-size:5px;width:28px;flex-shrink:0;">感動した</span>
+                <div style="flex:1;background:#d4cdbe;border-radius:99px;height:4px;">
+                  <div style="background:#4a3f36;width:25%;height:100%;border-radius:99px;"></div>
+                </div>
+                <span style="font-size:5px;color:#8a7e70;">3</span>
+              </div>
+            </div>
+          </div>
+          <!-- my bookshelf -->
+          <div style="background:white;border-radius:5px;padding:5px;flex:1;">
+            <div style="font-size:5px;color:#8a7e70;letter-spacing:0.1em;margin-bottom:3px;">マイ本棚 <span style="color:#b8432a;">12冊</span></div>
+            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:2px;">
+              <div style="height:26px;background:#d4cdbe;border-radius:2px;"></div>
+              <div style="height:26px;background:#c8b89a;border-radius:2px;"></div>
+              <div style="height:26px;background:#b8c4a8;border-radius:2px;"></div>
+              <div style="height:26px;background:#d4a090;border-radius:2px;"></div>
+              <div style="height:26px;background:#a0b8c8;border-radius:2px;"></div>
+              <div style="height:26px;background:#c8b89a;border-radius:2px;"></div>
+              <div style="height:26px;background:#d4cdbe;border-radius:2px;"></div>
+              <div style="height:26px;background:#b8c4a8;border-radius:2px;"></div>
+              <div style="height:26px;background:#d4cdbe;border-radius:2px;"></div>
+              <div style="height:26px;background:#c8b89a;border-radius:2px;"></div>
+            </div>
+            <!-- wishlist section -->
+            <div style="margin-top:6px;padding-top:4px;border-top:1px solid #f4f1ea;">
+              <div style="font-size:5px;color:#8a7e70;letter-spacing:0.1em;margin-bottom:3px;">また読みたい <span style="color:#a68a3f;">4冊</span></div>
+              <div style="display:flex;flex-direction:column;gap:2px;">
+                <div style="display:flex;align-items:center;gap:3px;">
+                  <div style="width:14px;height:18px;background:#d4cdbe;border-radius:1px;flex-shrink:0;"></div>
+                  <span style="font-size:5px;color:#4a3f36;">ハーミット・クラブ</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:3px;">
+                  <div style="width:14px;height:18px;background:#c8b89a;border-radius:1px;flex-shrink:0;"></div>
+                  <span style="font-size:5px;color:#4a3f36;">思考の整理学</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:0.78rem;color:#4a3f36;text-align:center;max-width:150px;">カテゴリ内訳＋サムネ本棚＋読みたいリスト</p>
+  </div>
+
+</div>
+
+<div style="margin-top:2rem;background:#f8f5ef;border-radius:8px;padding:1.5rem;max-width:700px;margin-left:auto;margin-right:auto;">
+  <h3 style="margin-bottom:1rem;">決定事項まとめ</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;font-size:0.85rem;">
+    <div><span class="label">ログイン</span><br>Googleワンタップ認証</div>
+    <div><span class="label">レイアウト</span><br>全画面切り替え（← 本棚で戻る）</div>
+    <div><span class="label">プロフィール</span><br>名前 ＋ 一言 ＋ 好きなジャンル ＋ SNS</div>
+    <div><span class="label">読書目標</span><br>年間 ＋ 月別棒グラフ ＋ カテゴリ内訳</div>
+    <div><span class="label">読みたいリスト</span><br>既存「また読みたい」をマイページに表示</div>
+    <div><span class="label">サムネタップ</span><br>マイページ内でミニ詳細ポップアップ</div>
+  </div>
+</div>

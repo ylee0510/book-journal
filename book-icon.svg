@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="50" fill="#b8432a"/>
+  <!-- White border ring -->
+  <circle cx="50" cy="50" r="44" fill="none" stroke="white" stroke-width="2.5"/>
+
+  <!-- Open book – left page -->
+  <path d="M50,25 Q33,24 19,28 L17,63 Q33,59 50,63 Z" fill="white"/>
+  <!-- Open book – right page -->
+  <path d="M50,25 Q67,24 81,28 L83,63 Q67,59 50,63 Z" fill="white"/>
+  <!-- Spine line -->
+  <line x1="50" y1="25" x2="50" y2="63" stroke="#b8432a" stroke-width="1.8"/>
+  <!-- Bottom binding curve -->
+  <path d="M17,63 Q50,70 83,63" fill="none" stroke="white" stroke-width="2.2"/>
+
+  <!-- Fountain pen (rotated ~45°, nib toward lower-left) -->
+  <g transform="translate(67,43) rotate(40)">
+    <!-- Butt cap -->
+    <rect x="-3.5" y="-18" width="7" height="6" rx="2" fill="white"/>
+    <!-- Body -->
+    <rect x="-3.5" y="-12" width="7" height="20" fill="white"/>
+    <!-- Grip section (slightly wider) -->
+    <rect x="-4" y="8" width="8" height="5" fill="white"/>
+    <!-- Nib triangle -->
+    <polygon points="-3.5,13 3.5,13 0,23" fill="white"/>
+  </g>
+</svg>

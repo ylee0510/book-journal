@@ -1196,7 +1196,7 @@
   #html5-qrcode-reader span { display: none !important; }
 
   .scanner-guide {
-    padding: 0.8rem 1.2rem;
+    padding: 0.6rem 1.2rem 0.4rem;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.62rem;
     color: var(--ink-fade);
@@ -1204,6 +1204,21 @@
     letter-spacing: 0.05em;
     border-top: 1px solid var(--line);
   }
+  .scanner-capture-btn {
+    display: block;
+    width: calc(100% - 2.4rem);
+    margin: 0 1.2rem 0.8rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 0.65rem;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .scanner-capture-btn:hover { background: var(--ink); }
 
   .scanner-aim {
     position: absolute;
@@ -2179,6 +2194,7 @@
       </div>
     </div>
     <div class="scanner-guide">本の裏表紙の上部のバーコード(ISBN)を枠内に合わせてください</div>
+    <button class="scanner-capture-btn" id="scannerCaptureBtn" onclick="captureFrame()">📸 今の画面で読み取る</button>
   </div>
 </div>
 
@@ -3487,8 +3503,8 @@
 
     // qrbox をビューポート幅に合わせて動的計算（余裕を持たせてピントが合いやすく）
     const viewportW = Math.min(window.innerWidth, 420);
-    const boxW = Math.round(viewportW * 0.55);
-    const boxH = Math.round(boxW * 0.45);
+    const boxW = Math.round(viewportW * 0.38);
+    const boxH = Math.round(boxW * 0.55);
 
     html5Scanner.start(
       { facingMode: 'environment' },
@@ -3518,6 +3534,35 @@
       if (statusEl) { statusEl.className = 'isbn-status error'; statusEl.textContent = msg; }
       closeScanner();
     });
+  };
+
+  window.captureFrame = async function() {
+    const video = document.querySelector('#html5-qrcode-reader video');
+    if (!video) return;
+    const btn = document.getElementById('scannerCaptureBtn');
+    btn.textContent = '読み取り中...';
+    btn.disabled = true;
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+      const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.95));
+      const file = new File([blob], 'frame.jpg', { type: 'image/jpeg' });
+      const tmpScanner = new Html5Qrcode('html5-qrcode-reader');
+      const result = await tmpScanner.scanFile(file, false);
+      tmpScanner.clear();
+      const isbn = result.replace(/\D/g, '');
+      document.getElementById('inputIsbn').value = isbn;
+      closeScanner();
+      window.searchByIsbn();
+    } catch {
+      btn.textContent = '📸 今の画面で読み取る';
+      btn.disabled = false;
+      const s = document.getElementById('isbnStatus');
+      s.className = 'isbn-status error';
+      s.textContent = '× 読み取れませんでした。もう少し近づけてください';
+    }
   };
 
   window.closeScanner = function() {

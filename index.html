@@ -461,6 +461,163 @@
     font-style: italic;
   }
 
+  /* ========== Likes & Comments ========== */
+  .book-social {
+    margin-top: 1rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .social-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .like-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: transparent;
+    border: 1px solid var(--line);
+    padding: 0.35rem 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    border-radius: 2px;
+  }
+
+  .like-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .like-btn.liked {
+    background: rgba(184, 67, 42, 0.08);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .like-btn .heart {
+    font-size: 0.9rem;
+    line-height: 1;
+  }
+
+  .comment-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: transparent;
+    border: 1px solid var(--line);
+    padding: 0.35rem 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    border-radius: 2px;
+  }
+
+  .comment-toggle:hover {
+    border-color: var(--ink-soft);
+    color: var(--ink);
+  }
+
+  .comments-section {
+    margin-top: 0.9rem;
+    display: none;
+  }
+
+  .comments-section.open { display: block; }
+
+  .comment-item {
+    padding: 0.6rem 0.7rem;
+    background: var(--bg);
+    border-left: 2px solid var(--line);
+    margin-bottom: 0.5rem;
+  }
+
+  .comment-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.25rem;
+  }
+
+  .comment-author {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--ink);
+    font-family: 'Noto Serif JP', serif;
+  }
+
+  .comment-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--ink-fade);
+  }
+
+  .comment-text {
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+
+  .comment-delete {
+    background: transparent;
+    border: none;
+    color: var(--ink-fade);
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    padding: 0 0 0 0.5rem;
+  }
+  .comment-delete:hover { color: var(--accent); }
+
+  .comment-form {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+  }
+
+  .comment-input {
+    flex-grow: 1;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 0.5rem 0.7rem;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.82rem;
+    color: var(--ink);
+    resize: none;
+  }
+
+  .comment-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .comment-submit {
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    padding: 0 0.9rem;
+    cursor: pointer;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.78rem;
+    white-space: nowrap;
+    transition: background 0.2s ease;
+  }
+  .comment-submit:hover { background: var(--accent); }
+
+  .comments-empty {
+    font-size: 0.75rem;
+    color: var(--ink-fade);
+    font-style: italic;
+    padding: 0.3rem 0;
+  }
+
   .recommend-label {
     display: inline-block;
     font-family: 'JetBrains Mono', monospace;
@@ -1191,8 +1348,8 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">Recommended When / こんな時におすすめ <span style="color:var(--ink-fade); font-weight:normal; text-transform:none; letter-spacing:0;">(任意)</span></label>
-        <input type="text" class="form-input" id="inputRecommend" placeholder="例:元気を出したい時、長い休みに読みたい時">
+        <label class="form-label">Recommended For / こんな人におすすめ <span style="color:var(--ink-fade); font-weight:normal; text-transform:none; letter-spacing:0;">(任意)</span></label>
+        <input type="text" class="form-input" id="inputRecommend" placeholder="例:新しい挑戦をしたい人、人生に迷っている人">
       </div>
 
       <div class="form-group">
@@ -1394,6 +1551,12 @@
   function renderBooks() {
     const grid = document.getElementById('booksGrid');
     
+    // Remember which comment sections are open (survive re-render)
+    const openComments = new Set();
+    document.querySelectorAll('.comments-section.open').forEach(el => {
+      openComments.add(el.id);
+    });
+    
     // Update stats
     const finished = books.filter(b => b.status === 'finished').length;
     const reading = books.filter(b => b.status === 'reading').length;
@@ -1458,7 +1621,7 @@
           </div>
         </div>
         <div class="book-memo">${escapeHtml(book.memo || '')}</div>
-        ${book.recommend ? `<div class="book-recommend"><span class="recommend-label">こんな時に</span>${escapeHtml(book.recommend)}</div>` : ''}
+        ${book.recommend ? `<div class="book-recommend"><span class="recommend-label">こんな人に</span>${escapeHtml(book.recommend)}</div>` : ''}
         <div class="book-footer">
           <span class="book-author-meta">
             ${escapeHtml(book.reader || 'anonymous')} · ${formatDate(book.createdAt)}
@@ -1468,7 +1631,69 @@
             <button class="book-delete" onclick="deleteBook(event, '${book.id}')">DELETE</button>
           </div>
         </div>
+        <div class="book-social">
+          <div class="social-bar">
+            <button class="like-btn ${hasLiked(book) ? 'liked' : ''}" onclick="toggleLike(event, '${book.id}')">
+              <span class="heart">${hasLiked(book) ? '♥' : '♡'}</span>
+              <span>${(book.likes || []).length}</span>
+            </button>
+            <button class="comment-toggle" onclick="toggleComments(event, '${book.id}')">
+              <span>💬</span>
+              <span>${(book.comments || []).length}</span>
+            </button>
+          </div>
+          <div class="comments-section" id="comments-${book.id}">
+            ${renderComments(book)}
+            <div class="comment-form">
+              <input type="text" class="comment-input" id="comment-input-${book.id}" placeholder="コメントを追加..." onkeydown="if(event.key==='Enter'){event.preventDefault();addComment('${book.id}');}">
+              <button class="comment-submit" onclick="addComment('${book.id}')">送信</button>
+            </div>
+          </div>
+        </div>
       </article>
+    `).join('');
+    
+    // Restore open comment sections
+    openComments.forEach(elId => {
+      const el = document.getElementById(elId);
+      if (el) el.classList.add('open');
+    });
+  }
+
+  // Get the current user's identity (from localStorage, set on first interaction)
+  function getMyName() {
+    let name = '';
+    try { name = localStorage.getItem('myReaderName') || ''; } catch (e) {}
+    return name;
+  }
+  function setMyName(name) {
+    try { localStorage.setItem('myReaderName', name); } catch (e) {}
+  }
+
+  // Check if current user has liked this book
+  function hasLiked(book) {
+    const me = getMyName();
+    if (!me) return false;
+    return (book.likes || []).includes(me);
+  }
+
+  // Render comments for a book
+  function renderComments(book) {
+    const comments = book.comments || [];
+    if (comments.length === 0) {
+      return '<div class="comments-empty">まだコメントはありません</div>';
+    }
+    return comments.map((c, idx) => `
+      <div class="comment-item">
+        <div class="comment-meta">
+          <span class="comment-author">${escapeHtml(c.author || '名無し')}</span>
+          <span>
+            <span class="comment-date">${formatDate(c.createdAt)}</span>
+            <button class="comment-delete" onclick="deleteComment(event, '${book.id}', ${idx})">×</button>
+          </span>
+        </div>
+        <div class="comment-text">${escapeHtml(c.text)}</div>
+      </div>
     `).join('');
   }
 
@@ -2559,6 +2784,134 @@
       showToast('削除に失敗: ' + (err.message || err));
     }
   }
+
+  // ==================== Likes & Comments ====================
+  
+  // Ask for the user's name if not set yet
+  function ensureMyName() {
+    let name = getMyName();
+    if (!name) {
+      name = (prompt('あなたの名前を入力してください(いいね・コメントに表示されます)') || '').trim();
+      if (name) setMyName(name);
+    }
+    return name;
+  }
+
+  // Save a book object back to storage
+  async function saveBook(book) {
+    await storage.set('book:' + book.id, JSON.stringify(book));
+    if (!window.firebaseStorage) {
+      const idx = books.findIndex(b => b.id === book.id);
+      if (idx >= 0) books[idx] = book;
+      renderBooks();
+    }
+  }
+
+  // Toggle like on a book
+  window.toggleLike = async function(event, id) {
+    event.stopPropagation();
+    const me = ensureMyName();
+    if (!me) return;
+    
+    const book = books.find(b => b.id === id);
+    if (!book) return;
+    
+    const likes = book.likes || [];
+    const liked = likes.includes(me);
+    
+    const updated = {
+      ...book,
+      likes: liked ? likes.filter(n => n !== me) : [...likes, me]
+    };
+    
+    try {
+      await saveBook(updated);
+    } catch (err) {
+      console.error('Like error:', err);
+      showToast('いいねに失敗しました');
+    }
+  };
+
+  // Toggle comment section visibility
+  window.toggleComments = function(event, id) {
+    event.stopPropagation();
+    const section = document.getElementById('comments-' + id);
+    if (section) section.classList.toggle('open');
+  };
+
+  // Add a comment
+  window.addComment = async function(id) {
+    const input = document.getElementById('comment-input-' + id);
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text) return;
+    
+    const me = ensureMyName();
+    if (!me) return;
+    
+    const book = books.find(b => b.id === id);
+    if (!book) return;
+    
+    const comment = {
+      author: me,
+      text: text,
+      createdAt: Date.now()
+    };
+    
+    const updated = {
+      ...book,
+      comments: [...(book.comments || []), comment]
+    };
+    
+    input.value = '';
+    
+    try {
+      await saveBook(updated);
+      // Keep the comment section open after posting
+      setTimeout(() => {
+        const section = document.getElementById('comments-' + id);
+        if (section) section.classList.add('open');
+      }, 50);
+    } catch (err) {
+      console.error('Comment error:', err);
+      showToast('コメントに失敗しました');
+    }
+  };
+
+  // Delete a comment
+  window.deleteComment = async function(event, id, commentIdx) {
+    event.stopPropagation();
+    const book = books.find(b => b.id === id);
+    if (!book || !book.comments) return;
+    
+    const comment = book.comments[commentIdx];
+    if (!comment) return;
+    
+    // Only allow deleting your own comments
+    const me = getMyName();
+    if (comment.author !== me) {
+      showToast('自分のコメントのみ削除できます');
+      return;
+    }
+    
+    if (!confirm('このコメントを削除しますか?')) return;
+    
+    const updated = {
+      ...book,
+      comments: book.comments.filter((_, i) => i !== commentIdx)
+    };
+    
+    try {
+      await saveBook(updated);
+      setTimeout(() => {
+        const section = document.getElementById('comments-' + id);
+        if (section) section.classList.add('open');
+      }, 50);
+    } catch (err) {
+      console.error('Comment delete error:', err);
+      showToast('削除に失敗しました');
+    }
+  };
 
   // Toast
   function showToast(msg) {

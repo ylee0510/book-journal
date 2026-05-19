@@ -1725,6 +1725,14 @@
     if (!book.category) return [];
     return Array.isArray(book.category) ? book.category : [book.category];
   }
+
+  function isMyBook(book) {
+    if (!currentUser) return false;
+    if (book.uid && book.uid === currentUser.uid) return true;
+    if (!book.uid && book.reader && book.reader === currentUser.displayName) return true;
+    return false;
+  }
+
   let selectedStatus = 'reading';
   let selectedRating = 0;
   let currentCoverUrl = null;
@@ -3141,6 +3149,7 @@
         memo: document.getElementById('inputMemo').value.trim(),
         recommend: document.getElementById('inputRecommend').value.trim(),
         category: Array.from(document.querySelectorAll('.category-cb:checked')).map(cb => cb.value),
+        uid: currentUser ? currentUser.uid : (existing.uid || null),
         status: selectedStatus,
         rating: selectedRating,
         coverUrl: coverUrl || existing.coverUrl || null,
@@ -3175,6 +3184,7 @@
         memo: document.getElementById('inputMemo').value.trim(),
         recommend: document.getElementById('inputRecommend').value.trim(),
         category: Array.from(document.querySelectorAll('.category-cb:checked')).map(cb => cb.value),
+        uid: currentUser ? currentUser.uid : null,
         status: selectedStatus,
         rating: selectedRating,
         coverUrl: coverUrl || null,

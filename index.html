@@ -1515,6 +1515,33 @@
   .mp-edit-label { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-fade); display: block; margin-bottom: 0.3rem; }
   .mp-save-btn { background: var(--ink); color: white; border: none; border-radius: 2px; padding: 0.5rem 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; cursor: pointer; align-self: flex-start; transition: background 0.2s; }
   .mp-save-btn:hover { background: var(--accent); }
+
+  /* ---- Goal Section ---- */
+  .mp-stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.8rem; margin-bottom: 1.2rem; }
+  .mp-stat-box { background: var(--bg); border-radius: 3px; padding: 0.8rem; text-align: center; }
+  .mp-stat-val { font-family: 'JetBrains Mono', monospace; font-size: 1.6rem; font-weight: 700; line-height: 1; margin-bottom: 0.2rem; }
+  .mp-stat-label { font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; letter-spacing: 0.1em; color: var(--ink-fade); text-transform: uppercase; }
+  .mp-progress-wrap { margin-bottom: 1.4rem; }
+  .mp-progress-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--ink-fade); }
+  .mp-progress-bar-bg { background: var(--line); border-radius: 999px; height: 6px; overflow: hidden; }
+  .mp-progress-bar-fill { background: var(--accent); height: 100%; border-radius: 999px; transition: width 0.5s ease; }
+  .mp-goal-edit { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.4rem; flex-wrap: wrap; }
+  .mp-goal-input { width: 70px; background: var(--bg); border: 1px solid var(--line); border-radius: 2px; padding: 0.3rem 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--ink); text-align: center; outline: none; }
+  .mp-goal-input:focus { border-color: var(--accent); }
+  .mp-goal-save { background: transparent; border: 1px solid var(--line); border-radius: 2px; padding: 0.3rem 0.7rem; font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.08em; color: var(--ink-fade); cursor: pointer; transition: all 0.2s; }
+  .mp-goal-save:hover { border-color: var(--accent); color: var(--accent); }
+  .mp-monthly-chart { margin-bottom: 1.4rem; }
+  .mp-chart-label { font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; letter-spacing: 0.1em; color: var(--ink-fade); text-transform: uppercase; margin-bottom: 0.5rem; }
+  .mp-bars { display: flex; align-items: flex-end; gap: 3px; height: 60px; }
+  .mp-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; height: 100%; justify-content: flex-end; }
+  .mp-bar { width: 100%; background: var(--accent); border-radius: 2px 2px 0 0; min-height: 2px; }
+  .mp-bar.empty { background: var(--line); }
+  .mp-bar-month { font-family: 'JetBrains Mono', monospace; font-size: 0.5rem; color: var(--ink-fade); text-align: center; }
+  .mp-cat-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem; }
+  .mp-cat-name { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; color: var(--ink-soft); min-width: 80px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mp-cat-bar-bg { flex: 1; background: var(--line); border-radius: 999px; height: 5px; overflow: hidden; }
+  .mp-cat-bar-fill { background: var(--gold); height: 100%; border-radius: 999px; }
+  .mp-cat-count { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--ink-fade); min-width: 20px; text-align: right; }
 </style>
 </head>
 <body>
@@ -1948,8 +1975,80 @@
     }
   }
   function renderMpGoal(myBooks) {
-    document.getElementById('mpGoal').innerHTML =
-      `<div class="mypage-section-title">読書目標</div><p style="color:var(--ink-fade);font-size:0.85rem;">（実装中）</p>`;
+    const el = document.getElementById('mpGoal');
+    const finished = myBooks.filter(b => b.status === 'finished');
+    const reading = myBooks.filter(b => b.status === 'reading');
+    const goal = (userProfile && userProfile.goalYear) || 20;
+    const pct = Math.min(100, Math.round((finished.length / goal) * 100));
+
+    const currentYear = new Date().getFullYear();
+    const monthCounts = Array(12).fill(0);
+    finished.forEach(b => {
+      const d = new Date(b.createdAt);
+      if (d.getFullYear() === currentYear) monthCounts[d.getMonth()]++;
+    });
+    const maxMonth = Math.max(...monthCounts, 1);
+    const monthNames = ['1','2','3','4','5','6','7','8','9','10','11','12'];
+    const barsHtml = monthCounts.map((cnt, i) => {
+      const h = Math.round((cnt / maxMonth) * 100);
+      return `<div class="mp-bar-wrap">
+        <div class="mp-bar ${cnt === 0 ? 'empty' : ''}" style="height:${cnt === 0 ? 4 : h}%;" title="${cnt}冊"></div>
+        <div class="mp-bar-month">${monthNames[i]}</div>
+      </div>`;
+    }).join('');
+
+    const catMap = {};
+    finished.forEach(b => {
+      getCategories(b).forEach(c => { catMap[c] = (catMap[c] || 0) + 1; });
+    });
+    const catEntries = Object.entries(catMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const maxCat = catEntries.length ? catEntries[0][1] : 1;
+    const catHtml = catEntries.length
+      ? catEntries.map(([name, cnt]) => `
+          <div class="mp-cat-row">
+            <div class="mp-cat-name">${escapeHtml(name)}</div>
+            <div class="mp-cat-bar-bg"><div class="mp-cat-bar-fill" style="width:${Math.round((cnt/maxCat)*100)}%"></div></div>
+            <div class="mp-cat-count">${cnt}</div>
+          </div>`).join('')
+      : `<p style="font-size:0.8rem;color:var(--ink-fade);">まだデータがありません</p>`;
+
+    el.innerHTML = `
+      <div class="mypage-section-title">読書目標 ${currentYear}</div>
+      <div class="mp-goal-edit">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--ink-fade);">年間目標：</span>
+        <input class="mp-goal-input" id="mpGoalInput" type="number" min="1" max="365" value="${goal}">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--ink-fade);">冊</span>
+        <button class="mp-goal-save" onclick="saveGoalYear()">更新</button>
+      </div>
+      <div class="mp-stats-row">
+        <div class="mp-stat-box"><div class="mp-stat-val" style="color:var(--accent);">${finished.length}</div><div class="mp-stat-label">読了</div></div>
+        <div class="mp-stat-box"><div class="mp-stat-val" style="color:var(--ink-soft);">${reading.length}</div><div class="mp-stat-label">読書中</div></div>
+        <div class="mp-stat-box"><div class="mp-stat-val" style="color:var(--gold);">${goal}</div><div class="mp-stat-label">目標</div></div>
+      </div>
+      <div class="mp-progress-wrap">
+        <div class="mp-progress-meta"><span>${finished.length} / ${goal}冊</span><span style="color:var(--gold);">${pct}%</span></div>
+        <div class="mp-progress-bar-bg"><div class="mp-progress-bar-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="mp-monthly-chart">
+        <div class="mp-chart-label">月別読了数 ${currentYear}</div>
+        <div class="mp-bars">${barsHtml}</div>
+      </div>
+      <div class="mp-chart-label">カテゴリ内訳</div>
+      ${catHtml}`;
+  }
+
+  async function saveGoalYear() {
+    const val = parseInt(document.getElementById('mpGoalInput').value, 10);
+    if (!val || val < 1) return;
+    userProfile = { ...userProfile, goalYear: val };
+    try {
+      await window.firebaseAuth.saveProfile(currentUser.uid, { goalYear: val });
+      const myBooks = books.filter(isMyBook);
+      renderMpGoal(myBooks);
+      showToast('目標を更新しました ✓');
+    } catch (e) {
+      showToast('保存に失敗: ' + (e.message || e));
+    }
   }
   function renderMpShelf(myBooks) {
     document.getElementById('mpShelf').innerHTML =

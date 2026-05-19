@@ -1106,6 +1106,128 @@
   .isbn-status.success { color: var(--gold); }
   .isbn-status.error { color: var(--accent); }
 
+  /* ---- Barcode Scanner ---- */
+  .btn-scan {
+    background: var(--bg-deep);
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    padding: 0 0.9rem;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .btn-scan:hover { border-color: var(--accent); color: var(--accent); }
+
+  .scanner-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,8,6,0.92);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  .scanner-box {
+    background: var(--card);
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .scanner-header {
+    padding: 1rem 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .scanner-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ink-soft);
+  }
+
+  .scanner-close {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--ink-fade);
+    line-height: 1;
+    padding: 0.2rem;
+    transition: color 0.2s;
+  }
+  .scanner-close:hover { color: var(--accent); }
+
+  .scanner-viewport {
+    position: relative;
+    background: #000;
+  }
+
+  #html5-qrcode-reader {
+    width: 100% !important;
+  }
+  #html5-qrcode-reader video {
+    width: 100% !important;
+    max-height: 280px;
+    object-fit: cover;
+  }
+  #html5-qrcode-reader img { display: none !important; }
+  #html5-qrcode-reader button { display: none !important; }
+  #html5-qrcode-reader select { display: none !important; }
+  #html5-qrcode-reader span { display: none !important; }
+
+  .scanner-guide {
+    padding: 0.8rem 1.2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--ink-fade);
+    text-align: center;
+    letter-spacing: 0.05em;
+    border-top: 1px solid var(--line);
+  }
+
+  .scanner-aim {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 260px;
+    height: 80px;
+    pointer-events: none;
+  }
+  .scanner-aim::before, .scanner-aim::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-color: var(--accent);
+    border-style: solid;
+  }
+  .scanner-aim::before { top: 0; left: 0; border-width: 2px 0 0 2px; }
+  .scanner-aim::after  { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
+  .scanner-aim-tr, .scanner-aim-bl {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-color: var(--accent);
+    border-style: solid;
+  }
+  .scanner-aim-tr { top: 0; right: 0; border-width: 2px 2px 0 0; }
+  .scanner-aim-bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; }
+
   .divider-or {
     text-align: center;
     margin: 0 0 1.5rem;
@@ -2036,6 +2158,24 @@
   </div>
 </div>
 
+<!-- Barcode Scanner Modal -->
+<div class="scanner-overlay" id="scannerOverlay" style="display:none;">
+  <div class="scanner-box">
+    <div class="scanner-header">
+      <span class="scanner-title">📷 バーコードをスキャン</span>
+      <button class="scanner-close" onclick="closeScanner()">✕</button>
+    </div>
+    <div class="scanner-viewport">
+      <div id="html5-qrcode-reader"></div>
+      <div class="scanner-aim">
+        <div class="scanner-aim-tr"></div>
+        <div class="scanner-aim-bl"></div>
+      </div>
+    </div>
+    <div class="scanner-guide">本の裏表紙のバーコードを枠内に合わせてください</div>
+  </div>
+</div>
+
 <!-- Modal -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
@@ -2053,6 +2193,7 @@
         </div>
         <div class="isbn-search-row">
           <input type="text" class="form-input" id="inputIsbn" placeholder="例:9784101001012" autocomplete="off" maxlength="17">
+          <button type="button" class="btn-scan" onclick="openScanner()" title="カメラでバーコードを読み取る">📷</button>
           <button type="button" class="btn-isbn" id="btnIsbnSearch" onclick="searchByIsbn()">検索</button>
         </div>
         <div class="isbn-status" id="isbnStatus"></div>
@@ -2128,6 +2269,9 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- html5-qrcode for barcode scanning -->
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
 <!-- Firebase SDK -->
 <script type="module">
@@ -3318,6 +3462,61 @@
   }
 
   // ==================== ISBN Search ====================
+  // ==================== Barcode Scanner ====================
+  let html5Scanner = null;
+
+  window.openScanner = function() {
+    const overlay = document.getElementById('scannerOverlay');
+    overlay.style.display = 'flex';
+
+    if (!window.Html5Qrcode) {
+      document.getElementById('isbnStatus').textContent = 'スキャナーライブラリ読み込み中...';
+      closeScanner();
+      return;
+    }
+
+    html5Scanner = new Html5Qrcode('html5-qrcode-reader');
+    html5Scanner.start(
+      { facingMode: 'environment' },
+      {
+        fps: 10,
+        qrbox: { width: 260, height: 90 },
+        formatsToSupport: [
+          Html5QrcodeSupportedFormats.EAN_13,
+          Html5QrcodeSupportedFormats.EAN_8,
+          Html5QrcodeSupportedFormats.UPC_A,
+        ],
+        aspectRatio: 1.5,
+      },
+      (decodedText) => {
+        // EAN-13 バーコードを取得したらISBN欄に入力して検索
+        const isbn = decodedText.replace(/\D/g, '');
+        document.getElementById('inputIsbn').value = isbn;
+        closeScanner();
+        window.searchByIsbn();
+      },
+      () => {} // scan failure — ignore per-frame errors
+    ).catch(err => {
+      const msg = err && err.toString().includes('Permission')
+        ? 'カメラへのアクセスを許可してください'
+        : 'カメラを起動できませんでした';
+      const statusEl = document.getElementById('isbnStatus');
+      if (statusEl) { statusEl.className = 'isbn-status error'; statusEl.textContent = msg; }
+      closeScanner();
+    });
+  };
+
+  window.closeScanner = function() {
+    const overlay = document.getElementById('scannerOverlay');
+    overlay.style.display = 'none';
+    if (html5Scanner) {
+      html5Scanner.stop().catch(() => {}).finally(() => {
+        html5Scanner.clear();
+        html5Scanner = null;
+      });
+    }
+  };
+
   window.searchByIsbn = async function() {
     const rawInput = document.getElementById('inputIsbn').value.trim();
     const isbn = rawInput.replace(/[-\s]/g, '');  // Remove hyphens and spaces

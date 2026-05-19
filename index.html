@@ -2305,7 +2305,7 @@
 <!-- html5-qrcode for barcode scanning -->
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <!-- Quagga2 for iOS Safari EAN barcode fallback -->
-<script src="https://unpkg.com/@ericblade/quagga2@1.8.2/lib/quagga.min.js"></script>
+<script src="https://unpkg.com/@ericblade/quagga2@1.8.2/dist/quagga.min.js" onerror="console.warn('Quagga2 load failed')"></script>
 
 <!-- Firebase SDK -->
 <script type="module">
@@ -3551,7 +3551,7 @@
 
   function quaggaDecode(canvas) {
     return new Promise((resolve, reject) => {
-      if (!window.Quagga) { reject(new Error('Quagga未ロード')); return; }
+      if (!window.Quagga) { reject(new Error('スキャンライブラリの読み込みに失敗しました。ページを再読み込みしてお試しください')); return; }
       Quagga.decodeSingle({
         decoder: { readers: ['ean_reader', 'ean_8_reader', 'upc_reader', 'upc_e_reader'] },
         locate: true,

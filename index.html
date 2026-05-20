@@ -260,27 +260,60 @@
     color: var(--ink-fade);
   }
 
-  .reader-filter {
-    font-family: 'Noto Serif JP', serif;
-    font-size: 0.85rem;
-    padding: 0.45rem 2rem 0.45rem 0.8rem;
+  .custom-select {
+    position: relative;
+    min-width: 140px;
+  }
+  .custom-select-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.45rem 0.8rem;
     border: 1px solid var(--line);
     background: var(--card);
     color: var(--ink);
     cursor: pointer;
     border-radius: 2px;
-    appearance: none;
-    -webkit-appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234a3f36' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 0.5rem center;
-    background-size: 14px;
-    min-width: 140px;
-    transition: all 0.2s ease;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.85rem;
+    width: 100%;
+    transition: border-color 0.2s;
+    white-space: nowrap;
   }
-
-  .reader-filter:hover { border-color: var(--ink-soft); }
-  .reader-filter:focus { outline: none; border-color: var(--accent); }
+  .custom-select-btn:hover { border-color: var(--ink-soft); }
+  .custom-select-btn.open { border-color: var(--accent); }
+  .custom-select-chevron { width: 14px; height: 14px; flex-shrink: 0; transition: transform 0.2s; }
+  .custom-select-btn.open .custom-select-chevron { transform: rotate(180deg); }
+  .custom-select-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    z-index: 300;
+    display: none;
+    min-width: 100%;
+    overflow: hidden;
+  }
+  .custom-select-dropdown.open { display: block; }
+  .custom-select-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.85rem;
+    color: #1a1714;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .custom-select-option:hover { background: #f5f2ed; }
+  .custom-select-option.selected { color: var(--accent); font-weight: 500; }
+  .custom-select-option::before { content: ''; display: inline-block; width: 0.8rem; flex-shrink: 0; }
+  .custom-select-option.selected::before { content: '✓'; font-size: 0.7rem; }
 
   .btn-add:hover {
     background: var(--ink);
@@ -545,9 +578,9 @@
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Noto Serif JP', serif;
     font-size: 0.6rem;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.03em;
     color: var(--gold);
     background: rgba(166, 138, 63, 0.1);
     border: 1px solid rgba(166, 138, 63, 0.3);
@@ -863,6 +896,19 @@
     border: 1px solid var(--line);
   }
 
+  @media (max-width: 600px) {
+    .modal-overlay {
+      padding: 0;
+      align-items: flex-end;
+    }
+    .modal {
+      max-height: 95vh;
+      padding: 1.5rem 1.25rem;
+      border-radius: 16px 16px 0 0;
+      border-bottom: none;
+    }
+  }
+
   @keyframes slideUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -1115,7 +1161,7 @@
     border: 1px solid var(--line);
     color: var(--ink-soft);
     padding: 0.7rem 0.8rem;
-    font-size: 0.82rem;
+    font-size: 0.95rem;
     cursor: pointer;
     border-radius: 2px;
     transition: all 0.2s;
@@ -1179,6 +1225,14 @@
 
   .scanner-viewport {
     position: relative;
+    background: #000;
+  }
+
+  #scannerVideo {
+    width: 100%;
+    max-height: 280px;
+    object-fit: cover;
+    display: block;
     background: #000;
   }
 
@@ -1735,19 +1789,19 @@
 
   /* Mini detail popup */
   .mp-thumb-popup-overlay { position: fixed; inset: 0; background: rgba(26,23,20,0.55); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1.5rem; }
-  .mp-thumb-popup { background: var(--card); border-radius: 6px; box-shadow: 0 16px 48px rgba(0,0,0,0.3); max-width: 360px; width: 100%; overflow: hidden; }
-  .mp-thumb-popup-header { display: flex; gap: 1rem; padding: 1.2rem; border-bottom: 1px solid var(--line); }
-  .mp-thumb-popup-cover { width: 60px; height: 90px; border-radius: 2px; object-fit: cover; flex-shrink: 0; background: var(--bg-deep); }
-  .mp-thumb-popup-cover-placeholder { width: 60px; height: 90px; border-radius: 2px; background: var(--bg-deep); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; color: var(--ink-fade); flex-shrink: 0; text-align: center; padding: 4px; line-height: 1.3; }
+  .mp-thumb-popup { background: #ffffff; border-radius: 6px; box-shadow: 0 16px 48px rgba(0,0,0,0.3); max-width: 360px; width: 100%; overflow: hidden; display: flex; flex-direction: column; max-height: 85vh; }
+  .mp-thumb-popup-header { display: flex; gap: 1rem; padding: 1.2rem; border-bottom: 1px solid #e0dcd4; }
+  .mp-thumb-popup-cover { width: 60px; height: 90px; border-radius: 2px; object-fit: cover; flex-shrink: 0; background: #f0ede8; }
+  .mp-thumb-popup-cover-placeholder { width: 60px; height: 90px; border-radius: 2px; background: #f0ede8; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; color: #8a7e70; flex-shrink: 0; text-align: center; padding: 4px; line-height: 1.3; }
   .mp-thumb-popup-meta { flex: 1; }
-  .mp-thumb-popup-title { font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; color: var(--accent); line-height: 1.3; margin-bottom: 0.3rem; }
-  .mp-thumb-popup-author { font-size: 0.8rem; color: var(--ink-soft); font-style: italic; margin-bottom: 0.5rem; }
+  .mp-thumb-popup-title { font-family: 'Noto Serif JP', serif; font-weight: 700; font-size: 0.9rem; color: var(--accent); line-height: 1.4; margin-bottom: 0.3rem; }
+  .mp-thumb-popup-author { font-family: 'Noto Serif JP', serif; font-size: 0.8rem; color: #1a1714; font-style: italic; margin-bottom: 0.5rem; }
   .mp-thumb-popup-stars { color: var(--gold); font-size: 0.85rem; margin-bottom: 0.4rem; }
   .mp-thumb-popup-cats { display: flex; flex-wrap: wrap; gap: 0.3rem; }
-  .mp-thumb-popup-body { padding: 1rem 1.2rem; }
-  .mp-thumb-popup-memo { font-size: 0.82rem; color: var(--ink-soft); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0.8rem; }
-  .mp-thumb-popup-close { width: 100%; background: var(--bg); border: none; border-top: 1px solid var(--line); padding: 0.7rem; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; color: var(--ink-fade); cursor: pointer; transition: background 0.2s; }
-  .mp-thumb-popup-close:hover { background: var(--line); }
+  .mp-thumb-popup-body { padding: 1rem 1.2rem; overflow-y: auto; flex: 1; background: #ffffff; }
+  .mp-thumb-popup-memo { font-family: 'Noto Serif JP', serif; font-size: 0.82rem; color: #1a1714; line-height: 1.8; white-space: pre-wrap; word-break: break-word; margin-bottom: 0.8rem; }
+  .mp-thumb-popup-close { width: 100%; background: #f5f2ed; border: none; border-top: 1px solid #e0dcd4; padding: 0.7rem; font-family: 'Noto Serif JP', serif; font-size: 0.75rem; letter-spacing: 0.05em; color: #4a3f36; cursor: pointer; transition: background 0.2s; }
+  .mp-thumb-popup-close:hover { background: #e8e4de; }
 
   /* ---- Wishlist Section ---- */
   .mp-wishlist-item { display: flex; align-items: center; gap: 0.9rem; padding: 0.7rem 0; border-bottom: 1px solid var(--line); }
@@ -1757,6 +1811,20 @@
   .mp-wishlist-info { flex: 1; min-width: 0; }
   .mp-wishlist-title { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.8rem; color: var(--accent); line-height: 1.3; margin-bottom: 0.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .mp-wishlist-author { font-size: 0.75rem; color: var(--ink-soft); font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .public-shelf-view {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 80;
+    overflow-y: auto;
+  }
+  .public-shelf-view.active { display: block; }
+  .public-shelf-header { display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--bg); z-index: 2; }
+  .public-shelf-container { max-width: 680px; margin: 0 auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+  .reader-name-link { cursor: pointer; border-bottom: 1px dotted var(--ink-fade); transition: color 0.15s; }
+  .reader-name-link:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
   /* ==================== GUIDE PAGE ==================== */
   .btn-guide {
@@ -2020,21 +2088,33 @@
       </div>
       <div class="reader-filter-wrap">
         <div class="category-filter-wrap">
-          <select class="reader-filter" id="categoryFilter" onchange="onCategoryFilterChange(this.value)">
-            <option value="all">カテゴリ：すべて</option>
-            <option value="わくわく🤩">わくわく🤩</option>
-            <option value="感動した🥺">感動した🥺</option>
-            <option value="おもしろい😆">おもしろい😆</option>
-            <option value="タメになる💡">タメになる💡</option>
-            <option value="やる気出る💪">やる気出る💪</option>
-            <option value="新しい視野🌏">新しい視野🌏</option>
-            <option value="衝撃を受けた🤯">衝撃を受けた🤯</option>
-            <option value="人生のバイブル📖">人生のバイブル📖</option>
-          </select>
+          <div class="custom-select" id="categoryFilterWrap">
+            <button type="button" class="custom-select-btn" id="categoryFilterBtn" onclick="toggleCustomSelect('categoryFilter')">
+              <span id="categoryFilterLabel">カテゴリ：すべて</span>
+              <svg class="custom-select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="custom-select-dropdown" id="categoryFilterDropdown">
+              <div class="custom-select-option selected" data-value="all" onclick="selectCustomOption('categoryFilter','all','カテゴリ：すべて')">カテゴリ：すべて</div>
+              <div class="custom-select-option" data-value="わくわく" onclick="selectCustomOption('categoryFilter','わくわく','わくわく')">わくわく</div>
+              <div class="custom-select-option" data-value="感動した" onclick="selectCustomOption('categoryFilter','感動した','感動した')">感動した</div>
+              <div class="custom-select-option" data-value="おもしろい" onclick="selectCustomOption('categoryFilter','おもしろい','おもしろい')">おもしろい</div>
+              <div class="custom-select-option" data-value="タメになる" onclick="selectCustomOption('categoryFilter','タメになる','タメになる')">タメになる</div>
+              <div class="custom-select-option" data-value="やる気出る" onclick="selectCustomOption('categoryFilter','やる気出る','やる気出る')">やる気出る</div>
+              <div class="custom-select-option" data-value="新しい視野" onclick="selectCustomOption('categoryFilter','新しい視野','新しい視野')">新しい視野</div>
+              <div class="custom-select-option" data-value="衝撃を受けた" onclick="selectCustomOption('categoryFilter','衝撃を受けた','衝撃を受けた')">衝撃を受けた</div>
+              <div class="custom-select-option" data-value="人生のバイブル" onclick="selectCustomOption('categoryFilter','人生のバイブル','人生のバイブル')">人生のバイブル</div>
+            </div>
+          </div>
         </div>
-        <select class="reader-filter" id="readerFilter" onchange="onReaderFilterChange(this.value)">
-          <option value="all">Reader：すべて</option>
-        </select>
+        <div class="custom-select" id="readerFilterWrap">
+          <button type="button" class="custom-select-btn" id="readerFilterBtn" onclick="toggleCustomSelect('readerFilter')">
+            <span id="readerFilterLabel">Reader：すべて</span>
+            <svg class="custom-select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="custom-select-dropdown" id="readerFilterDropdown">
+            <div class="custom-select-option selected" data-value="all" onclick="selectCustomOption('readerFilter','all','Reader：すべて')">Reader：すべて</div>
+          </div>
+        </div>
       </div>
       <button class="btn-add" onclick="openModal()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -2059,6 +2139,17 @@
   </div>
   <div class="mypage-container" id="mypageContainer">
     <!-- JS で描画 -->
+  </div>
+</div>
+
+<!-- Public Shelf View (no login required) -->
+<div class="public-shelf-view" id="publicShelfView">
+  <div class="public-shelf-header">
+    <h1 class="logo" onclick="hidePublicShelf()" style="cursor:pointer;font-size:1.8rem;">Shelf<em>.</em></h1>
+    <span id="publicShelfTitle" style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--ink-fade);letter-spacing:0.08em;"></span>
+  </div>
+  <div class="public-shelf-container" id="publicShelfContainer">
+    <div style="text-align:center;padding:3rem;color:var(--ink-fade);">読み込み中...</div>
   </div>
 </div>
 
@@ -2094,25 +2185,18 @@
           <span class="guide-item-num">02</span>
           <div class="guide-item-body">
             <div class="guide-item-title">カテゴリで分類する</div>
-            <div class="guide-item-desc">記録時に <em>わくわく🤩</em> <em>感動した🥺</em> などのカテゴリを最大3つまで選択できます。カードにタグとして表示され、フィルターで絞り込みもできます。</div>
+            <div class="guide-item-desc">記録時に <em>わくわく</em> <em>感動した</em> などのカテゴリを最大3つまで選択できます。カードにタグとして表示され、フィルターで絞り込みもできます。</div>
           </div>
         </div>
         <div class="guide-item">
           <span class="guide-item-num">03</span>
           <div class="guide-item-body">
-            <div class="guide-item-title">感想を読む / 展開する</div>
-            <div class="guide-item-desc">長い感想は自動的に折りたたまれます。<em>…もっと読む</em> が表示されたカードをタップすると全文が読めます。</div>
+            <div class="guide-item-title">絞り込み・フィルター</div>
+            <div class="guide-item-desc">ステータスタブ（すべて / 読書中 / 読了 / また読みたい）で切り替えられます。カテゴリと作成者の絞り込みもできます。</div>
           </div>
         </div>
         <div class="guide-item">
           <span class="guide-item-num">04</span>
-          <div class="guide-item-body">
-            <div class="guide-item-title">絞り込み・フィルター</div>
-            <div class="guide-item-desc">ステータスタブ（すべて / 読書中 / 読了 / また読みたい）で切り替えられます。<em>カテゴリ：すべて</em> と <em>Reader：すべて</em> のプルダウンで組み合わせて絞り込みもできます。</div>
-          </div>
-        </div>
-        <div class="guide-item">
-          <span class="guide-item-num">05</span>
           <div class="guide-item-body">
             <div class="guide-item-title">いいね・コメント</div>
             <div class="guide-item-desc">カード下部の <em>♡</em> でいいねできます。<em>💬</em> でコメント欄が開き、みんなで感想を共有できます。</div>
@@ -2173,6 +2257,13 @@
             <div class="guide-item-desc">ステータスを <em>また読みたい</em> にして記録した本が一覧表示されます。読み返したい本の管理に使えます。</div>
           </div>
         </div>
+        <div class="guide-item">
+          <span class="guide-item-num">05</span>
+          <div class="guide-item-body">
+            <div class="guide-item-title">本棚をシェアする</div>
+            <div class="guide-item-desc">プロフィール欄の <em>リンクをコピー</em> ボタンで短いURLを取得できます。そのリンクを開けばログイン不要でマイ本棚を閲覧できます。トップページの名前をタップしても他の人の本棚を確認できます。</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -2187,7 +2278,8 @@
       <button class="scanner-close" onclick="closeScanner()">✕</button>
     </div>
     <div class="scanner-viewport">
-      <div id="html5-qrcode-reader"></div>
+      <video id="scannerVideo" playsinline autoplay muted></video>
+      <div id="html5-qrcode-reader" style="display:none;"></div>
       <div id="html5-qrcode-capture" style="display:none;"></div>
       <div class="scanner-aim">
         <div class="scanner-aim-tr"></div>
@@ -2216,7 +2308,24 @@
         </div>
         <input type="text" class="form-input" id="inputIsbn" placeholder="例:9784101001012" autocomplete="off" maxlength="17" style="width:100%;margin-bottom:0.5rem;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">
         <div class="isbn-search-row">
-          <button type="button" class="btn-scan" onclick="openScanner()">📷 スキャン</button>
+          <button type="button" class="btn-scan" onclick="openScanner()">
+            <svg width="28" height="20" viewBox="0 0 44 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <!-- corner brackets -->
+              <path d="M0 8V0h8" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
+              <path d="M36 0h8v8" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
+              <path d="M0 24v8h8" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
+              <path d="M36 32h8v-8" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
+              <!-- barcode bars -->
+              <rect x="10" y="6" width="2" height="20" rx="0.5" fill="currentColor"/>
+              <rect x="14" y="6" width="1" height="20" rx="0.5" fill="currentColor"/>
+              <rect x="17" y="6" width="3" height="20" rx="0.5" fill="currentColor"/>
+              <rect x="22" y="6" width="1" height="20" rx="0.5" fill="currentColor"/>
+              <rect x="25" y="6" width="2" height="20" rx="0.5" fill="currentColor"/>
+              <rect x="29" y="6" width="1" height="20" rx="0.5" fill="currentColor"/>
+              <rect x="32" y="6" width="2" height="20" rx="0.5" fill="currentColor"/>
+            </svg>
+            スキャン
+          </button>
           <button type="button" class="btn-isbn" id="btnIsbnSearch" onclick="searchByIsbn()">検索</button>
         </div>
         <div class="isbn-status" id="isbnStatus"></div>
@@ -2295,16 +2404,22 @@
 
 <!-- html5-qrcode for barcode scanning -->
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<!-- Quagga2 for iOS Safari EAN barcode fallback -->
+<script src="https://unpkg.com/@ericblade/quagga2@1.8.2/dist/quagga.min.js" onerror="console.warn('Quagga2 load failed')"></script>
 
 <!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import {
-    getFirestore, collection, doc, getDoc, getDocs, setDoc, deleteDoc, onSnapshot, query, orderBy
+    getFirestore, collection, doc, getDoc, getDocs, setDoc, deleteDoc,
+    onSnapshot, query, orderBy, where
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import {
     getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getFunctions, httpsCallable
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCdB46Ch67KosgVZewtV7rJBhLU4bWLesQ",
@@ -2338,6 +2453,22 @@
     },
     async saveProfile(uid, data) {
       await setDoc(doc(db, 'users', uid), { ...data, updatedAt: Date.now() }, { merge: true });
+    },
+    async getShortId(uid) {
+      const profile = await this.getProfile(uid);
+      if (profile && profile.shortId) return profile.shortId;
+      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      let shortId = '';
+      const arr = new Uint8Array(7);
+      crypto.getRandomValues(arr);
+      for (const b of arr) shortId += chars[b % chars.length];
+      await setDoc(doc(db, 'shortLinks', shortId), { uid });
+      await this.saveProfile(uid, { shortId });
+      return shortId;
+    },
+    async resolveShortId(shortId) {
+      const snap = await getDoc(doc(db, 'shortLinks', shortId));
+      return snap.exists() ? snap.data().uid : null;
     }
   };
 
@@ -2366,7 +2497,61 @@
       });
     }
   };
-  
+
+  const firebaseFunctions = getFunctions(app, 'asia-northeast1');
+
+  window.firebasePricing = {
+    PRICE_MONTHLY:  'price_1TZ5AXJ2g6QSeujmXdjbqVYC',
+    PRICE_ANNUAL:   'price_1TZ5BRJ2g6QSeujm7rW22z9K',
+    PRICE_LIFETIME: 'price_1TZ5CTJ2g6QSeujm9mIRb6z2',
+
+    async getUserPlanStatus(uid) {
+      const snap = await getDoc(doc(db, 'users', uid));
+      return snap.exists() ? (snap.data().planStatus || 'free') : 'free';
+    },
+
+    async startCheckout(priceId, mode, planType) {
+      const uid = auth.currentUser?.uid;
+      if (!uid) throw new Error('Not authenticated');
+      const sessionRef = doc(collection(db, 'customers', uid, 'checkout_sessions'));
+      const sessionData = {
+        price: priceId,
+        mode: mode,
+        success_url: window.location.origin + window.location.pathname + '?payment=success',
+        cancel_url:  window.location.origin + window.location.pathname + '?payment=cancel',
+      };
+      if (planType === 'lifetime') {
+        sessionData.metadata = { planType: 'lifetime' };
+      }
+      await setDoc(sessionRef, sessionData);
+      return new Promise((resolve, reject) => {
+        const unsub = onSnapshot(sessionRef, (snap) => {
+          const data = snap.data();
+          if (data?.url) {
+            unsub();
+            window.location.href = data.url;
+            resolve();
+          } else if (data?.error) {
+            unsub();
+            reject(new Error(data.error?.message || 'チェックアウトエラー'));
+          }
+        });
+        setTimeout(() => { unsub(); reject(new Error('タイムアウト: もう一度お試しください')); }, 15000);
+      });
+    },
+
+    async openBillingPortal() {
+      const createPortalLink = httpsCallable(
+        firebaseFunctions,
+        'ext-firestore-stripe-payments-createPortalLink'
+      );
+      const { data } = await createPortalLink({
+        returnUrl: window.location.origin + window.location.pathname,
+      });
+      window.location.href = data.url;
+    },
+  };
+
   // Signal that Firebase is ready
   window.firebaseReady = true;
   window.dispatchEvent(new Event('firebaseReady'));
@@ -2432,6 +2617,96 @@
     document.getElementById('mainView').style.display = '';
   }
 
+  window.showPublicShelf = async function(id) {
+    document.getElementById('mainView').style.display = 'none';
+    document.getElementById('publicShelfView').classList.add('active');
+    const url = new URL(window.location.href);
+    url.searchParams.set('shelf', id);
+    history.pushState({}, '', url);
+    // 7文字の短縮IDならuidに解決、長い場合はuidとして直接使用（旧リンク互換）
+    let uid = id;
+    if (id.length <= 8) {
+      const resolved = await window.firebaseAuth.resolveShortId(id);
+      if (resolved) uid = resolved;
+    }
+    await renderPublicShelf(uid);
+  };
+
+  function hidePublicShelf() {
+    document.getElementById('publicShelfView').classList.remove('active');
+    document.getElementById('mainView').style.display = '';
+    const url = new URL(window.location.href);
+    url.searchParams.delete('shelf');
+    history.pushState({}, '', url);
+  }
+
+  async function renderPublicShelf(uid) {
+    const container = document.getElementById('publicShelfContainer');
+    const titleEl = document.getElementById('publicShelfTitle');
+    container.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--ink-fade);">読み込み中...</div>';
+
+    let profile = null;
+    try { profile = await window.firebaseAuth.getProfile(uid); } catch(e) {}
+    const name = (profile && profile.displayName) || '読書家';
+    titleEl.textContent = name + 'の本棚';
+
+    const userBooks = books.filter(b => b.uid === uid);
+    const finished = userBooks.filter(b => b.status === 'finished');
+    const reading = userBooks.filter(b => b.status === 'reading');
+    const goal = (profile && profile.goalYear) || 20;
+    const pct = Math.min(100, Math.round((finished.length / goal) * 100));
+
+    const shelfBooks = userBooks.filter(b => b.status === 'finished' || b.status === 'reading');
+    const thumbsHtml = shelfBooks.map(book => {
+      const cover = book.coverUrl
+        ? `<img src="${escapeHtml(book.coverUrl)}" alt="${escapeHtml(book.title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+           <div class="mp-shelf-thumb-placeholder" style="display:none;">${escapeHtml((book.title||'').slice(0,12))}</div>`
+        : `<div class="mp-shelf-thumb-placeholder">${escapeHtml((book.title||'').slice(0,12))}</div>`;
+      return `<div class="mp-shelf-thumb" onclick="showThumbPopup('${escapeHtml(book.id)}')" title="${escapeHtml(book.title)}">${cover}</div>`;
+    }).join('');
+
+    const bioHtml = (profile && profile.bio) ? `<p style="font-size:0.85rem;color:var(--ink-soft);margin-top:0.3rem;">${escapeHtml(profile.bio)}</p>` : '';
+    const avatarHtml = (profile && profile.photoURL)
+      ? `<img class="mp-avatar" src="${escapeHtml(profile.photoURL)}" alt="">`
+      : `<div class="mp-avatar-placeholder">${name[0] || 'U'}</div>`;
+
+    container.innerHTML = `
+      <div class="mypage-section">
+        <div class="mp-profile-wrap">
+          ${avatarHtml}
+          <div class="mp-profile-info">
+            <div class="mp-name">${escapeHtml(name)}</div>
+            ${bioHtml}
+          </div>
+        </div>
+      </div>
+      <div class="mypage-section">
+        <div class="mypage-section-title">マイ本棚 <span style="color:var(--accent);">${shelfBooks.length}冊</span></div>
+        ${shelfBooks.length > 0
+          ? `<div class="mp-shelf-grid">${thumbsHtml}</div>`
+          : `<p style="font-size:0.85rem;color:var(--ink-fade);">まだ本が登録されていません</p>`}
+      </div>`;
+  }
+
+  window.copyShelfLink = function() {
+    const btn = document.getElementById('copyShelfBtn');
+    if (!cachedShelfShortId) {
+      showToast('準備中です。しばらくしてからもう一度お試しください');
+      return;
+    }
+    const url = `${location.origin}${location.pathname}?shelf=${cachedShelfShortId}`;
+    // iOSはawait後のclipboard操作が拒否されるため、ユーザー操作の直後に同期で実行
+    const ta = document.createElement('textarea');
+    ta.value = url;
+    ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;font-size:16px';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    const copied = document.execCommand('copy');
+    document.body.removeChild(ta);
+    if (btn) { btn.textContent = copied ? 'コピーしました ✓' : url; }
+    if (copied) setTimeout(() => { if (btn) btn.textContent = 'リンクをコピー'; }, 2000);
+  };
+
   function showGuide() {
     document.getElementById('mainView').style.display = 'none';
     document.getElementById('guideView').classList.add('active');
@@ -2441,6 +2716,8 @@
     document.getElementById('guideView').classList.remove('active');
     document.getElementById('mainView').style.display = '';
   }
+
+  let cachedShelfShortId = null;
 
   async function renderMyPage() {
     const myBooks = books.filter(isMyBook);
@@ -2452,6 +2729,8 @@
       <div id="mpWishlist" class="mypage-section"></div>
     `;
     await loadUserProfile(currentUser.uid);
+    // shortIdをバックグラウンドで事前取得（ボタン押下時に同期コピーできるよう）
+    window.firebaseAuth.getShortId(currentUser.uid).then(id => { cachedShelfShortId = id; }).catch(() => {});
     renderMpProfile();
     renderMpGoal(myBooks);
     renderMpShelf(myBooks);
@@ -2525,6 +2804,7 @@
             ${genrePills ? `<div class="mp-genres">${genrePills}</div>` : ''}
             ${snsLinks ? `<div class="mp-sns">${snsLinks}</div>` : ''}
             <button class="mp-edit-btn" onclick="renderMpProfile(true)">編集</button>
+            <button class="mp-edit-btn" onclick="copyShelfLink()" id="copyShelfBtn">リンクをコピー</button>
           </div>
         </div>`;
     }
@@ -2657,7 +2937,7 @@
       : '';
 
     const cats = getCategories(book)
-      .map(c => `<span class="book-category-tag" style="font-size:0.58rem;">${escapeHtml(c)}</span>`)
+      .map(c => `<span class="book-category-tag" style="font-size:0.58rem;">${escapeHtml(normalizeCategory(c))}</span>`)
       .join('');
 
     const coverHtml = book.coverUrl
@@ -2739,15 +3019,20 @@
   let currentCategoryFilter = 'all';
 
   const CATEGORIES = [
-    'わくわく🤩',
-    '感動した🥺',
-    'おもしろい😆',
-    'タメになる💡',
-    'やる気出る💪',
-    '新しい視野🌏',
-    '衝撃を受けた🤯',
-    '人生のバイブル📖',
+    'わくわく',
+    '感動した',
+    'おもしろい',
+    'タメになる',
+    'やる気出る',
+    '新しい視野',
+    '衝撃を受けた',
+    '人生のバイブル',
   ];
+
+  // 旧データ（絵文字あり）との後方互換のため絵文字を除去して正規化
+  function normalizeCategory(str) {
+    return str.replace(/\p{Emoji_Presentation}/gu, '').trim();
+  }
 
   // 後方互換: book.category が文字列/配列どちらでも配列で返す
   function getCategories(book) {
@@ -2865,6 +3150,10 @@
       firebaseUnsubscribe = window.firebaseStorage.subscribe((items) => {
         books = items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
         renderBooks();
+        const shelfParam = new URL(window.location.href).searchParams.get('shelf');
+        if (shelfParam && !document.getElementById('publicShelfView').classList.contains('active')) {
+          window.showPublicShelf(shelfParam);
+        }
       });
       return;
     }
@@ -2940,7 +3229,7 @@
     }
     // Filter by category
     if (currentCategoryFilter !== 'all') {
-      filtered = filtered.filter(b => getCategories(b).includes(currentCategoryFilter));
+      filtered = filtered.filter(b => getCategories(b).map(normalizeCategory).includes(currentCategoryFilter));
     }
 
     if (filtered.length === 0) {
@@ -2967,7 +3256,7 @@
             <span class="status-dot"></span>
             ${statusLabel[book.status] || book.status}
           </div>
-          ${getCategories(book).map(c => `<span class="book-category-tag">${escapeHtml(c)}</span>`).join('')}
+          ${getCategories(book).map(c => `<span class="book-category-tag">${escapeHtml(normalizeCategory(c))}</span>`).join('')}
         </div>
 
         <div class="book-top">
@@ -2999,7 +3288,9 @@
 
         <div class="book-footer">
           <span class="book-author-meta">
-            ${escapeHtml(book.reader || 'anonymous')} · ${formatDate(book.createdAt)}
+            ${book.uid
+              ? `<span class="reader-name-link" onclick="window.showPublicShelf('${escapeHtml(book.uid)}')">${escapeHtml(book.reader || 'anonymous')}</span>`
+              : escapeHtml(book.reader || 'anonymous')} · ${formatDate(book.createdAt)}
           </span>
           <div class="book-actions">
             <button class="book-edit" onclick="openEditModal(event, '${book.id}')">EDIT</button>
@@ -3122,31 +3413,23 @@
 
   // Update reader filter dropdown with unique reader names (sorted)
   function updateReaderFilterOptions() {
-    const select = document.getElementById('readerFilter');
-    if (!select) return;
-    
-    // Collect unique non-empty reader names
+    const dropdown = document.getElementById('readerFilterDropdown');
+    if (!dropdown) return;
     const readers = new Set();
     for (const b of books) {
       const name = (b.reader || '').trim();
       if (name) readers.add(name);
     }
     const sortedReaders = Array.from(readers).sort((a, b) => a.localeCompare(b, 'ja'));
-    
-    // Preserve current selection
-    const currentValue = select.value || currentReaderFilter;
-    
-    // Rebuild options
-    select.innerHTML = '<option value="all">Reader：すべて</option>' +
-      sortedReaders.map(r => 
-        `<option value="${escapeHtml(r)}"${r === currentValue ? ' selected' : ''}>${escapeHtml(r)}</option>`
-      ).join('');
-    
-    // If current filter's reader no longer exists, reset
     if (currentReaderFilter !== 'all' && !readers.has(currentReaderFilter)) {
       currentReaderFilter = 'all';
-      select.value = 'all';
+      document.getElementById('readerFilterLabel').textContent = 'Reader：すべて';
     }
+    dropdown.innerHTML =
+      `<div class="custom-select-option${currentReaderFilter==='all'?' selected':''}" data-value="all" onclick="selectCustomOption('readerFilter','all','Reader：すべて')">Reader：すべて</div>` +
+      sortedReaders.map(r =>
+        `<div class="custom-select-option${currentReaderFilter===r?' selected':''}" data-value="${escapeHtml(r)}" onclick="selectCustomOption('readerFilter','${escapeHtml(r)}','${escapeHtml(r)}')">${escapeHtml(r)}</div>`
+      ).join('');
   }
 
   window.onReaderFilterChange = function(value) {
@@ -3158,6 +3441,32 @@
     currentCategoryFilter = value;
     renderBooks();
   };
+
+  window.toggleCustomSelect = function(id) {
+    const btn = document.getElementById(id + 'Btn');
+    const dropdown = document.getElementById(id + 'Dropdown');
+    const isOpen = dropdown.classList.contains('open');
+    document.querySelectorAll('.custom-select-dropdown.open').forEach(d => d.classList.remove('open'));
+    document.querySelectorAll('.custom-select-btn.open').forEach(b => b.classList.remove('open'));
+    if (!isOpen) { dropdown.classList.add('open'); btn.classList.add('open'); }
+  };
+
+  window.selectCustomOption = function(id, value, label) {
+    document.getElementById(id + 'Label').textContent = label;
+    const dropdown = document.getElementById(id + 'Dropdown');
+    dropdown.querySelectorAll('.custom-select-option').forEach(o => o.classList.toggle('selected', o.dataset.value === value));
+    dropdown.classList.remove('open');
+    document.getElementById(id + 'Btn').classList.remove('open');
+    if (id === 'categoryFilter') window.onCategoryFilterChange(value);
+    if (id === 'readerFilter') window.onReaderFilterChange(value);
+  };
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.custom-select')) {
+      document.querySelectorAll('.custom-select-dropdown.open').forEach(d => d.classList.remove('open'));
+      document.querySelectorAll('.custom-select-btn.open').forEach(b => b.classList.remove('open'));
+    }
+  });
 
   const COPY_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
   const CHECK_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
@@ -3486,123 +3795,172 @@
 
   // ==================== ISBN Search ====================
   // ==================== Barcode Scanner ====================
-  let html5Scanner = null;
+  // ========== Barcode Scanner (BarcodeDetector → ZXing fallback) ==========
+  let scanStream = null;
+  let scanRafId = null;
+  let zxingScanInterval = null;
 
-  window.openScanner = function() {
-    const overlay = document.getElementById('scannerOverlay');
-    overlay.style.display = 'flex';
+  function onScanSuccess(rawValue) {
+    const isbn = rawValue.replace(/\D/g, '');
+    if (isbn.length < 10) return;
+    // ISBNは13桁なら978/979始まり、それ以外（価格コード等）は無視
+    if (isbn.length === 13 && !isbn.startsWith('978') && !isbn.startsWith('979')) return;
+    document.getElementById('inputIsbn').value = isbn;
+    closeScanner();
+    window.searchByIsbn();
+  }
 
-    if (!window.Html5Qrcode) {
-      document.getElementById('isbnStatus').textContent = 'スキャナーライブラリ読み込み中...';
+  // 枠（scanner-aim: 260x80 centered）に対応するビデオ領域をcanvasにクロップ
+  function cropToAimArea(video) {
+    const vW = video.videoWidth, vH = video.videoHeight;
+    if (!vW) return null;
+    const rect = video.getBoundingClientRect();
+    const dW = rect.width, dH = rect.height;
+    if (!dW || !dH) return null;
+
+    // object-fit: cover のスケール計算
+    const vAR = vW / vH, dAR = dW / dH;
+    let scale, clipX = 0, clipY = 0;
+    if (vAR > dAR) {
+      scale = dH / vH;
+      clipX = (vW * scale - dW) / 2; // 左右にはみ出す表示ピクセル
+    } else {
+      scale = dW / vW;
+      clipY = (vH * scale - dH) / 2;
+    }
+
+    // 枠のCSS座標（260x80、中央配置）
+    const aimW = 260, aimH = 80;
+    const aimX = (dW - aimW) / 2;
+    const aimY = (dH - aimH) / 2;
+
+    // 実際のビデオ座標に変換（少し余白を追加）
+    const pad = 8;
+    const vx = Math.max(0, Math.round((aimX + clipX) / scale) - pad);
+    const vy = Math.max(0, Math.round((aimY + clipY) / scale) - pad);
+    const vw = Math.min(vW - vx, Math.round(aimW / scale) + pad * 2);
+    const vh = Math.min(vH - vy, Math.round(aimH / scale) + pad * 2);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = vw; canvas.height = vh;
+    canvas.getContext('2d').drawImage(video, vx, vy, vw, vh, 0, 0, vw, vh);
+    return canvas;
+  }
+
+  function quaggaDecode(canvas) {
+    return new Promise((resolve, reject) => {
+      if (!window.Quagga) { reject(new Error('スキャンライブラリの読み込みに失敗しました。ページを再読み込みしてお試しください')); return; }
+      Quagga.decodeSingle({
+        decoder: { readers: ['ean_reader', 'ean_8_reader', 'upc_reader', 'upc_e_reader'] },
+        locate: true,
+        numOfWorkers: 0,
+        src: canvas.toDataURL('image/jpeg', 0.95)
+      }, (result) => {
+        if (result && result.codeResult) resolve(result.codeResult.code);
+        else reject(new Error('コードが見つかりませんでした'));
+      });
+    });
+  }
+
+  function fullFrameCanvas(video) {
+    const c = document.createElement('canvas');
+    c.width = video.videoWidth; c.height = video.videoHeight;
+    c.getContext('2d').drawImage(video, 0, 0);
+    return c;
+  }
+
+  function startQuaggaContinuous(video) {
+    if (!window.Quagga) return;
+    zxingScanInterval = setInterval(async () => {
+      if (!scanStream) return;
+      const canvas = cropToAimArea(video) || fullFrameCanvas(video);
+      try {
+        const code = await quaggaDecode(canvas);
+        onScanSuccess(code);
+      } catch {}
+    }, 800);
+  }
+
+  window.openScanner = async function() {
+    document.getElementById('scannerOverlay').style.display = 'flex';
+    const btn = document.getElementById('scannerCaptureBtn');
+    btn.textContent = '📸 今の画面で読み取る';
+    btn.disabled = false;
+
+    const video = document.getElementById('scannerVideo');
+
+    try {
+      scanStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 } }
+      });
+      video.srcObject = scanStream;
+      video.style.display = 'block';
+      await video.play();
+    } catch(e) {
+      const s = document.getElementById('isbnStatus');
+      s.className = 'isbn-status error';
+      s.textContent = 'カメラへのアクセスを許可してください';
       closeScanner();
       return;
     }
 
-    html5Scanner = new Html5Qrcode('html5-qrcode-reader');
-
-    // qrbox をビューポート幅に合わせて動的計算（余裕を持たせてピントが合いやすく）
-    const viewportW = Math.min(window.innerWidth, 420);
-    const boxW = Math.round(viewportW * 0.38);
-    const boxH = Math.round(boxW * 0.55);
-
-    html5Scanner.start(
-      { facingMode: 'environment' },
-      {
-        fps: 20,
-        experimentalFeatures: { useBarCodeDetectorIfSupported: true },
-        qrbox: { width: boxW, height: boxH },
-        formatsToSupport: [
-          Html5QrcodeSupportedFormats.EAN_13,
-          Html5QrcodeSupportedFormats.EAN_8,
-          Html5QrcodeSupportedFormats.UPC_A,
-        ],
-        // aspectRatio は指定しない（ブラウザに任せる方が安定）
-      },
-      (decodedText) => {
-        // EAN-13 バーコードを取得したらISBN欄に入力して検索
-        const isbn = decodedText.replace(/\D/g, '');
-        document.getElementById('inputIsbn').value = isbn;
-        closeScanner();
-        window.searchByIsbn();
-      },
-      () => {} // scan failure — ignore per-frame errors
-    ).catch(err => {
-      const msg = err && err.toString().includes('Permission')
-        ? 'カメラへのアクセスを許可してください'
-        : 'カメラを起動できませんでした';
-      const statusEl = document.getElementById('isbnStatus');
-      if (statusEl) { statusEl.className = 'isbn-status error'; statusEl.textContent = msg; }
-      closeScanner();
-    });
+    if ('BarcodeDetector' in window) {
+      // Chrome Android など: 枠エリアをクロップしてBarcodeDetectorに渡す
+      const detector = new BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'] });
+      const tick = async () => {
+        if (!scanStream) return;
+        try {
+          const canvas = cropToAimArea(video);
+          if (canvas) {
+            const bitmap = await createImageBitmap(canvas);
+            const codes = await detector.detect(bitmap);
+            if (codes.length) { onScanSuccess(codes[0].rawValue); return; }
+          }
+        } catch {}
+        scanRafId = requestAnimationFrame(tick);
+      };
+      scanRafId = requestAnimationFrame(tick);
+    } else {
+      // iOS Safari など: Quagga2 で連続スキャン
+      startQuaggaContinuous(video);
+    }
   };
 
   window.captureFrame = async function() {
-    const video = document.querySelector('#html5-qrcode-reader video');
-    if (!video) return;
     const btn = document.getElementById('scannerCaptureBtn');
-    btn.textContent = '読み取り中...';
-    btn.disabled = true;
+    btn.textContent = '読み取り中...'; btn.disabled = true;
+
+    const video = document.getElementById('scannerVideo');
+    const canvas = cropToAimArea(video);
+    if (!canvas) { btn.textContent = '📸 今の画面で読み取る'; btn.disabled = false; return; }
+
     try {
-      const canvas = document.createElement('canvas');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      canvas.getContext('2d').drawImage(video, 0, 0);
-      const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.95));
-      const file = new File([blob], 'frame.jpg', { type: 'image/jpeg' });
-      // 別のdivを使うことでライブスキャナーを破壊しない
-      const captureDiv = document.getElementById('html5-qrcode-capture');
-      const tmpScanner = new Html5Qrcode('html5-qrcode-capture');
-      const result = await tmpScanner.scanFile(file, false);
-      await tmpScanner.clear();
-      const isbn = result.replace(/\D/g, '');
-      document.getElementById('inputIsbn').value = isbn;
-      closeScanner();
-      window.searchByIsbn();
-    } catch {
-      btn.textContent = '📸 今の画面で読み取る';
-      btn.disabled = false;
+      if ('BarcodeDetector' in window) {
+        const bitmap = await createImageBitmap(canvas);
+        const detector = new BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'] });
+        const codes = await detector.detect(bitmap);
+        if (codes.length) { onScanSuccess(codes[0].rawValue); return; }
+        throw new Error('BarcodeDetector: not found');
+      }
+      // Quagga2 fallback: 枠エリア → 失敗したらフルフレームで再試行
+      let code;
+      try { code = await quaggaDecode(canvas); }
+      catch { code = await quaggaDecode(fullFrameCanvas(video)); }
+      onScanSuccess(code);
+    } catch(e) {
+      btn.textContent = '📸 今の画面で読み取る'; btn.disabled = false;
       const s = document.getElementById('isbnStatus');
       s.className = 'isbn-status error';
-      s.textContent = '× 読み取れませんでした。もう少し近づけてください';
+      s.textContent = '× ' + (e?.message || String(e));
     }
   };
 
   window.closeScanner = function() {
-    const overlay = document.getElementById('scannerOverlay');
-    overlay.style.display = 'none';
-    if (html5Scanner) {
-      html5Scanner.stop().catch(() => {}).finally(() => {
-        html5Scanner.clear();
-        html5Scanner = null;
-      });
-    }
-  };
-
-  // 写真撮影→バーコード読み取り（iOS native camera 経由）
-  window.openPhotoScan = function() {
-    document.getElementById('photoScanInput').click();
-  };
-
-  window.handlePhotoScan = async function(input) {
-    const file = input.files && input.files[0];
-    if (!file) return;
-    const statusEl = document.getElementById('isbnStatus');
-    statusEl.className = 'isbn-status';
-    statusEl.textContent = '📷 読み取り中...';
-    try {
-      const scanner = new Html5Qrcode('html5-qrcode-reader');
-      const result = await scanner.scanFile(file, false);
-      scanner.clear();
-      const isbn = result.replace(/\D/g, '');
-      document.getElementById('inputIsbn').value = isbn;
-      statusEl.className = 'isbn-status success';
-      statusEl.textContent = '✓ 読み取り成功: ' + isbn;
-      window.searchByIsbn();
-    } catch (e) {
-      statusEl.className = 'isbn-status error';
-      statusEl.textContent = '× バーコードを検出できませんでした';
-    }
-    input.value = '';
+    document.getElementById('scannerOverlay').style.display = 'none';
+    if (scanRafId) { cancelAnimationFrame(scanRafId); scanRafId = null; }
+    if (zxingScanInterval) { clearInterval(zxingScanInterval); zxingScanInterval = null; }
+    if (scanStream) { scanStream.getTracks().forEach(t => t.stop()); scanStream = null; }
+    const v = document.getElementById('scannerVideo'); if (v) { v.srcObject = null; }
   };
 
   window.searchByIsbn = async function() {

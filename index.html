@@ -2037,6 +2037,204 @@
     .guide-items { padding: 1rem; }
     .guide-section-header { padding: 0.8rem 1rem; }
   }
+
+  /* ==================== LIMIT BANNER ==================== */
+  .limit-banner {
+    display: none;
+    background: linear-gradient(135deg, var(--accent) 0%, #c9522f 100%);
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    text-align: center;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.85rem;
+    position: relative;
+    z-index: 10;
+  }
+  .limit-banner.visible { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+  .limit-banner-text { line-height: 1.5; }
+  .limit-banner-btn {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.5);
+    color: #fff;
+    padding: 0.3rem 0.9rem;
+    border-radius: 2rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: 'Noto Serif JP', serif;
+  }
+  .limit-banner-btn:hover { background: rgba(255,255,255,0.35); }
+
+  /* ==================== UPGRADE MODAL ==================== */
+  .upgrade-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,23,20,0.6);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  .upgrade-overlay.open { display: flex; }
+  .upgrade-modal {
+    background: var(--card);
+    border-radius: 0.5rem;
+    padding: 2rem 2rem 1.5rem;
+    max-width: 560px;
+    width: 100%;
+    box-shadow: 0 20px 60px -20px rgba(26,23,20,0.4);
+    position: relative;
+  }
+  .upgrade-modal-close {
+    position: absolute;
+    top: 1rem; right: 1.2rem;
+    background: none; border: none;
+    font-size: 1.4rem; color: var(--ink-fade);
+    cursor: pointer; line-height: 1;
+  }
+  .upgrade-modal-close:hover { color: var(--ink); }
+  .upgrade-modal-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.4rem;
+    font-weight: 300;
+    margin-bottom: 0.3rem;
+  }
+  .upgrade-modal-sub {
+    font-size: 0.8rem;
+    color: var(--ink-fade);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 1.5rem;
+  }
+  .plan-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.2rem;
+  }
+  @media (max-width: 500px) {
+    .plan-cards { grid-template-columns: 1fr; }
+  }
+  .plan-card {
+    border: 1px solid var(--line);
+    border-radius: 0.4rem;
+    padding: 1rem 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    background: var(--bg);
+    position: relative;
+  }
+  .plan-card.recommended {
+    border-color: var(--accent);
+    background: #fff9f7;
+  }
+  .plan-card-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .plan-card-name {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .plan-card-price {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .plan-card-price span {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--ink-fade);
+  }
+  .plan-card-note {
+    font-size: 0.7rem;
+    color: var(--ink-soft);
+    min-height: 1.2em;
+  }
+  .plan-card-btn {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: 0.25rem;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    min-height: 2rem;
+  }
+  .plan-card-btn:hover { background: var(--accent); }
+  .plan-card-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .plan-card.recommended .plan-card-btn { background: var(--accent); }
+  .plan-card.recommended .plan-card-btn:hover { background: #a33c26; }
+  .upgrade-modal-note {
+    font-size: 0.72rem;
+    color: var(--ink-fade);
+    text-align: center;
+    line-height: 1.5;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ==================== MY PAGE PLAN SECTION ==================== */
+  .mp-plan-badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2rem;
+    color: #fff;
+    vertical-align: middle;
+    margin-left: 0.4rem;
+  }
+  .mp-plan-badge.free { background: var(--ink-fade); }
+  .mp-plan-badge.monthly, .mp-plan-badge.annual { background: var(--accent); }
+  .mp-plan-badge.lifetime { background: var(--gold); }
+  .mp-plan-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--ink-fade);
+    margin-top: 0.3rem;
+  }
+  .mp-plan-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+    margin-top: 1rem;
+  }
+  @media (max-width: 480px) {
+    .mp-plan-cards { grid-template-columns: 1fr; }
+  }
+  .mp-portal-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1rem;
+    padding: 0.6rem 1.2rem;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--ink-soft);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.82rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+  }
+  .mp-portal-btn:hover { border-color: var(--ink-soft); color: var(--ink); }
 </style>
 </head>
 <body>
@@ -2122,6 +2320,16 @@
       </button>
     </div>
   </header>
+
+  <!-- 20冊到達バナー -->
+  <div class="limit-banner" id="limitBanner">
+    <span class="limit-banner-text">
+      読書記録20冊に到達しました — 21冊目からは有料プランが必要です
+    </span>
+    <button class="limit-banner-btn" onclick="showMyPage(); setTimeout(() => document.getElementById('mpPlan')?.scrollIntoView({ behavior: 'smooth' }), 300)">
+      プランを見る
+    </button>
+  </div>
 
   <!-- Books Grid -->
   <main class="books-grid" id="booksGrid">
@@ -2400,6 +2608,45 @@
   </div>
 </div>
 
+<!-- アップグレードモーダル -->
+<div class="upgrade-overlay" id="upgradeOverlay" onclick="if(event.target===this)closeUpgradeModal()">
+  <div class="upgrade-modal">
+    <button class="upgrade-modal-close" onclick="closeUpgradeModal()">×</button>
+    <div class="upgrade-modal-title">読書記録の上限に到達しました</div>
+    <div class="upgrade-modal-sub">無料プランは20冊まで — 続けるにはアップグレードを</div>
+    <div class="plan-cards">
+      <div class="plan-card">
+        <div class="plan-card-name">月額プラン</div>
+        <div class="plan-card-price">¥330<span>/月</span></div>
+        <div class="plan-card-note"></div>
+        <button class="plan-card-btn" id="btnMonthly" onclick="handlePlanSelect('monthly')">
+          アップグレード
+        </button>
+      </div>
+      <div class="plan-card recommended">
+        <div class="plan-card-badge">おすすめ</div>
+        <div class="plan-card-name">年額プラン</div>
+        <div class="plan-card-price">¥980<span>/年</span></div>
+        <div class="plan-card-note">月あたり約¥81 — 73%お得</div>
+        <button class="plan-card-btn" id="btnAnnual" onclick="handlePlanSelect('annual')">
+          アップグレード
+        </button>
+      </div>
+      <div class="plan-card">
+        <div class="plan-card-name">永久プラン</div>
+        <div class="plan-card-price">¥2,980</div>
+        <div class="plan-card-note">買い切り・無期限</div>
+        <button class="plan-card-btn" id="btnLifetime" onclick="handlePlanSelect('lifetime')">
+          購入する
+        </button>
+      </div>
+    </div>
+    <div class="upgrade-modal-note">
+      決済は Stripe の安全なページで行われます。いつでもキャンセル可能。
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <!-- html5-qrcode for barcode scanning -->
@@ -2620,6 +2867,42 @@
     banner.classList.toggle('visible', show);
   }
 
+  function openUpgradeModal() {
+    document.getElementById('upgradeOverlay').classList.add('open');
+  }
+
+  function closeUpgradeModal() {
+    document.getElementById('upgradeOverlay').classList.remove('open');
+  }
+
+  async function handlePlanSelect(planKey) {
+    if (!currentUser) { handleSignIn(); return; }
+    if (!window.firebasePricing) { showToast('決済サービスの準備中です'); return; }
+
+    const p = window.firebasePricing;
+    const configs = {
+      monthly:  { priceId: p.PRICE_MONTHLY,  mode: 'subscription', planType: null },
+      annual:   { priceId: p.PRICE_ANNUAL,   mode: 'subscription', planType: null },
+      lifetime: { priceId: p.PRICE_LIFETIME, mode: 'payment',      planType: 'lifetime' },
+    };
+    const cfg = configs[planKey];
+    if (!cfg) return;
+
+    const btnId = { monthly: 'btnMonthly', annual: 'btnAnnual', lifetime: 'btnLifetime' }[planKey];
+    const btn = document.getElementById(btnId);
+    const originalText = btn.textContent.trim();
+    btn.disabled = true;
+    btn.innerHTML = '<span style="display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle"></span>';
+
+    try {
+      await p.startCheckout(cfg.priceId, cfg.mode, cfg.planType);
+    } catch (err) {
+      showToast('エラー: ' + (err.message || '決済を開始できませんでした'));
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
+  }
+
   function showMyPage() {
     if (!currentUser) { handleSignIn(); return; }
     document.getElementById('mainView').style.display = 'none';
@@ -2738,6 +3021,7 @@
     const myBooks = books.filter(isMyBook);
     const container = document.getElementById('mypageContainer');
     container.innerHTML = `
+      <div id="mpPlan" class="mypage-section"></div>
       <div id="mpProfile" class="mypage-section"></div>
       <div id="mpGoal" class="mypage-section"></div>
       <div id="mpShelf" class="mypage-section"></div>
@@ -2746,10 +3030,74 @@
     await loadUserProfile(currentUser.uid);
     // shortIdをバックグラウンドで事前取得（ボタン押下時に同期コピーできるよう）
     window.firebaseAuth.getShortId(currentUser.uid).then(id => { cachedShelfShortId = id; }).catch(() => {});
+    renderMpPlan();
     renderMpProfile();
     renderMpGoal(myBooks);
     renderMpShelf(myBooks);
     renderMpWishlist(myBooks);
+  }
+
+  function renderMpPlan() {
+    const el = document.getElementById('mpPlan');
+    if (!el) return;
+    const p = window.firebasePricing;
+    const myBooks = books.filter(isMyBook);
+    const count = myBooks.length;
+
+    const badgeClass = { free: 'free', monthly: 'monthly', annual: 'annual', lifetime: 'lifetime' }[userPlanStatus] || 'free';
+    const badgeLabel = { free: 'Free', monthly: '月額プラン', annual: '年額プラン', lifetime: '永久プラン' }[userPlanStatus] || 'Free';
+
+    let body = '';
+    if (userPlanStatus === 'free') {
+      body = `
+        <div class="mp-plan-meta">${count} / 20 冊使用中${count >= 20 ? ' — 上限に達しました' : ''}</div>
+        <div class="mp-plan-cards">
+          <div class="plan-card">
+            <div class="plan-card-name">月額プラン</div>
+            <div class="plan-card-price">¥330<span>/月</span></div>
+            <div class="plan-card-note"></div>
+            <button class="plan-card-btn" onclick="handlePlanSelect('monthly')">アップグレード</button>
+          </div>
+          <div class="plan-card recommended">
+            <div class="plan-card-badge">おすすめ</div>
+            <div class="plan-card-name">年額プラン</div>
+            <div class="plan-card-price">¥980<span>/年</span></div>
+            <div class="plan-card-note">月あたり約¥81 — 73%お得</div>
+            <button class="plan-card-btn" onclick="handlePlanSelect('annual')">アップグレード</button>
+          </div>
+          <div class="plan-card">
+            <div class="plan-card-name">永久プラン</div>
+            <div class="plan-card-price">¥2,980</div>
+            <div class="plan-card-note">買い切り・無期限</div>
+            <button class="plan-card-btn" onclick="handlePlanSelect('lifetime')">購入する</button>
+          </div>
+        </div>`;
+    } else if (userPlanStatus === 'lifetime') {
+      body = `<div class="mp-plan-meta">無期限 — 何冊でも登録できます</div>`;
+    } else {
+      body = `
+        <div class="mp-plan-meta">有効なサブスクリプション</div>
+        <div>
+          <button class="mp-portal-btn" onclick="handleOpenPortal()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+            請求を管理する
+          </button>
+        </div>`;
+    }
+
+    el.innerHTML = `
+      <div class="mypage-section-title">Plan <span class="mp-plan-badge ${badgeClass}">${badgeLabel}</span></div>
+      ${body}`;
+  }
+
+  async function handleOpenPortal() {
+    if (!window.firebasePricing) return;
+    try {
+      showToast('Stripe へリダイレクト中...');
+      await window.firebasePricing.openBillingPortal();
+    } catch (err) {
+      showToast('エラー: ' + (err.message || 'ポータルを開けませんでした'));
+    }
   }
 
   function renderMpProfile(editing = false) {
@@ -3208,6 +3556,23 @@
     console.log('Firebase ready — switching to shared storage');
     loadBooks();
   });
+
+  // Handle return from Stripe Checkout
+  (function handlePaymentReturn() {
+    const params = new URLSearchParams(window.location.search);
+    const payment = params.get('payment');
+    if (!payment) return;
+    const cleanUrl = window.location.pathname;
+    history.replaceState({}, '', cleanUrl);
+    if (payment === 'success') {
+      setTimeout(() => {
+        showToast('決済が完了しました。プランが反映されるまで少々お待ちください ✓');
+        if (currentUser) loadPlanStatus(currentUser.uid);
+      }, 1500);
+    } else if (payment === 'cancel') {
+      setTimeout(() => showToast('決済をキャンセルしました'), 500);
+    }
+  })();
 
   function renderBooks() {
     const grid = document.getElementById('booksGrid');

@@ -1,0 +1,32 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      ".firebaserc",
+      "firestore.rules",
+      ".git/**",
+      ".github/**",
+      "functions/**",
+      "docs/**",
+      "node_modules/**",
+      "*.md"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "runtime": "nodejs20",
+      "ignore": ["node_modules", ".git", "__tests__"]
+    }
+  ],
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}

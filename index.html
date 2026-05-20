@@ -2560,6 +2560,7 @@
 <script>
   let currentUser = null;
   let userProfile = null;
+  let userPlanStatus = 'free';
 
   function updateAuthUI() {
     const area = document.getElementById('authArea');
@@ -2603,6 +2604,20 @@
     if (!window.firebaseAuth) return;
     await window.firebaseAuth.signOut();
     hideMyPage();
+  }
+
+  async function loadPlanStatus(uid) {
+    if (!window.firebasePricing) return;
+    userPlanStatus = await window.firebasePricing.getUserPlanStatus(uid);
+    updateLimitBanner();
+  }
+
+  function updateLimitBanner() {
+    const banner = document.getElementById('limitBanner');
+    if (!banner) return;
+    const myBooks = currentUser ? books.filter(isMyBook) : [];
+    const show = userPlanStatus === 'free' && myBooks.length >= 20;
+    banner.classList.toggle('visible', show);
   }
 
   function showMyPage() {
@@ -3121,9 +3136,14 @@
   window.addEventListener('firebaseReady', updateStorageModeIndicator);
   window.addEventListener('firebaseReady', () => {
     if (window.firebaseAuth) {
-      window.firebaseAuth.onAuthStateChanged((user) => {
+      window.firebaseAuth.onAuthStateChanged(async (user) => {
         currentUser = user;
+        userPlanStatus = 'free';
         updateAuthUI();
+        if (user) {
+          await loadPlanStatus(user.uid);
+        }
+        updateLimitBanner();
       });
     }
   });
@@ -3328,6 +3348,7 @@
 
     adjustTitleFontSizes();
     detectClampedMemos();
+    updateLimitBanner();
   }
 
   function detectClampedMemos() {
@@ -4694,7 +4715,15 @@
         btn.textContent = '更新する';
       }
     } else {
-      // CREATE new book
+      // CREATE new book — check free plan limit
+      const myBooks = books.filter(isMyBook);
+      if (userPlanStatus === 'free' && myBooks.length >= 20) {
+        btn.disabled = false;
+        btn.textContent = '記録する';
+        openUpgradeModal();
+        return;
+      }
+
       const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
       const book = {
         id: id,

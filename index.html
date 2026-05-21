@@ -2433,6 +2433,67 @@
     cursor: pointer;
   }
   .mp-portal-btn:hover { border-color: var(--ink-soft); color: var(--ink); }
+
+  /* プランページ（全画面） */
+  .plan-view {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 100;
+    overflow-y: auto;
+  }
+  .plan-view.active { display: block; }
+  .plan-view-header {
+    position: sticky;
+    top: 0;
+    background: var(--bg-deep);
+    border-bottom: 1px solid var(--line);
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .plan-view-back {
+    background: none;
+    border: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink-fade);
+    cursor: pointer;
+    letter-spacing: 0.1em;
+  }
+  .plan-view-back:hover { color: var(--ink); }
+  .plan-view-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: var(--accent);
+  }
+  .plan-view-body {
+    max-width: 540px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* My PageのプランCTA */
+  .mp-plan-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.75rem;
+    padding: 0.45rem 1rem;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--ink-soft);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mp-plan-cta:hover { border-color: var(--accent); color: var(--accent); }
 </style>
 </head>
 <body>
@@ -2538,7 +2599,7 @@
     <span class="limit-banner-text">
       読書記録20冊に到達しました — 21冊目からは有料プランが必要です
     </span>
-    <button class="limit-banner-btn" onclick="showMyPage(); setTimeout(() => document.getElementById('mpPlan')?.scrollIntoView({ behavior: 'smooth' }), 300)">
+    <button class="limit-banner-btn" onclick="showMyPage(); setTimeout(() => showPlanPage(), 300)">
       プランを見る
     </button>
   </div>
@@ -2556,6 +2617,16 @@
     <button class="card-popup-close" onclick="closeCardPopup()">✕</button>
     <div id="cardPopupContent"></div>
   </div>
+</div>
+
+<!-- Plan Page (full-screen) -->
+<div class="plan-view" id="planView">
+  <div class="plan-view-header">
+    <button class="plan-view-back" onclick="hidePlanPage()">← My Page</button>
+    <span class="plan-view-title">Plan</span>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="plan-view-body" id="planViewBody"></div>
 </div>
 
 <!-- My Page (full-screen) -->
@@ -3315,17 +3386,38 @@
   function renderMpPlan() {
     const el = document.getElementById('mpPlan');
     if (!el) return;
-    const p = window.firebasePricing;
     const myBooks = books.filter(isMyBook);
     const count = myBooks.length;
 
     const badgeClass = { free: 'free', monthly: 'monthly', annual: 'annual', lifetime: 'lifetime' }[userPlanStatus] || 'free';
     const badgeLabel = { free: 'Free', monthly: '月額プラン', annual: '年額プラン', lifetime: '永久プラン' }[userPlanStatus] || 'Free';
 
-    let body = '';
+    let meta = '';
+    let cta = '';
     if (userPlanStatus === 'free') {
-      body = `
-        <div class="mp-plan-meta">${count} / 20 冊使用中${count >= 20 ? ' — 上限に達しました' : ''}</div>
+      meta = `<div class="mp-plan-meta">${count} / 20 冊使用中${count >= 20 ? ' — 上限に達しました' : ''}</div>`;
+      cta  = `<button class="mp-plan-cta" onclick="showPlanPage()">プランを見る →</button>`;
+    } else if (userPlanStatus === 'lifetime') {
+      meta = `<div class="mp-plan-meta">無期限 — 何冊でも登録できます</div>`;
+    } else {
+      meta = `<div class="mp-plan-meta">有効なサブスクリプション</div>`;
+      cta  = `<button class="mp-plan-cta" onclick="showPlanPage()">プランを管理する →</button>`;
+    }
+
+    el.innerHTML = `
+      <div class="mypage-section-title">Plan <span class="mp-plan-badge ${badgeClass}">${badgeLabel}</span></div>
+      ${meta}${cta}`;
+  }
+
+  function showPlanPage() {
+    const myBooks = books.filter(isMyBook);
+    const count = myBooks.length;
+    const body = document.getElementById('planViewBody');
+
+    let content = '';
+    if (userPlanStatus === 'free') {
+      content = `
+        <div class="mp-plan-meta" style="margin-bottom:1.5rem;">${count} / 20 冊使用中</div>
         <div class="mp-plan-cards">
           <div class="plan-card">
             <div class="plan-card-name">月額プラン</div>
@@ -3348,21 +3440,21 @@
           </div>
         </div>`;
     } else if (userPlanStatus === 'lifetime') {
-      body = `<div class="mp-plan-meta">無期限 — 何冊でも登録できます</div>`;
+      content = `<div class="mp-plan-meta">無期限プラン — 何冊でも登録できます</div>`;
     } else {
-      body = `
-        <div class="mp-plan-meta">有効なサブスクリプション</div>
-        <div>
-          <button class="mp-portal-btn" onclick="handleOpenPortal()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-            請求を管理する
-          </button>
-        </div>`;
+      content = `
+        <div class="mp-plan-meta" style="margin-bottom:1rem;">有効なサブスクリプション</div>
+        <button class="mp-portal-btn" onclick="handleOpenPortal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+          請求を管理する
+        </button>`;
     }
+    body.innerHTML = content;
+    document.getElementById('planView').classList.add('active');
+  }
 
-    el.innerHTML = `
-      <div class="mypage-section-title">Plan <span class="mp-plan-badge ${badgeClass}">${badgeLabel}</span></div>
-      ${body}`;
+  function hidePlanPage() {
+    document.getElementById('planView').classList.remove('active');
   }
 
   async function handleOpenPortal() {

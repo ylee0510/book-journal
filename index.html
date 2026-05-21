@@ -1065,6 +1065,7 @@
     position: relative;
     animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
     border: 1px solid var(--line);
+    border-radius: 16px 16px 0 0;
   }
 
   @media (max-width: 600px) {
@@ -5232,7 +5233,9 @@
     document.querySelector('.modal-title').innerHTML = '新しい記録<em>.</em>';
     document.getElementById('submitBtn').textContent = '記録する';
     if (currentUser) {
-      document.getElementById('inputReader').value = (userProfile && userProfile.displayName) || '';
+      document.getElementById('inputReader').value =
+        (userProfile && userProfile.displayName) ||
+        (currentUser && currentUser.displayName) || '';
     }
     document.getElementById('modal').classList.add('active');
     setTimeout(() => document.getElementById('inputIsbn').focus(), 100);

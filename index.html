@@ -5444,12 +5444,6 @@
     event.preventDefault();
     const btn = document.getElementById('submitBtn');
     const isEditing = !!editingBookId;
-
-    if (!isEditing && !currentUser) {
-      handleSignIn();
-      return;
-    }
-
     btn.disabled = true;
     btn.textContent = isEditing ? '更新中...' : '保存中...';
 

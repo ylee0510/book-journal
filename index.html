@@ -332,11 +332,17 @@
 
   /* ==================== BOOK GRID ==================== */
   .books-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.5rem;
-    padding: 1rem 0 4rem;
+    display: flex;
+    flex-direction: row;
+    gap: 1.25rem;
+    padding: 1rem 0.25rem 4rem;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
   }
+  .books-grid::-webkit-scrollbar { display: none; }
 
   .book-card {
     background: var(--card);
@@ -348,6 +354,9 @@
     display: flex;
     flex-direction: column;
     gap: 0;
+    flex-shrink: 0;
+    width: 300px;
+    scroll-snap-align: start;
   }
 
   .book-card::before {
@@ -1567,7 +1576,7 @@
     .stat:nth-child(1), .stat:nth-child(2) { border-bottom: 1px solid var(--line); }
     .logo { font-size: 2rem; }
     .stat-value { font-size: 2.2rem; }
-    .books-grid { grid-template-columns: 1fr; }
+    .book-card { width: 80vw; max-width: 320px; }
     .action-bar { flex-direction: column; align-items: stretch; }
     .btn-add { justify-content: center; }
     .form-group-inline { grid-template-columns: 1fr; }

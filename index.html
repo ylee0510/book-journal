@@ -2252,9 +2252,12 @@
   <!-- Header -->
   <header>
     <div class="header-top">
-      <div>
+      <div style="display:flex;align-items:flex-start;gap:0.75rem;">
         <h1 class="logo">Shelf<em>.</em></h1>
-        <p class="tagline">A Shared Reading Journal — Est. 2026</p>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;padding-top:0.3rem;">
+          <p class="tagline" style="margin:0;">みんなでつくる読書記録</p>
+          <p class="tagline" style="margin:0;">A Shared Reading Journal — Est. 2026</p>
+        </div>
       </div>
       <div style="display:flex;align-items:center;gap:1rem;">
         <button class="btn-guide" onclick="showGuide()">Shelf.とは？</button>
@@ -2364,7 +2367,7 @@
   <div class="public-shelf-header">
     <div onclick="hidePublicShelf()" style="cursor:pointer;">
       <h1 class="logo" style="font-size:1.8rem;">Shelf<em>.</em></h1>
-      <p class="tagline">本と人をつなぐ読書記録</p>
+      <p class="tagline">みんなでつくる読書記録</p>
     </div>
     <span id="publicShelfTitle" style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--ink-fade);letter-spacing:0.08em;"></span>
   </div>

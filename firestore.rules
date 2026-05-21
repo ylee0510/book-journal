@@ -3,10 +3,12 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     function userPlan(uid) {
-      return get(/databases/$(database)/documents/users/$(uid)).data.get('planStatus', 'free');
+      let doc = get(/databases/$(database)/documents/users/$(uid));
+      return doc == null ? 'free' : doc.data.get('planStatus', 'free');
     }
     function userBookCount(uid) {
-      return get(/databases/$(database)/documents/users/$(uid)).data.get('bookCount', 0);
+      let doc = get(/databases/$(database)/documents/users/$(uid));
+      return doc == null ? 0 : doc.data.get('bookCount', 0);
     }
     function canAddBook(uid) {
       return userPlan(uid) != 'free' || userBookCount(uid) < 20;

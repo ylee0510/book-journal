@@ -168,7 +168,7 @@
   .filter-tabs {
     display: flex;
     gap: 0.6rem;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
 
   .filter-tab {
@@ -183,6 +183,14 @@
     align-items: center;
     gap: 0.3rem;
     min-width: 80px;
+  }
+
+  @media (max-width: 480px) {
+    .filter-tab {
+      padding: 0.6rem 0.5rem;
+      min-width: 0;
+      flex: 1;
+    }
   }
 
   .filter-tab:hover {
@@ -1831,20 +1839,20 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: 1.5px solid var(--line);
-    background: transparent;
-    color: var(--ink-fade);
+    padding: 0.3rem 0.9rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--gold);
+    background: var(--gold);
+    color: #fff;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
     cursor: pointer;
     transition: all 0.2s;
     flex-shrink: 0;
+    white-space: nowrap;
   }
-  .btn-guide:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-guide:hover { background: var(--ink); border-color: var(--ink); color: #fff; }
 
   .guide-view {
     display: none;
@@ -2249,10 +2257,7 @@
         <p class="tagline">A Shared Reading Journal — Est. 2026</p>
       </div>
       <div style="display:flex;align-items:center;gap:1rem;">
-        <div class="meta-info">
-          <div class="date" id="currentDate"></div>
-        </div>
-        <button class="btn-guide" onclick="showGuide()" title="使い方ガイド">?</button>
+        <button class="btn-guide" onclick="showGuide()">Shelf.とは？</button>
         <div id="authArea">
           <!-- JS で描画 -->
         </div>
@@ -2283,6 +2288,10 @@
           <span class="count" id="countFinished">0</span>
           <span class="tab-label">読了</span>
         </button>
+        <div class="filter-tab" style="cursor:default;border-style:dashed;opacity:0.8;" title="みんなの今年の読書目標合計">
+          <span class="count" id="totalGoal" style="color:var(--gold);">—</span>
+          <span class="tab-label">みんなの目標</span>
+        </div>
       </div>
       <div class="reader-filter-wrap">
         <div class="category-filter-wrap">
@@ -2353,7 +2362,10 @@
 <!-- Public Shelf View (no login required) -->
 <div class="public-shelf-view" id="publicShelfView">
   <div class="public-shelf-header">
-    <h1 class="logo" onclick="hidePublicShelf()" style="cursor:pointer;font-size:1.8rem;">Shelf<em>.</em></h1>
+    <div onclick="hidePublicShelf()" style="cursor:pointer;">
+      <h1 class="logo" style="font-size:1.8rem;">Shelf<em>.</em></h1>
+      <p class="tagline">本と人をつなぐ読書記録</p>
+    </div>
     <span id="publicShelfTitle" style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--ink-fade);letter-spacing:0.08em;"></span>
   </div>
   <div class="public-shelf-container" id="publicShelfContainer">
@@ -2586,11 +2598,8 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">Category / カテゴリ <span style="color:var(--ink-fade); font-weight:normal; text-transform:none; letter-spacing:0;">(任意・3つまで)</span></label>
-        <div class="category-checkboxes" id="categoryCheckboxes">
-          <!-- JS で CATEGORIES から生成 -->
-        </div>
-        <span class="category-limit-hint" id="categoryLimitHint">0 / 3 選択中</span>
+        <label class="form-label">Memo / 感想・メモ</label>
+        <textarea class="form-textarea" id="inputMemo" placeholder="この本について感じたこと、印象に残ったフレーズなど..."></textarea>
       </div>
 
       <div class="form-group">
@@ -2599,8 +2608,11 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">Memo / 感想・メモ</label>
-        <textarea class="form-textarea" id="inputMemo" placeholder="この本について感じたこと、印象に残ったフレーズなど..."></textarea>
+        <label class="form-label">Category / カテゴリ <span style="color:var(--ink-fade); font-weight:normal; text-transform:none; letter-spacing:0;">(任意・3つまで)</span></label>
+        <div class="category-checkboxes" id="categoryCheckboxes">
+          <!-- JS で CATEGORIES から生成 -->
+        </div>
+        <span class="category-limit-hint" id="categoryLimitHint">0 / 3 選択中</span>
       </div>
 
       <button type="submit" class="btn-submit" id="submitBtn">記録する</button>
@@ -3002,7 +3014,7 @@
     const copied = document.execCommand('copy');
     document.body.removeChild(ta);
     if (btn) { btn.textContent = copied ? 'コピーしました ✓' : url; }
-    if (copied) setTimeout(() => { if (btn) btn.textContent = 'リンクをコピー'; }, 2000);
+    if (copied) setTimeout(() => { if (btn) btn.textContent = 'マイ本棚シェア'; }, 2000);
   };
 
   function showGuide() {
@@ -3167,7 +3179,7 @@
             ${genrePills ? `<div class="mp-genres">${genrePills}</div>` : ''}
             ${snsLinks ? `<div class="mp-sns">${snsLinks}</div>` : ''}
             <button class="mp-edit-btn" onclick="renderMpProfile(true)">編集</button>
-            <button class="mp-edit-btn" onclick="copyShelfLink()" id="copyShelfBtn">リンクをコピー</button>
+            <button class="mp-edit-btn" onclick="copyShelfLink()" id="copyShelfBtn">マイ本棚シェア</button>
           </div>
         </div>`;
     }
@@ -3499,8 +3511,8 @@
   // Date display
   const now = new Date();
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  document.getElementById('currentDate').textContent = 
-    `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+  const dateEl = document.getElementById('currentDate');
+  if (dateEl) dateEl.textContent = `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
 
   // Track unsubscribe function for Firebase realtime listener
   let firebaseUnsubscribe = null;
@@ -3599,6 +3611,8 @@
     document.getElementById('countReading').textContent = reading;
     document.getElementById('countFinished').textContent = finished;
     document.getElementById('countWishlist').textContent = wishlist;
+
+    loadTotalGoal();
 
     // Update reader filter options (collect all unique readers)
     updateReaderFilterOptions();
@@ -3795,6 +3809,24 @@
       html += i <= rating ? '★' : '<span class="empty">★</span>';
     }
     return html;
+  }
+
+  // みんなの目標合計
+  let totalGoalCache = null;
+  let totalGoalUids = '';
+
+  async function loadTotalGoal() {
+    const uids = [...new Set(books.filter(b => b.uid).map(b => b.uid))].sort().join(',');
+    if (uids === totalGoalUids && totalGoalCache !== null) return;
+    totalGoalUids = uids;
+    const uidList = uids ? uids.split(',') : [];
+    const goals = await Promise.all(uidList.map(async uid => {
+      const p = await window.firebaseAuth.getProfile(uid);
+      return (p && p.goalYear) || 0;
+    }));
+    totalGoalCache = goals.reduce((s, v) => s + v, 0);
+    const el = document.getElementById('totalGoal');
+    if (el) el.textContent = totalGoalCache || '—';
   }
 
   // Update reader filter dropdown with unique reader names (sorted)
@@ -4937,6 +4969,9 @@
     editingBookId = null;
     document.querySelector('.modal-title').innerHTML = '新しい記録<em>.</em>';
     document.getElementById('submitBtn').textContent = '記録する';
+    if (currentUser) {
+      document.getElementById('inputReader').value = (userProfile && userProfile.displayName) || '';
+    }
     document.getElementById('modal').classList.add('active');
     setTimeout(() => document.getElementById('inputIsbn').focus(), 100);
   }

@@ -3123,6 +3123,7 @@
   let currentUser = null;
   let userProfile = null;
   let userPlanStatus = 'free';
+  let signingIn = false;
 
   function updateAuthUI() {
     const area = document.getElementById('authArea');
@@ -3153,28 +3154,15 @@
 
   async function handleSignIn() {
     if (!window.firebaseAuth) { showToast('認証サービス準備中...'); return; }
+    signingIn = true;
     try {
-      if (currentUser?.isAnonymous) {
-        await window.firebaseAuth.linkWithGooglePopup();
-      } else {
-        await window.firebaseAuth.signInWithGoogle();
-      }
+      await window.firebaseAuth.signInWithGoogle();
     } catch (e) {
-      if (e.code === 'auth/credential-already-in-use') {
-        // 既存の Google アカウントがある場合 — ポップアップ不要で credential から直接ログイン
-        const credential = GoogleAuthProvider.credentialFromError(e);
-        if (credential) {
-          try {
-            await signInWithCredential(auth, credential);
-          } catch (e2) {
-            if (e2.code !== 'auth/popup-closed-by-user' && e2.code !== 'auth/cancelled-popup-request') {
-              showToast('ログインに失敗しました: ' + (e2.message || e2));
-            }
-          }
-        }
-      } else if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') {
+      if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') {
         showToast('ログインに失敗しました: ' + (e.message || e));
       }
+    } finally {
+      signingIn = false;
     }
   }
 
@@ -3881,8 +3869,8 @@
     if (window.firebaseAuth) {
       window.firebaseAuth.onAuthStateChanged(async (user) => {
         if (!user) {
-          await window.firebaseAuth.signInAnonymously();
-          return; // 匿名ログイン後に再度 onAuthStateChanged が発火する
+          if (!signingIn) await window.firebaseAuth.signInAnonymously();
+          return;
         }
         currentUser = user;
         userPlanStatus = 'free';

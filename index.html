@@ -348,6 +348,72 @@
   }
   .books-grid::-webkit-scrollbar { display: none; }
 
+  /* グリッドモード */
+  .books-grid.is-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.85rem;
+    padding: 1.25rem;
+    overflow-x: visible;
+    overflow-y: visible;
+    scroll-snap-type: none;
+  }
+  .books-grid.is-grid .book-card {
+    width: auto;
+    flex-shrink: unset;
+    scroll-snap-align: none;
+    padding: 0.75rem 0.6rem;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .books-grid.is-grid .book-status-row,
+  .books-grid.is-grid .book-info,
+  .books-grid.is-grid .book-recommend,
+  .books-grid.is-grid .book-footer,
+  .books-grid.is-grid .book-social { display: none !important; }
+  .books-grid.is-grid .book-top {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  .books-grid.is-grid .book-cover {
+    width: 80%;
+    height: auto;
+    aspect-ratio: 2/3;
+  }
+  .books-grid.is-grid .book-title-block { padding: 0; }
+  .books-grid.is-grid .book-title {
+    font-size: 0.7rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.5;
+  }
+  .books-grid.is-grid .book-author { font-size: 0.6rem; }
+  .books-grid.is-grid .title-copy-btn { display: none; }
+
+  /* 表示切替ボタン */
+  .view-toggle { display: flex; gap: 0.3rem; align-items: center; }
+  .btn-view {
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--ink-fade);
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .btn-view.active { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .btn-view svg { width: 14px; height: 14px; }
+
   .book-card {
     background: #ffffff;
     border: 1px solid var(--line);
@@ -2370,10 +2436,20 @@
           </div>
         </div>
       </div>
-      <button class="btn-add" onclick="openModal()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        本を記録する
-      </button>
+      <div style="display:flex;align-items:center;gap:0.75rem;">
+        <div class="view-toggle">
+          <button class="btn-view active" id="btnViewShelf" onclick="setView('shelf')" title="本棚">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+          </button>
+          <button class="btn-view" id="btnViewGrid" onclick="setView('grid')" title="一覧">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/></svg>
+          </button>
+        </div>
+        <button class="btn-add" onclick="openModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          本を記録する
+        </button>
+      </div>
     </div>
   </header>
 
@@ -3077,6 +3153,15 @@
     if (btn) { btn.textContent = copied ? 'コピーしました ✓' : url; }
     if (copied) setTimeout(() => { if (btn) btn.textContent = 'マイ本棚シェア'; }, 2000);
   };
+
+  let currentView = 'shelf';
+  function setView(mode) {
+    currentView = mode;
+    const grid = document.getElementById('booksGrid');
+    document.getElementById('btnViewShelf').classList.toggle('active', mode === 'shelf');
+    document.getElementById('btnViewGrid').classList.toggle('active', mode === 'grid');
+    grid.classList.toggle('is-grid', mode === 'grid');
+  }
 
   function showGuide() {
     document.getElementById('mainView').style.display = 'none';

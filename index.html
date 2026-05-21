@@ -3127,7 +3127,7 @@
   function updateAuthUI() {
     const area = document.getElementById('authArea');
     if (!area) return;
-    if (currentUser) {
+    if (currentUser && !currentUser.isAnonymous) {
       const initial = (currentUser.displayName || 'U')[0].toUpperCase();
       const avatarHtml = currentUser.photoURL
         ? `<img class="auth-avatar" src="${currentUser.photoURL}" alt="${initial}">`

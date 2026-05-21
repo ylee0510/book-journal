@@ -2970,7 +2970,7 @@
     onSnapshot, query, orderBy, where
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import {
-    getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut
+    getAuth, signInWithPopup, linkWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInAnonymously
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import {
     getFunctions, httpsCallable
@@ -2998,6 +2998,13 @@
     },
     async signOut() {
       return signOut(auth);
+    },
+    async signInAnonymously() {
+      return signInAnonymously(auth);
+    },
+    async linkWithGooglePopup() {
+      const provider = new GoogleAuthProvider();
+      return linkWithPopup(auth.currentUser, provider);
     },
     onAuthStateChanged(callback) {
       return onAuthStateChanged(auth, callback);
@@ -5420,6 +5427,12 @@
     event.preventDefault();
     const btn = document.getElementById('submitBtn');
     const isEditing = !!editingBookId;
+
+    if (!isEditing && !currentUser) {
+      handleSignIn();
+      return;
+    }
+
     btn.disabled = true;
     btn.textContent = isEditing ? '更新中...' : '保存中...';
 

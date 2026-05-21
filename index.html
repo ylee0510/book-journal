@@ -3197,17 +3197,21 @@
     if (!cfg) return;
 
     const btnId = { monthly: 'btnMonthly', annual: 'btnAnnual', lifetime: 'btnLifetime' }[planKey];
-    const btn = document.getElementById(btnId);
-    const originalText = btn.textContent.trim();
-    btn.disabled = true;
-    btn.innerHTML = '<span style="display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle"></span>';
+    const btn = document.getElementById(btnId); // upgrade modal のボタン（plan page では null の場合あり）
+    const originalText = btn ? btn.textContent.trim() : '';
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<span style="display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle"></span>';
+    }
 
     try {
       await p.startCheckout(cfg.priceId, cfg.mode, cfg.planType);
     } catch (err) {
       showToast('エラー: ' + (err.message || '決済を開始できませんでした'));
-      btn.disabled = false;
-      btn.textContent = originalText;
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
     }
   }
 

@@ -1924,20 +1924,22 @@
   }
 
   .guide-hero-intro {
-    margin-top: 2rem;
-    text-align: left;
-    max-width: 480px;
-    margin-left: auto;
-    margin-right: auto;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    gap: 2.5rem;
+    margin: 2.5rem auto;
     color: var(--ink);
     font-size: 0.82rem;
-    line-height: 2.2;
+    line-height: 2.4;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.25rem;
   }
   .guide-hero-intro p {
-    margin: 0 0 1.6rem;
-  }
-  .guide-hero-intro p:last-child {
-    margin-bottom: 0;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    margin: 0;
   }
   .guide-hero-intro strong {
     font-weight: 600;

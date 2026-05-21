@@ -2970,7 +2970,7 @@
     onSnapshot, query, orderBy, where
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import {
-    getAuth, signInWithPopup, linkWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInAnonymously
+    getAuth, signInWithPopup, signInWithCredential, linkWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInAnonymously
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import {
     getFunctions, httpsCallable
@@ -3161,12 +3161,15 @@
       }
     } catch (e) {
       if (e.code === 'auth/credential-already-in-use') {
-        // 既存の Google アカウントがある場合 — 通常ログインにフォールバック
-        try {
-          await window.firebaseAuth.signInWithGoogle();
-        } catch (e2) {
-          if (e2.code !== 'auth/popup-closed-by-user' && e2.code !== 'auth/cancelled-popup-request') {
-            showToast('ログインに失敗しました: ' + (e2.message || e2));
+        // 既存の Google アカウントがある場合 — ポップアップ不要で credential から直接ログイン
+        const credential = GoogleAuthProvider.credentialFromError(e);
+        if (credential) {
+          try {
+            await signInWithCredential(auth, credential);
+          } catch (e2) {
+            if (e2.code !== 'auth/popup-closed-by-user' && e2.code !== 'auth/cancelled-popup-request') {
+              showToast('ログインに失敗しました: ' + (e2.message || e2));
+            }
           }
         }
       } else if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') {

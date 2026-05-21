@@ -4075,8 +4075,8 @@
               ? `<span class="reader-name-link" onclick="window.showPublicShelf('${escapeHtml(book.uid)}')">${escapeHtml(book.reader || 'anonymous')}</span>`
               : escapeHtml(book.reader || 'anonymous')} · ${formatDate(book.createdAt)}
           </span>
-          ${isMyBook(book) ? `<div class="book-actions">
-            <button class="book-edit" onclick="openEditModal(event, '${book.id}')">EDIT</button>
+          ${isMyBook(book) || currentUser?.email === 'ys510lee@gmail.com' ? `<div class="book-actions">
+            ${isMyBook(book) ? `<button class="book-edit" onclick="openEditModal(event, '${book.id}')">EDIT</button>` : ''}
             <button class="book-delete" onclick="deleteBook(event, '${book.id}')">DELETE</button>
           </div>` : ''}
         </div>

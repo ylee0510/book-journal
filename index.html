@@ -3154,9 +3154,22 @@
   async function handleSignIn() {
     if (!window.firebaseAuth) { showToast('認証サービス準備中...'); return; }
     try {
-      await window.firebaseAuth.signInWithGoogle();
+      if (auth.currentUser?.isAnonymous) {
+        await window.firebaseAuth.linkWithGooglePopup();
+      } else {
+        await window.firebaseAuth.signInWithGoogle();
+      }
     } catch (e) {
-      if (e.code !== 'auth/popup-closed-by-user') {
+      if (e.code === 'auth/credential-already-in-use') {
+        // 既存の Google アカウントがある場合 — 通常ログインにフォールバック
+        try {
+          await window.firebaseAuth.signInWithGoogle();
+        } catch (e2) {
+          if (e2.code !== 'auth/popup-closed-by-user') {
+            showToast('ログインに失敗しました: ' + (e2.message || e2));
+          }
+        }
+      } else if (e.code !== 'auth/popup-closed-by-user') {
         showToast('ログインに失敗しました: ' + (e.message || e));
       }
     }

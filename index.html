@@ -3063,6 +3063,11 @@
   function showGuide() {
     document.getElementById('mainView').style.display = 'none';
     document.getElementById('guideView').classList.add('active');
+    // 縦書きエリアのスクロール位置を冒頭（右端）にリセット
+    requestAnimationFrame(() => {
+      const intro = document.querySelector('.guide-hero-intro');
+      if (intro) intro.scrollLeft = intro.scrollWidth;
+    });
   }
 
   function hideGuide() {

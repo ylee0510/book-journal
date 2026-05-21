@@ -3204,7 +3204,7 @@
   }
 
   async function handlePlanSelect(planKey) {
-    if (!currentUser) { handleSignIn(); return; }
+    if (!currentUser || currentUser.isAnonymous) { handleSignIn(); return; }
     if (!window.firebasePricing) { showToast('決済サービスの準備中です'); return; }
 
     const p = window.firebasePricing;
@@ -3236,7 +3236,7 @@
   }
 
   function showMyPage() {
-    if (!currentUser) { handleSignIn(); return; }
+    if (!currentUser || currentUser.isAnonymous) { handleSignIn(); return; }
     document.getElementById('mainView').style.display = 'none';
     document.getElementById('mypageView').classList.add('active');
     renderMyPage();

@@ -909,12 +909,14 @@
 
   .comment-form {
     display: flex;
+    flex-direction: column;
     gap: 0.4rem;
     margin-top: 0.6rem;
   }
 
   .comment-input {
-    flex-grow: 1;
+    width: 100%;
+    box-sizing: border-box;
     background: var(--bg);
     border: 1px solid var(--line);
     padding: 0.5rem 0.7rem;
@@ -933,11 +935,11 @@
     background: var(--ink);
     color: var(--bg);
     border: none;
-    padding: 0 0.9rem;
+    padding: 0.5rem 0.9rem;
     cursor: pointer;
     font-family: 'Noto Serif JP', serif;
     font-size: 0.78rem;
-    white-space: nowrap;
+    width: 100%;
     transition: background 0.2s ease;
   }
   .comment-submit:hover { background: var(--accent); }
@@ -4092,8 +4094,8 @@
           <div class="comments-section" id="comments-${book.id}">
             ${renderComments(book)}
             <div class="comment-form">
-              <input type="text" class="comment-input" id="comment-input-${book.id}" placeholder="コメントを追加...">
-              <button class="comment-submit" onclick="addComment('${book.id}')">送信</button>
+              <input type="text" class="comment-input" id="comment-input-${book.id}" placeholder="コメントを追加..." onkeydown="if(event.key==='Enter'&&!event.isComposing)addComment('${book.id}')">
+              <button class="comment-submit" onclick="addComment('${book.id}')">コメントする</button>
             </div>
           </div>
         </div>

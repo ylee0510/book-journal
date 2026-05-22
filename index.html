@@ -608,17 +608,11 @@
     line-height: 1.7;
     flex-grow: 1;
     display: -webkit-box;
-    -webkit-line-clamp: 5;
+    -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow: hidden;
     cursor: pointer;
     position: relative;
-  }
-
-  .book-memo-inline.expanded {
-    display: block;
-    -webkit-line-clamp: unset;
-    overflow: visible;
   }
 
   .book-memo-inline.is-clamped::after {
@@ -626,7 +620,7 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    background: linear-gradient(to right, transparent, var(--card) 40%);
+    background: linear-gradient(to right, transparent, #ffffff 40%);
     padding-left: 2rem;
     font-size: 0.75rem;
     color: var(--accent);
@@ -634,18 +628,11 @@
     letter-spacing: 0.02em;
   }
 
-  .book-memo-inline.expanded::after {
-    content: none;
-  }
+  .book-memo-inline:not(.is-clamped) { cursor: default; }
 
   .book-memo-inline:empty {
     cursor: default;
-  }
-
-  .book-memo-inline:empty::before {
-    content: '感想はまだ書かれていません';
-    color: var(--ink-fade);
-    font-style: italic;
+    display: none;
   }
 
   /* Recommend block */
@@ -3343,7 +3330,8 @@
     grid.classList.toggle('is-grid', mode === 'grid');
   }
 
-  function openCardPopup(bookId) {
+  function openCardPopup(bookId, event) {
+    if (event) event.stopPropagation();
     const book = books.find(b => b.id === bookId);
     if (!book) return;
     const statusLabel = { reading: '読書中', finished: '読了', wishlist: 'また読みたい' };
@@ -4048,12 +4036,11 @@
               : `<div class="book-cover-placeholder">${escapeHtml(book.title).slice(0,30)}</div>`}
           </div>
           <div class="book-info">
-            <div class="book-memo-inline" onclick="toggleMemo(event, this)">${escapeHtml(book.memo || '')}</div>
+            <div class="book-memo-inline" onclick="if(this.classList.contains('is-clamped'))openCardPopup('${book.id}',event)">${escapeHtml(book.memo || '')}</div>
             ${book.rating ? `<div class="book-rating">${renderStars(book.rating)}</div>` : ''}
           </div>
         </div>
 
-        ${book.recommend ? `<div class="book-recommend"><span class="recommend-label">こんな人へ</span>${escapeHtml(book.recommend)}</div>` : ''}
 
         <div class="book-title-block">
           <div class="book-title-wrap">
@@ -4152,12 +4139,7 @@
     try { localStorage.setItem('myReaderName', name); } catch (e) {}
   }
 
-  // Toggle memo expansion
-  window.toggleMemo = function(event, el) {
-    if (!el.textContent.trim()) return; // empty memo, do nothing
-    event.stopPropagation();
-    el.classList.toggle('expanded');
-  };
+  // (toggleMemo deprecated — memo click now opens card popup)
 
   // Check if current user has liked this book
   function hasLiked(book) {

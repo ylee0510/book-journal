@@ -3344,8 +3344,8 @@
       <div class="card-popup-meta">
         ${statusLabel[book.status] || ''} ${stars ? `· ${stars}` : ''} ${cats}
       </div>
-      ${book.memo ? `<div class="card-popup-memo">${escapeHtml(book.memo)}</div>` : ''}
-      ${book.recommend ? `<div class="card-popup-recommend"><strong>こんな人へ</strong> ${escapeHtml(book.recommend)}</div>` : ''}
+      ${book.memo ? `<div class="card-popup-memo">${linkify(book.memo)}</div>` : ''}
+      ${book.recommend ? `<div class="card-popup-recommend"><strong>こんな人へ</strong> ${linkify(book.recommend)}</div>` : ''}
     `;
     document.getElementById('cardPopupOverlay').classList.add('open');
   }
@@ -4163,7 +4163,7 @@
             <button class="comment-delete" onclick="deleteComment(event, '${book.id}', ${idx})">×</button>
           </span>
         </div>
-        <div class="comment-text">${escapeHtml(c.text)}</div>
+        <div class="comment-text">${linkify(c.text)}</div>
       </div>
     `).join('');
   }
@@ -4271,6 +4271,19 @@
     return String(str)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  }
+
+  // URLを自動リンク化（非URL部分はescapeHtml済み）
+  function linkify(text) {
+    if (!text) return '';
+    const parts = String(text).split(/(https?:\/\/[^\s<>"]+)/g);
+    return parts.map((part, i) => {
+      if (i % 2 === 1) {
+        const escapedUrl = escapeHtml(part);
+        return `<a href="${escapedUrl}" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:underline;word-break:break-all;">${escapedUrl}</a>`;
+      }
+      return escapeHtml(part);
+    }).join('');
   }
 
   function formatDate(ts) {

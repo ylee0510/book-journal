@@ -2561,7 +2561,7 @@
     overflow: hidden;
     box-shadow: 3px 5px 18px rgba(0,0,0,0.28), inset -2px 0 4px rgba(0,0,0,0.12);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    background: #1c1008;
+    background: #3a2415;
     user-select: none;
   }
   .magazine-cover:hover {
@@ -2584,21 +2584,25 @@
   }
   .mc-logo {
     font-family: 'Fraunces', serif;
-    font-style: italic;
-    font-size: 1.1rem;
-    font-weight: 700;
+    font-weight: 300;
+    font-size: 1.15rem;
     color: #fff;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     line-height: 1;
   }
-  .mc-logo em { color: #e07a5f; font-style: normal; }
+  .mc-logo em, .mc-vol em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 400;
+  }
   .mc-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.42rem;
-    letter-spacing: 0.2em;
-    color: rgba(255,255,255,0.45);
-    text-transform: uppercase;
-    margin-top: 0.18rem;
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: 0.62rem;
+    color: rgba(255,255,255,0.72);
+    letter-spacing: 0em;
+    margin-top: 0.2rem;
+    line-height: 1.2;
   }
   .mc-rule {
     height: 1px;
@@ -2607,12 +2611,12 @@
     opacity: 0.75;
   }
   .mc-vol {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.4rem;
-    letter-spacing: 0.14em;
-    color: rgba(255,255,255,0.4);
-    text-transform: uppercase;
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: 0.58rem;
+    color: rgba(255,255,255,0.58);
     padding: 0 0.7rem;
+    line-height: 1.2;
   }
   .mc-essay {
     writing-mode: vertical-rl;
@@ -2866,7 +2870,7 @@
           <div class="mc-label">Magazine</div>
         </div>
         <div class="mc-rule"></div>
-        <div class="mc-vol">Vol. 1</div>
+        <div class="mc-vol">Vol<em>.</em> 1</div>
         <div class="mc-essay">本とタイミング</div>
         <div class="mc-bottom"></div>
       </div>

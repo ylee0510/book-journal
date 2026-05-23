@@ -2734,9 +2734,8 @@
   .magazine-reader {
     background: #faf7f2;
     width: 100%;
-    max-height: 92vh;
-    border-radius: 16px;
-    margin-bottom: 1.5rem;
+    max-height: 100vh;
+    border-radius: 16px 16px 0 0;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -2799,10 +2798,10 @@
     display: block;
     writing-mode: vertical-rl;
     -webkit-writing-mode: vertical-rl;
-    height: calc(92vh - 5.5rem);
+    height: calc(100vh - 5.5rem - env(safe-area-inset-bottom, 0px));
     font-family: 'Noto Serif JP', 'Georgia', serif;
     color: var(--ink);
-    padding: 2rem 2.5rem 4rem;
+    padding: 2rem 2.5rem calc(4.5rem + env(safe-area-inset-bottom, 0px));
     box-sizing: border-box;
   }
   .mrb-head {
@@ -3029,7 +3028,7 @@
   /* Magazine comment floating button */
   .mag-comment-btn {
     position: absolute;
-    bottom: 1rem;
+    bottom: calc(1.2rem + env(safe-area-inset-bottom, 0px));
     right: 1rem;
     display: flex;
     align-items: center;

@@ -5892,6 +5892,10 @@
     grid += `<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + innerH}"
                    stroke="#a89070" stroke-width="0.75"/>`;
 
+    // 「今日」ラベル — グラフ右上固定
+    grid += `<text x="${W - padR}" y="${padT - 1}" text-anchor="end"
+                   font-size="7.5" fill="#b8432a" font-family="monospace" font-weight="600">今日</text>`;
+
     // Bars + x-axis labels
     let bars = '';
     dayCounts.forEach((cnt, i) => {
@@ -5906,12 +5910,11 @@
                  <title>${d.getMonth()+1}/${d.getDate()} ${cnt}冊</title>
                </rect>`;
 
-      // X-axis label every 7 days + today
-      if (i % 7 === 0 || i === 29) {
-        const label = daysAgo === 0 ? '今日' : `${d.getMonth()+1}/${d.getDate()}`;
+      // X-axis label every 7 days (skip i===29 = today, handled separately)
+      if (i % 7 === 0) {
         const lx = +(padL + i * slotW + slotW / 2).toFixed(1);
         bars += `<text x="${lx}" y="${H - 3}" text-anchor="middle"
-                       font-size="7.5" fill="#8a7e70" font-family="monospace">${label}</text>`;
+                       font-size="7.5" fill="#8a7e70" font-family="monospace">${d.getMonth()+1}/${d.getDate()}</text>`;
       }
     });
 

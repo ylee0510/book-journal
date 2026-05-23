@@ -2569,7 +2569,7 @@
     overflow: hidden;
     box-shadow: 3px 5px 18px rgba(0,0,0,0.28), inset -2px 0 4px rgba(0,0,0,0.12);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    background: #6e893c;
+    background: #8aaa46;
     user-select: none;
   }
   .magazine-cover:hover {
@@ -2691,13 +2691,14 @@
   }
   .mrh-title em { font-style: italic; color: var(--accent); font-weight: 400; }
   .mrh-vol {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: 0.72rem;
+    letter-spacing: -0.01em;
     color: var(--ink-fade);
-    text-transform: uppercase;
-    margin-top: 0.25rem;
+    margin-top: 0.2rem;
   }
+  .mrh-vol em { font-style: italic; color: var(--accent); font-weight: 400; }
   .magazine-reader-close {
     background: none;
     border: 1px solid var(--line);
@@ -2895,7 +2896,7 @@
     <div class="magazine-reader-header">
       <div>
         <div class="mrh-title">Shelf<em>.</em> Magazine</div>
-        <div class="mrh-vol" id="magazineReaderVol">Vol. 1</div>
+        <div class="mrh-vol" id="magazineReaderVol">Vol<em>.</em> 1</div>
       </div>
       <button class="magazine-reader-close" onclick="closeMagazineReader()">閉じる</button>
     </div>
@@ -6014,7 +6015,7 @@
   const magazineData = {
     vol1: {
       vol: 'Vol. 1',
-      meta: '不定期連載　一編の余韻',
+      meta: 'みんなで育てる、ゆるコラム',
       title: '本と、巡り合わせ',
       paragraphs: [
         '良きタイミングでの良き本との出会いは、人生を変えるかもしれません。',

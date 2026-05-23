@@ -364,7 +364,6 @@
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
-    height: clamp(280px, 75vw, 440px);
   }
   .books-grid.is-grid .book-card {
     width: auto;
@@ -3331,7 +3330,14 @@
     const grid = document.getElementById('booksGrid');
     document.getElementById('btnViewShelf').classList.toggle('active', mode === 'shelf');
     document.getElementById('btnViewGrid').classList.toggle('active', mode === 'grid');
-    grid.classList.toggle('is-grid', mode === 'grid');
+    if (mode === 'grid') {
+      const h = grid.offsetHeight; // リストモードの実際の高さを取得
+      grid.classList.add('is-grid');
+      grid.style.height = h + 'px'; // グリッドに同じ高さを適用
+    } else {
+      grid.classList.remove('is-grid');
+      grid.style.height = ''; // リストモードに戻す時はautoに
+    }
   }
 
   function openCardPopup(bookId, event) {

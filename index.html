@@ -5731,8 +5731,7 @@
     document.getElementById('submitBtn').textContent = '記録する';
     if (currentUser) {
       document.getElementById('inputReader').value =
-        (userProfile && userProfile.displayName) ||
-        (currentUser && currentUser.displayName) || '';
+        (userProfile && userProfile.displayName) || '';
     }
     document.getElementById('modal').classList.add('active');
     setTimeout(() => document.getElementById('inputIsbn').focus(), 100);

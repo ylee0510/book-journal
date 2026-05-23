@@ -2506,28 +2506,23 @@
   /* ==================== MAGAZINE SHELF ==================== */
   .magazine-section {
     margin-top: 3rem;
-    border-top: 1px solid var(--line);
     padding-bottom: 0;
   }
   .magazine-section-label {
-    padding: 1.25rem 0 0;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
+    padding: 0 0 0.85rem;
+    border-bottom: 1px solid var(--line);
   }
   .magazine-section-label span {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.14em;
-    color: var(--ink-fade);
-    text-transform: uppercase;
-    white-space: nowrap;
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: 0.88rem;
+    letter-spacing: -0.01em;
+    color: var(--ink-soft);
   }
-  .magazine-section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--line);
+  .magazine-section-label span em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 400;
   }
   .magazine-shelf {
     display: flex;
@@ -2561,7 +2556,7 @@
     overflow: hidden;
     box-shadow: 3px 5px 18px rgba(0,0,0,0.28), inset -2px 0 4px rgba(0,0,0,0.12);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    background: #3a2415;
+    background: #4a5c2c;
     user-select: none;
   }
   .magazine-cover:hover {
@@ -2860,7 +2855,7 @@
   <!-- Magazine Shelf -->
   <section class="magazine-section">
     <div class="magazine-section-label">
-      <span>Shelf. Magazine</span>
+      <span>Shelf<em>.</em> Magazine</span>
     </div>
     <div class="magazine-shelf">
       <!-- Vol. 1 -->

@@ -673,9 +673,9 @@
   .book-band {
     margin: 0.75rem -1rem 0;
     padding: 0.4rem 1rem;
-    background: linear-gradient(90deg, rgba(166,138,63,0.12), rgba(166,138,63,0.05));
-    border-top: 1px solid rgba(166,138,63,0.28);
-    border-bottom: 1px solid rgba(166,138,63,0.28);
+    background: #fdf8dc;
+    border-top: 1px solid #e8d97a;
+    border-bottom: 1px solid #e8d97a;
     font-family: 'Noto Serif JP', serif;
     font-size: 0.72rem;
     color: var(--ink-soft);
@@ -696,16 +696,20 @@
     font-style: normal;
     vertical-align: middle;
   }
-  /* グリッド表示：帯を1行に圧縮 */
+  /* グリッド表示：帯を2行表示、カード高さはそのまま */
   .books-grid.is-grid .book-band {
     margin: 0.3rem -0.5rem 0;
     padding: 0.28rem 0.5rem;
     font-size: 0.6rem;
-    -webkit-line-clamp: 1;
+    -webkit-line-clamp: 2;
     text-align: left;
   }
   .books-grid.is-grid .book-band-label {
     font-size: 0.5rem;
+  }
+  .books-grid.is-grid .book-title-block {
+    padding: 0.2rem 0 0;
+    margin-top: 0.2rem;
   }
 
   /* Title block - fixed min-height so cards align vertically */
@@ -6157,12 +6161,12 @@
         .map(([name, count]) => ({ name, count }));
     }
 
+    // 先月の受賞者（カレンダー月）
+    const nowDate = new Date(now);
+
     // 今月ランキング（カレンダー月）
     const currentMonthStart = new Date(nowDate.getFullYear(), nowDate.getMonth(), 1).getTime();
     const ranking30 = computeRanking(currentMonthStart, now);
-
-    // 先月の受賞者（カレンダー月）
-    const nowDate = new Date(now);
     const prevMonthStart = new Date(nowDate.getFullYear(), nowDate.getMonth() - 1, 1).getTime();
     const prevMonthEnd   = new Date(nowDate.getFullYear(), nowDate.getMonth(),     1).getTime() - 1;
     const rankingPrev    = computeRanking(prevMonthStart, prevMonthEnd);

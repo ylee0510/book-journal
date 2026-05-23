@@ -2502,6 +2502,74 @@
     transition: all 0.2s;
   }
   .mp-plan-cta:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ==================== MAGAZINE SECTION ==================== */
+  .magazine-section {
+    margin: 3rem -2.5rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .magazine-section-label {
+    padding: 1.25rem 2.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .magazine-section-label span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    color: var(--ink-fade);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .magazine-section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+  .magazine-wrapper {
+    width: 100%;
+    height: 72vh;
+    overflow-x: auto;
+    overflow-y: hidden;
+    background-color: #faf7f2;
+    box-sizing: border-box;
+    padding: 2.25rem 2.5rem;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .magazine-wrapper::-webkit-scrollbar { display: none; }
+  .magazine-content {
+    display: block;
+    writing-mode: vertical-rl;
+    -webkit-writing-mode: vertical-rl;
+    height: 100%;
+    font-family: 'Noto Serif JP', 'Georgia', 'YuMincho', serif;
+    color: var(--ink);
+  }
+  .magazine-header {
+    margin-left: 3rem;
+  }
+  .magazine-meta {
+    font-size: 0.65rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.1em;
+  }
+  .magazine-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.15em;
+  }
+  .magazine-body p {
+    font-size: 0.88rem;
+    line-height: 2.4;
+    letter-spacing: 0.08em;
+    margin-left: 2.25rem;
+    margin-bottom: 0;
+  }
 </style>
 </head>
 <body>
@@ -2616,6 +2684,37 @@
   <main class="books-grid" id="booksGrid">
     <div class="loading">Loading shared library</div>
   </main>
+
+  <!-- Magazine Section -->
+  <section class="magazine-section">
+    <div class="magazine-section-label">
+      <span>Magazine</span>
+    </div>
+    <div class="magazine-wrapper">
+      <article class="magazine-content">
+        <header class="magazine-header">
+          <p class="magazine-meta">不定期連載　一編の余韻</p>
+          <h1 class="magazine-title">本とタイミング</h1>
+        </header>
+        <div class="magazine-body">
+          <p>良きタイミングでの良き本との出会いは、人生を変えるかもしれません。</p>
+          <p>そう言うと、少し大げさに聞こえるかもしれません。<br>
+          けれど実際には、一冊の本が人の考え方や行動の方向を変えることは、決して珍しいことではありません。</p>
+          <p>本は、答えを与えてくれるというよりも、自分の中に眠っていた感覚や問いを呼び起こしてくれる存在です。<br>
+          なんとなく抱えていた違和感に言葉を与えてくれたり、踏み出せずにいた一歩を後押ししてくれたり。<br>
+          まるで心のどこかに火種があり、その火にそっと空気を送ってくれるような感覚があります。</p>
+          <p>不思議なのは、「良い本」がいつも同じように響くわけではないことです。<br>
+          数年前には何も感じなかった本が、ある日突然、自分のために書かれたように感じることがあります。</p>
+          <p>つまり、本との出会いには「内容」だけでなく、「タイミング」があります。</p>
+          <p>人生の転機や迷いの時期に出会った一冊は、単なる情報ではなく、その後の選択や行動を変える&#8220;着火剤&#8221;になる。<br>
+          だからこそ、本を読むことは、自分の未来との偶然の出会いを増やす行為なのかもしれません。</p>
+          <p>すぐに人生が変わるわけではなくても、考え方が少し変わる。<br>
+          視界が少し広がる。<br>
+          その小さな変化の積み重ねが、振り返った時に大きな違いになっているのだと思います。</p>
+        </div>
+      </article>
+    </div>
+  </section>
 
 </div>
 

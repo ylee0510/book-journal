@@ -2752,6 +2752,115 @@
     margin-bottom: 0;
   }
 
+  /* ==================== GOAL CHART POPUP ==================== */
+  .goal-chart-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    background: rgba(26,23,20,0.55);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  .goal-chart-overlay.is-open { display: flex; }
+  .goal-chart-popup {
+    background: var(--bg);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.22);
+    overflow: hidden;
+    animation: popIn 0.22s cubic-bezier(0.34,1.2,0.64,1);
+  }
+  @keyframes popIn {
+    from { transform: scale(0.92); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+  }
+  .goal-chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem 0.9rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .goal-chart-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: 1rem;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .goal-chart-close {
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.8rem;
+    color: var(--ink-fade);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .goal-chart-close:hover { border-color: var(--accent); color: var(--accent); }
+  .goal-chart-body {
+    padding: 1.25rem 1.25rem 1.5rem;
+  }
+  .gc-total {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    margin-bottom: 1.25rem;
+  }
+  .gc-total-num {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: 2.4rem;
+    line-height: 1;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .gc-total-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-fade);
+    text-transform: uppercase;
+  }
+  .gc-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 80px;
+  }
+  .gc-bar-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    height: 100%;
+    justify-content: flex-end;
+  }
+  .gc-bar {
+    width: 100%;
+    background: var(--accent);
+    border-radius: 2px 2px 0 0;
+    min-height: 2px;
+    transition: opacity 0.15s;
+  }
+  .gc-bar:hover { opacity: 0.75; }
+  .gc-bar.empty { background: var(--line); }
+  .gc-bar-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.45rem;
+    color: var(--ink-fade);
+    text-align: center;
+    white-space: nowrap;
+    min-height: 0.6rem;
+  }
+
   /* Magazine comment panel */
   .mag-comment-panel {
     flex-shrink: 0;
@@ -2861,7 +2970,7 @@
           <span class="count" id="countFinished">0</span>
           <span class="tab-label">読了</span>
         </button>
-        <div class="filter-tab" style="cursor:default;border-style:dashed;opacity:0.8;" title="みんなの今年の読書目標合計">
+        <div class="filter-tab" style="cursor:pointer;border-style:dashed;opacity:0.8;" title="みんなの読了記録を見る" onclick="openGoalChart()">
           <span class="count" id="totalGoal" style="color:var(--gold);">—</span>
           <span class="tab-label">みんなの目標</span>
         </div>
@@ -2974,6 +3083,17 @@
         <button class="mag-comment-submit" onclick="addMagazineComment()">コメントする</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Goal Chart Popup -->
+<div class="goal-chart-overlay" id="goalChartOverlay" onclick="closeGoalChart(event)">
+  <div class="goal-chart-popup" id="goalChartPopup">
+    <div class="goal-chart-header">
+      <span class="goal-chart-title">みんなの読了記録</span>
+      <button class="goal-chart-close" onclick="closeGoalChart()">✕</button>
+    </div>
+    <div class="goal-chart-body" id="goalChartBody"></div>
   </div>
 </div>
 
@@ -5652,12 +5772,58 @@
 
   document.querySelectorAll('.filter-tab').forEach(tab => {
     tab.addEventListener('click', () => {
+      if (!tab.dataset.filter) return; // みんなの目標は onclick で処理
       document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       currentFilter = tab.dataset.filter;
       renderBooks();
     });
   });
+
+  function openGoalChart() {
+    const msPerDay = 86400000;
+    const now = Date.now();
+    const dayCounts = Array(30).fill(0);
+
+    books.filter(b => b.status === 'finished').forEach(b => {
+      const daysAgo = Math.floor((now - b.createdAt) / msPerDay);
+      if (daysAgo >= 0 && daysAgo < 30) dayCounts[29 - daysAgo]++;
+    });
+
+    const total = dayCounts.reduce((a, v) => a + v, 0);
+    const maxVal = Math.max(...dayCounts, 1);
+
+    const barsHtml = dayCounts.map((cnt, i) => {
+      const daysAgo = 29 - i;
+      const d = new Date(now - daysAgo * msPerDay);
+      const showLabel = (i % 7 === 0) || i === 29;
+      const label = showLabel
+        ? (daysAgo === 0 ? '今日' : `${d.getMonth() + 1}/${d.getDate()}`)
+        : '';
+      const h = cnt === 0 ? 2 : Math.max(6, Math.round((cnt / maxVal) * 100));
+      return `<div class="gc-bar-wrap">
+        <div class="gc-bar ${cnt === 0 ? 'empty' : ''}" style="height:${h}%;" title="${d.getMonth()+1}/${d.getDate()} ${cnt}冊"></div>
+        <div class="gc-bar-label">${label}</div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('goalChartBody').innerHTML = `
+      <div class="gc-total">
+        <span class="gc-total-num">${total}</span>
+        <span class="gc-total-label">冊 / 過去30日</span>
+      </div>
+      <div class="mp-chart-label" style="margin-bottom:0.5rem;">日別読了数</div>
+      <div class="gc-bars">${barsHtml}</div>
+    `;
+    document.getElementById('goalChartOverlay').classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeGoalChart(event) {
+    if (event && event.target !== document.getElementById('goalChartOverlay')) return;
+    document.getElementById('goalChartOverlay').classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
 
   // Status options
   document.querySelectorAll('.status-option').forEach(opt => {

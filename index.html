@@ -6117,8 +6117,9 @@
         .map(([name, count]) => ({ name, count }));
     }
 
-    // 過去30日ランキング
-    const ranking30 = computeRanking(now - 30 * msPerDay, now);
+    // 今月ランキング（カレンダー月）
+    const currentMonthStart = new Date(nowDate.getFullYear(), nowDate.getMonth(), 1).getTime();
+    const ranking30 = computeRanking(currentMonthStart, now);
 
     // 先月の受賞者（カレンダー月）
     const nowDate = new Date(now);
@@ -6163,7 +6164,7 @@
       <div class="mp-chart-label" style="margin-bottom:0.5rem;">日別読了数</div>
       ${svg}
       <div class="gc-ranking-section">
-        <div class="gc-ranking-label">📚 過去30日の読書虫ランキング</div>
+        <div class="gc-ranking-label">🐛 今月の読書虫</div>
         ${buildPodium(ranking30)}
         <div class="gc-prev-section">
           <div class="gc-prev-label">🏅 ${prevMonthLabel}の受賞者</div>

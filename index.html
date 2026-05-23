@@ -2941,11 +2941,53 @@
     font-size: 0.78rem;
     color: var(--ink-soft);
     line-height: 1.55;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+  .mag-comment-body {
+    flex: 1;
+    min-width: 0;
   }
   .mag-comment-author {
     font-weight: 600;
     color: var(--ink);
     margin-right: 0.35rem;
+  }
+  .mag-comment-actions {
+    display: flex;
+    gap: 0.2rem;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .mag-comment-item:hover .mag-comment-actions { opacity: 1; }
+  .mac-btn {
+    background: none;
+    border: none;
+    padding: 0.1rem 0.25rem;
+    font-size: 0.7rem;
+    color: var(--ink-fade);
+    cursor: pointer;
+    border-radius: 3px;
+    line-height: 1;
+    transition: color 0.12s, background 0.12s;
+  }
+  .mac-btn:hover { color: var(--ink-soft); background: var(--bg-deep); }
+  .mac-del:hover { color: var(--accent); }
+  .mac-save { color: var(--accent); font-size: 0.68rem; }
+  .mac-save:hover { background: var(--accent); color: #fff; }
+  .mag-comment-edit-input {
+    flex: 1;
+    width: 100%;
+    padding: 0.2rem 0.4rem;
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    background: var(--bg);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.78rem;
+    color: var(--ink);
+    outline: none;
   }
   .mag-comment-empty {
     font-size: 0.75rem;
@@ -3524,7 +3566,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import {
-    getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, deleteDoc,
+    getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, deleteDoc, updateDoc,
     onSnapshot, query, orderBy, where
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import {
@@ -3678,7 +3720,7 @@
 
   // Expose Firestore helpers needed by magazine reader (regular script scope)
   window._db = db;
-  window._fs = { collection, addDoc, onSnapshot, query, where, orderBy };
+  window._fs = { collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, query, where, orderBy };
 </script>
 
 <script>
@@ -6442,7 +6484,8 @@
       where('magId', '==', magId)
     );
     magCommentUnsub = onSnapshot(q, (snap) => {
-      const comments = snap.docs.map(d => d.data())
+      const comments = snap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
         .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
       renderMagComments(comments);
     }, (err) => { console.warn('magazine comment snapshot error:', err); });
@@ -6459,12 +6502,22 @@
       list.innerHTML = '<p class="mag-comment-empty">まだコメントはありません</p>';
       return;
     }
-    list.innerHTML = comments.map(c => `
-      <div class="mag-comment-item">
-        <span class="mag-comment-author">${escapeHtml(c.author)}</span>${escapeHtml(c.text)}
-      </div>
-    `).join('');
-    // 最新コメントが見えるようにスクロール
+    const me = getMyName();
+    list.innerHTML = comments.map(c => {
+      const isMine = me && me === c.author;
+      const actions = isMine ? `
+        <div class="mag-comment-actions">
+          <button class="mac-btn" onclick="editMagComment('${c.id}', this)" title="編集">✎</button>
+          <button class="mac-btn mac-del" onclick="deleteMagComment('${c.id}')" title="削除">✕</button>
+        </div>` : '';
+      return `
+        <div class="mag-comment-item" data-cid="${c.id}">
+          <div class="mag-comment-body">
+            <span class="mag-comment-author">${escapeHtml(c.author)}</span><span class="mag-comment-text">${escapeHtml(c.text)}</span>
+          </div>
+          ${actions}
+        </div>`;
+    }).join('');
     list.scrollTop = list.scrollHeight;
   }
 
@@ -6479,6 +6532,70 @@
   function closeMagCommentSheet() {
     document.getElementById('magCommentSheet').classList.remove('is-open');
   }
+
+  window.deleteMagComment = async function(id) {
+    if (!confirm('このコメントを削除しますか？')) return;
+    try {
+      const { doc, deleteDoc } = window._fs;
+      await deleteDoc(doc(window._db, 'magazineComments', id));
+    } catch (err) {
+      console.error('delete comment error:', err);
+      showToast('削除に失敗しました');
+    }
+  };
+
+  window.editMagComment = function(id, btn) {
+    const item = document.querySelector(`.mag-comment-item[data-cid="${id}"]`);
+    if (!item) return;
+    const textEl = item.querySelector('.mag-comment-text');
+    const currentText = textEl ? textEl.textContent : '';
+    const body = item.querySelector('.mag-comment-body');
+    const actions = item.querySelector('.mag-comment-actions');
+    // インライン編集モードに切り替え
+    body.innerHTML = `
+      <span class="mag-comment-author">${escapeHtml(getMyName() || '')}</span>
+      <input class="mag-comment-edit-input" id="magEditInput_${id}" value="${escapeHtml(currentText)}"
+        onkeydown="if(event.key==='Enter'&&!event.isComposing)saveMagComment('${id}');if(event.key==='Escape')cancelMagEdit('${id}')">`;
+    actions.innerHTML = `
+      <button class="mac-btn mac-save" onclick="saveMagComment('${id}')">保存</button>
+      <button class="mac-btn" onclick="cancelMagEdit('${id}')">取消</button>`;
+    const input = document.getElementById(`magEditInput_${id}`);
+    if (input) { input.focus(); input.select(); }
+  };
+
+  window.saveMagComment = async function(id) {
+    const input = document.getElementById(`magEditInput_${id}`);
+    if (!input) return;
+    const newText = input.value.trim();
+    if (!newText) return;
+    try {
+      const { doc, updateDoc } = window._fs;
+      await updateDoc(doc(window._db, 'magazineComments', id), { text: newText });
+    } catch (err) {
+      console.error('update comment error:', err);
+      showToast('編集に失敗しました');
+    }
+  };
+
+  window.cancelMagEdit = function(id) {
+    // onSnapshot が自動的に再描画するので何もしなくてよいが、即時戻したい場合は再レンダリング
+    // 最新データで再描画するため何もしない（onSnapshot が発火しないケースのみ手動）
+    const input = document.getElementById(`magEditInput_${id}`);
+    if (input) {
+      // 変更なしのまま updateDoc して onSnapshot を起こす代わりに、
+      // DOM を直接元に戻す（onSnapshot は変化なしでは発火しない）
+      const item = document.querySelector(`.mag-comment-item[data-cid="${id}"]`);
+      if (!item) return;
+      const originalText = input.defaultValue;
+      const me = getMyName() || '';
+      const body = item.querySelector('.mag-comment-body');
+      const actions = item.querySelector('.mag-comment-actions');
+      body.innerHTML = `<span class="mag-comment-author">${escapeHtml(me)}</span><span class="mag-comment-text">${escapeHtml(originalText)}</span>`;
+      actions.innerHTML = `
+        <button class="mac-btn" onclick="editMagComment('${id}', this)" title="編集">✎</button>
+        <button class="mac-btn mac-del" onclick="deleteMagComment('${id}')" title="削除">✕</button>`;
+    }
+  };
 
   window.addMagazineComment = async function() {
     const input = document.getElementById('magCommentInput');

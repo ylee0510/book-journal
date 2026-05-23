@@ -6163,6 +6163,8 @@
 
     // 先月の受賞者（カレンダー月）
     const nowDate = new Date(now);
+    const currentMonthStart = new Date(nowDate.getFullYear(), nowDate.getMonth(), 1).getTime();
+    const ranking30 = computeRanking(currentMonthStart, now);
     const prevMonthStart = new Date(nowDate.getFullYear(), nowDate.getMonth() - 1, 1).getTime();
     const prevMonthEnd   = new Date(nowDate.getFullYear(), nowDate.getMonth(),     1).getTime() - 1;
     const rankingPrev    = computeRanking(prevMonthStart, prevMonthEnd);

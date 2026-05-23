@@ -6148,23 +6148,18 @@
                       style="width:100%;height:auto;display:block;">${grid}${bars}</svg>`;
 
     // ── ランキング計算 ──
-    // 日付フィルターなし：登録日に関わらず finished 全冊でカウント（本棚の冊数と一致させる）
     function computeRanking(startMs, endMs) {
       const counts = {};
-      const src = (startMs != null && endMs != null)
-        ? books.filter(b => b.status === 'finished' && b.createdAt >= startMs && b.createdAt <= endMs)
-        : books.filter(b => b.status === 'finished');
-      src.forEach(b => {
-        const name = (b.reader || '').trim();
-        if (name) counts[name] = (counts[name] || 0) + 1;
-      });
+      books
+        .filter(b => b.status === 'finished' && b.createdAt >= startMs && b.createdAt <= endMs)
+        .forEach(b => {
+          const name = (b.reader || '').trim();
+          if (name) counts[name] = (counts[name] || 0) + 1;
+        });
       return Object.entries(counts)
         .sort((a, b) => b[1] - a[1])
         .map(([name, count]) => ({ name, count }));
     }
-
-    // 今月ランキング：日付フィルターなし（本棚の読了冊数と一致）
-    const ranking30 = computeRanking(null, null);
 
     // 先月の受賞者（カレンダー月）
     const nowDate = new Date(now);

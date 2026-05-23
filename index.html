@@ -2503,13 +2503,14 @@
   }
   .mp-plan-cta:hover { border-color: var(--accent); color: var(--accent); }
 
-  /* ==================== MAGAZINE SECTION ==================== */
+  /* ==================== MAGAZINE SHELF ==================== */
   .magazine-section {
-    margin: 3rem -2.5rem 0;
+    margin-top: 3rem;
     border-top: 1px solid var(--line);
+    padding-bottom: 0;
   }
   .magazine-section-label {
-    padding: 1.25rem 2.5rem 0;
+    padding: 1.25rem 0 0;
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -2528,43 +2529,210 @@
     height: 1px;
     background: var(--line);
   }
-  .magazine-wrapper {
-    width: 100%;
-    height: 72vh;
+  .magazine-shelf {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    padding: 1.25rem 0 0;
     overflow-x: auto;
-    overflow-y: hidden;
-    background-color: #faf7f2;
-    box-sizing: border-box;
-    padding: 2.25rem 2.5rem;
+    -webkit-overflow-scrolling: touch;
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  .magazine-wrapper::-webkit-scrollbar { display: none; }
-  .magazine-content {
+  .magazine-shelf::-webkit-scrollbar { display: none; }
+  .magazine-shelf-board {
+    height: 10px;
+    background: linear-gradient(180deg, #c9b99e 0%, #a8916e 50%, #8a7054 100%);
+    border-radius: 0 0 2px 2px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    margin-bottom: 1.5rem;
+  }
+
+  /* Magazine cover card */
+  .magazine-cover {
+    flex-shrink: 0;
+    width: 108px;
+    height: 162px;
+    border-radius: 2px 5px 5px 2px;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 3px 5px 18px rgba(0,0,0,0.28), inset -2px 0 4px rgba(0,0,0,0.12);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: #1c1008;
+    user-select: none;
+  }
+  .magazine-cover:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 5px 10px 28px rgba(0,0,0,0.38);
+  }
+  .magazine-cover:active { transform: translateY(-2px) scale(1.01); }
+  .magazine-cover::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 8px;
+    background: linear-gradient(to right, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .mc-top {
+    padding: 0.7rem 0.7rem 0.4rem;
+    flex: 1;
+  }
+  .mc-logo {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+  .mc-logo em { color: #e07a5f; font-style: normal; }
+  .mc-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.42rem;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.45);
+    text-transform: uppercase;
+    margin-top: 0.18rem;
+  }
+  .mc-rule {
+    height: 1px;
+    background: var(--accent);
+    margin: 0.55rem 0.7rem 0.45rem;
+    opacity: 0.75;
+  }
+  .mc-vol {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.4rem;
+    letter-spacing: 0.14em;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    padding: 0 0.7rem;
+  }
+  .mc-essay {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.6rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.82);
+    letter-spacing: 0.14em;
+    padding: 0.4rem 0.7rem 0.6rem;
+    align-self: flex-end;
+    line-height: 1.6;
+  }
+  .mc-bottom {
+    height: 5px;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* ==================== MAGAZINE READER ==================== */
+  .magazine-reader-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(16, 10, 4, 0.7);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .magazine-reader-overlay.is-open { display: flex; }
+  .magazine-reader {
+    background: #faf7f2;
+    width: 100%;
+    max-height: 92vh;
+    border-radius: 16px 16px 0 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.28);
+    animation: readerSlideUp 0.3s cubic-bezier(0.34, 1.06, 0.64, 1);
+  }
+  @keyframes readerSlideUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);   opacity: 1; }
+  }
+  .magazine-reader-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem 0.85rem;
+    border-bottom: 1px solid var(--line);
+    background: #faf7f2;
+    flex-shrink: 0;
+  }
+  .mrh-title {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .mrh-title em { font-style: normal; color: var(--accent-soft); }
+  .mrh-vol {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-fade);
+    text-transform: uppercase;
+    margin-top: 0.25rem;
+  }
+  .magazine-reader-close {
+    background: none;
+    border: 1px solid var(--line);
+    cursor: pointer;
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 4px;
+    transition: all 0.15s;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .magazine-reader-close:hover { border-color: var(--accent); color: var(--accent); }
+  .magazine-reader-scroll {
+    flex: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .magazine-reader-scroll::-webkit-scrollbar { display: none; }
+  .magazine-reader-body {
     display: block;
     writing-mode: vertical-rl;
     -webkit-writing-mode: vertical-rl;
-    height: 100%;
-    font-family: 'Noto Serif JP', 'Georgia', 'YuMincho', serif;
+    height: calc(92vh - 5.5rem);
+    font-family: 'Noto Serif JP', 'Georgia', serif;
     color: var(--ink);
+    padding: 2rem 2.5rem;
+    box-sizing: border-box;
   }
-  .magazine-header {
+  .mrb-head {
     margin-left: 3rem;
   }
-  .magazine-meta {
+  .mrb-meta {
     font-size: 0.65rem;
     color: var(--accent);
     margin-bottom: 0.5rem;
     letter-spacing: 0.1em;
   }
-  .magazine-title {
+  .mrb-title {
     font-size: 1.35rem;
     font-weight: 700;
     line-height: 1.2;
     letter-spacing: 0.15em;
   }
-  .magazine-body p {
-    font-size: 0.88rem;
+  .mrb-body p {
+    font-size: 0.9rem;
     line-height: 2.4;
     letter-spacing: 0.08em;
     margin-left: 2.25rem;
@@ -2685,37 +2853,43 @@
     <div class="loading">Loading shared library</div>
   </main>
 
-  <!-- Magazine Section -->
+  <!-- Magazine Shelf -->
   <section class="magazine-section">
     <div class="magazine-section-label">
-      <span>Magazine</span>
+      <span>Shelf. Magazine</span>
     </div>
-    <div class="magazine-wrapper">
-      <article class="magazine-content">
-        <header class="magazine-header">
-          <p class="magazine-meta">不定期連載　一編の余韻</p>
-          <h1 class="magazine-title">本とタイミング</h1>
-        </header>
-        <div class="magazine-body">
-          <p>良きタイミングでの良き本との出会いは、人生を変えるかもしれません。</p>
-          <p>そう言うと、少し大げさに聞こえるかもしれません。<br>
-          けれど実際には、一冊の本が人の考え方や行動の方向を変えることは、決して珍しいことではありません。</p>
-          <p>本は、答えを与えてくれるというよりも、自分の中に眠っていた感覚や問いを呼び起こしてくれる存在です。<br>
-          なんとなく抱えていた違和感に言葉を与えてくれたり、踏み出せずにいた一歩を後押ししてくれたり。<br>
-          まるで心のどこかに火種があり、その火にそっと空気を送ってくれるような感覚があります。</p>
-          <p>不思議なのは、「良い本」がいつも同じように響くわけではないことです。<br>
-          数年前には何も感じなかった本が、ある日突然、自分のために書かれたように感じることがあります。</p>
-          <p>つまり、本との出会いには「内容」だけでなく、「タイミング」があります。</p>
-          <p>人生の転機や迷いの時期に出会った一冊は、単なる情報ではなく、その後の選択や行動を変える&#8220;着火剤&#8221;になる。<br>
-          だからこそ、本を読むことは、自分の未来との偶然の出会いを増やす行為なのかもしれません。</p>
-          <p>すぐに人生が変わるわけではなくても、考え方が少し変わる。<br>
-          視界が少し広がる。<br>
-          その小さな変化の積み重ねが、振り返った時に大きな違いになっているのだと思います。</p>
+    <div class="magazine-shelf">
+      <!-- Vol. 1 -->
+      <div class="magazine-cover" onclick="openMagazineReader('vol1')" title="Shelf Magazine Vol.1 — 本とタイミング">
+        <div class="mc-top">
+          <div class="mc-logo">Shelf<em>.</em></div>
+          <div class="mc-label">Magazine</div>
         </div>
-      </article>
+        <div class="mc-rule"></div>
+        <div class="mc-vol">Vol. 1</div>
+        <div class="mc-essay">本とタイミング</div>
+        <div class="mc-bottom"></div>
+      </div>
     </div>
+    <div class="magazine-shelf-board"></div>
   </section>
 
+</div>
+
+<!-- Magazine Reader -->
+<div class="magazine-reader-overlay" id="magazineReaderOverlay" onclick="closeMagazineReader(event)">
+  <div class="magazine-reader" id="magazineReader">
+    <div class="magazine-reader-header">
+      <div>
+        <div class="mrh-title">Shelf<em>.</em> Magazine</div>
+        <div class="mrh-vol" id="magazineReaderVol">Vol. 1</div>
+      </div>
+      <button class="magazine-reader-close" onclick="closeMagazineReader()">閉じる</button>
+    </div>
+    <div class="magazine-reader-scroll" id="magazineReaderScroll">
+      <div class="magazine-reader-body" id="magazineReaderBody"></div>
+    </div>
+  </div>
 </div>
 
 <!-- Card Detail Popup -->
@@ -5822,6 +5996,53 @@
 
   // Initial load
   loadBooks();
+
+  // ==================== MAGAZINE READER ====================
+  const magazineData = {
+    vol1: {
+      vol: 'Vol. 1',
+      meta: '不定期連載　一編の余韻',
+      title: '本とタイミング',
+      paragraphs: [
+        '良きタイミングでの良き本との出会いは、人生を変えるかもしれません。',
+        'そう言うと、少し大げさに聞こえるかもしれません。<br>けれど実際には、一冊の本が人の考え方や行動の方向を変えることは、決して珍しいことではありません。',
+        '本は、答えを与えてくれるというよりも、自分の中に眠っていた感覚や問いを呼び起こしてくれる存在です。<br>なんとなく抱えていた違和感に言葉を与えてくれたり、踏み出せずにいた一歩を後押ししてくれたり。<br>まるで心のどこかに火種があり、その火にそっと空気を送ってくれるような感覚があります。',
+        '不思議なのは、「良い本」がいつも同じように響くわけではないことです。<br>数年前には何も感じなかった本が、ある日突然、自分のために書かれたように感じることがあります。',
+        'つまり、本との出会いには「内容」だけでなく、「タイミング」があります。',
+        '人生の転機や迷いの時期に出会った一冊は、単なる情報ではなく、その後の選択や行動を変える“着火剤”になる。<br>だからこそ、本を読むことは、自分の未来との偶然の出会いを増やす行為なのかもしれません。',
+        'すぐに人生が変わるわけではなくても、考え方が少し変わる。<br>視界が少し広がる。<br>その小さな変化の積み重ねが、振り返った時に大きな違いになっているのだと思います。'
+      ]
+    }
+  };
+
+  function openMagazineReader(id) {
+    const mag = magazineData[id];
+    if (!mag) return;
+    document.getElementById('magazineReaderVol').textContent = mag.vol;
+    const body = document.getElementById('magazineReaderBody');
+    body.innerHTML = `
+      <div class="mrb-head">
+        <p class="mrb-meta">${mag.meta}</p>
+        <h1 class="mrb-title">${mag.title}</h1>
+      </div>
+      <div class="mrb-body">
+        ${mag.paragraphs.map(p => `<p>${p}</p>`).join('')}
+      </div>
+    `;
+    // In writing-mode: vertical-rl the text start is on the RIGHT — scroll to beginning
+    requestAnimationFrame(() => {
+      const scroll = document.getElementById('magazineReaderScroll');
+      if (scroll) scroll.scrollLeft = scroll.scrollWidth;
+    });
+    document.getElementById('magazineReaderOverlay').classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMagazineReader(event) {
+    if (event && event.target !== document.getElementById('magazineReaderOverlay')) return;
+    document.getElementById('magazineReaderOverlay').classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
 </script>
 
 </body>

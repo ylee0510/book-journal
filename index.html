@@ -388,22 +388,34 @@
     width: 100%;
   }
   .books-grid.is-grid .book-cover {
-    width: 70%;
-    height: auto;
+    width: auto;
+    height: 110px;
     aspect-ratio: 2/3;
-    max-height: 130px;
     flex-shrink: 0;
   }
-  .books-grid.is-grid .book-title-block { padding: 0; }
+  .books-grid.is-grid .book-title-block {
+    padding: 0.3rem 0 0;
+    border-top: none;
+    margin-top: 0.3rem;
+    min-height: unset;
+    align-items: center;
+  }
+  .books-grid.is-grid .book-title-wrap { justify-content: center; }
   .books-grid.is-grid .book-title {
-    font-size: 0.65rem;
+    font-size: 0.65rem !important;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     line-height: 1.4;
+    text-align: center;
   }
-  .books-grid.is-grid .book-author { font-size: 0.58rem; }
+  .books-grid.is-grid .book-author {
+    font-size: 0.58rem;
+    text-align: center;
+    display: block;
+    width: 100%;
+  }
   .books-grid.is-grid .title-copy-btn { display: none; }
 
   /* カード詳細ポップアップ */
@@ -4125,6 +4137,8 @@
   function adjustTitleFontSizes() {
     requestAnimationFrame(() => {
       document.querySelectorAll('.book-title').forEach(el => {
+        // グリッドモードはCSS側で固定済み（0.65rem !important）のでスキップ
+        if (el.closest('.is-grid')) return;
         el.style.fontSize = '';
         const lh = parseFloat(getComputedStyle(el).lineHeight);
         const maxH = lh * 2 + 2;

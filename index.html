@@ -2751,6 +2751,68 @@
     margin-left: 2.25rem;
     margin-bottom: 0;
   }
+
+  /* Magazine comment panel */
+  .mag-comment-panel {
+    flex-shrink: 0;
+    border-top: 1px solid var(--line);
+    padding: 0.75rem 1.25rem 0.9rem;
+    background: #faf7f2;
+    max-height: 38vh;
+    overflow-y: auto;
+  }
+  .mag-comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin-bottom: 0.6rem;
+  }
+  .mag-comment-item {
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .mag-comment-author {
+    font-weight: 600;
+    color: var(--ink);
+    margin-right: 0.35rem;
+  }
+  .mag-comment-empty {
+    font-size: 0.72rem;
+    color: var(--ink-fade);
+    margin-bottom: 0.6rem;
+  }
+  .mag-comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .mag-comment-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.45rem 0.7rem;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--bg);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.75rem;
+    color: var(--ink);
+    outline: none;
+  }
+  .mag-comment-input:focus { border-color: var(--accent); }
+  .mag-comment-submit {
+    align-self: flex-end;
+    padding: 0.35rem 0.9rem;
+    background: var(--bg-deep);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .mag-comment-submit:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
 </style>
 </head>
 <body>
@@ -2902,6 +2964,15 @@
     </div>
     <div class="magazine-reader-scroll" id="magazineReaderScroll">
       <div class="magazine-reader-body" id="magazineReaderBody"></div>
+    </div>
+    <div class="mag-comment-panel">
+      <div class="mag-comment-list" id="magCommentList"></div>
+      <div class="mag-comment-form">
+        <input type="text" class="mag-comment-input" id="magCommentInput"
+          placeholder="コメントを追加..."
+          onkeydown="if(event.key==='Enter'&&!event.isComposing)addMagazineComment()">
+        <button class="mag-comment-submit" onclick="addMagazineComment()">コメントする</button>
+      </div>
     </div>
   </div>
 </div>
@@ -3261,7 +3332,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import {
-    getFirestore, collection, doc, getDoc, getDocs, setDoc, deleteDoc,
+    getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, deleteDoc,
     onSnapshot, query, orderBy, where
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import {
@@ -6029,34 +6100,100 @@
     }
   };
 
+  let currentMagId = null;
+  let magCommentUnsub = null;
+
   function openMagazineReader(id) {
     const mag = magazineData[id];
     if (!mag) return;
-    document.getElementById('magazineReaderVol').textContent = mag.vol;
-    const body = document.getElementById('magazineReaderBody');
-    body.innerHTML = `
+    currentMagId = id;
+
+    // Update vol label (preserve em tag structure)
+    const volParts = mag.vol.match(/^(\w+)(\.)(.*)$/);
+    if (volParts) {
+      document.getElementById('magazineReaderVol').innerHTML =
+        `${escapeHtml(volParts[1])}<em>.</em>${escapeHtml(volParts[3])}`;
+    }
+
+    // Render article body
+    document.getElementById('magazineReaderBody').innerHTML = `
       <div class="mrb-head">
-        <p class="mrb-meta">${mag.meta}</p>
-        <h1 class="mrb-title">${mag.title}</h1>
+        <p class="mrb-meta">${escapeHtml(mag.meta)}</p>
+        <h1 class="mrb-title">${escapeHtml(mag.title)}</h1>
       </div>
       <div class="mrb-body">
         ${mag.paragraphs.map(p => `<p>${p}</p>`).join('')}
       </div>
     `;
-    // In writing-mode: vertical-rl the text start is on the RIGHT — scroll to beginning
+
+    // Scroll article to beginning (right side in vertical-rl)
     requestAnimationFrame(() => {
       const scroll = document.getElementById('magazineReaderScroll');
       if (scroll) scroll.scrollLeft = scroll.scrollWidth;
     });
+
+    // Subscribe to comments
+    subscribeToMagComments(id);
+
     document.getElementById('magazineReaderOverlay').classList.add('is-open');
     document.body.style.overflow = 'hidden';
   }
 
   function closeMagazineReader(event) {
     if (event && event.target !== document.getElementById('magazineReaderOverlay')) return;
+    if (magCommentUnsub) { magCommentUnsub(); magCommentUnsub = null; }
+    currentMagId = null;
     document.getElementById('magazineReaderOverlay').classList.remove('is-open');
     document.body.style.overflow = '';
   }
+
+  function subscribeToMagComments(magId) {
+    if (magCommentUnsub) magCommentUnsub();
+    const q = query(
+      collection(db, 'magazineComments'),
+      where('magId', '==', magId),
+      orderBy('createdAt', 'asc')
+    );
+    magCommentUnsub = onSnapshot(q, (snap) => {
+      const comments = snap.docs.map(d => d.data());
+      renderMagComments(comments);
+    }, () => {});
+  }
+
+  function renderMagComments(comments) {
+    const list = document.getElementById('magCommentList');
+    if (!list) return;
+    if (comments.length === 0) {
+      list.innerHTML = '<p class="mag-comment-empty">まだコメントはありません</p>';
+      return;
+    }
+    list.innerHTML = comments.map(c => `
+      <div class="mag-comment-item">
+        <span class="mag-comment-author">${escapeHtml(c.author)}</span>${escapeHtml(c.text)}
+      </div>
+    `).join('');
+  }
+
+  window.addMagazineComment = async function() {
+    const input = document.getElementById('magCommentInput');
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text || !currentMagId) return;
+    const me = ensureMyName();
+    if (!me) return;
+    input.value = '';
+    try {
+      await addDoc(collection(db, 'magazineComments'), {
+        magId: currentMagId,
+        author: me,
+        text: text,
+        createdAt: Date.now()
+      });
+    } catch (err) {
+      console.error('Magazine comment error:', err);
+      showToast('コメントに失敗しました');
+    }
+  };
 </script>
 
 </body>

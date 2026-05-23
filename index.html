@@ -2511,18 +2511,29 @@
   .magazine-section-label {
     padding: 0 0 0.85rem;
     border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
   }
-  .magazine-section-label span {
+  .magazine-section-label .msl-title {
     font-family: 'Fraunces', serif;
     font-weight: 300;
-    font-size: 0.88rem;
-    letter-spacing: -0.01em;
+    font-size: 1.3rem;
+    letter-spacing: -0.02em;
     color: var(--ink-soft);
+    line-height: 1;
   }
-  .magazine-section-label span em {
+  .magazine-section-label .msl-title em {
     font-style: italic;
     color: var(--accent);
     font-weight: 400;
+  }
+  .magazine-section-label .msl-sub {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 300;
+    font-size: 0.68rem;
+    color: var(--ink-fade);
+    letter-spacing: 0.02em;
   }
   .magazine-shelf {
     display: flex;
@@ -2857,7 +2868,8 @@
   <!-- Magazine Shelf -->
   <section class="magazine-section">
     <div class="magazine-section-label">
-      <span>Shelf<em>.</em> Magazine</span>
+      <span class="msl-title">Shelf<em>.</em> Magazine</span>
+      <span class="msl-sub">（不定期発行）</span>
     </div>
     <div class="magazine-shelf">
       <!-- Vol. 1 -->

@@ -2839,6 +2839,95 @@
   .goal-chart-close:hover { border-color: var(--accent); color: var(--accent); }
   .goal-chart-body {
     padding: 1.25rem 1.25rem 1.5rem;
+    overflow-y: auto;
+    max-height: calc(85vh - 4rem);
+  }
+
+  /* ── 読書虫ランキング ── */
+  .gc-ranking-section {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+  }
+  .gc-ranking-label {
+    font-size: 0.72rem;
+    color: var(--ink-fade);
+    letter-spacing: 0.05em;
+    margin-bottom: 1.1rem;
+    font-family: 'Noto Serif JP', serif;
+  }
+  .gc-podium {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  .gc-podium-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    max-width: 100px;
+  }
+  .gc-podium-medal { font-size: 1.7rem; line-height: 1; margin-bottom: 0.25rem; }
+  .gc-podium-name {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.1rem;
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
+  }
+  .gc-podium-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--ink-soft);
+    margin-bottom: 0.35rem;
+  }
+  .gc-podium-stand {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.85);
+  }
+  .gc-podium-empty .gc-podium-stand { opacity: 0.25; }
+  .gc-no-data {
+    text-align: center;
+    color: var(--ink-fade);
+    font-size: 0.75rem;
+    padding: 0.75rem 0;
+  }
+  /* 先月の受賞者 */
+  .gc-prev-section {
+    margin-top: 1.25rem;
+    padding: 0.85rem 1rem;
+    background: var(--bg-deep);
+    border-radius: 6px;
+    border: 1px solid var(--line);
+  }
+  .gc-prev-label {
+    font-size: 0.65rem;
+    color: var(--ink-fade);
+    margin-bottom: 0.55rem;
+    letter-spacing: 0.05em;
+    font-family: 'Noto Serif JP', serif;
+  }
+  .gc-prev-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .gc-prev-item {
+    font-size: 0.75rem;
+    color: var(--ink-soft);
   }
   .gc-total {
     display: flex;
@@ -6014,6 +6103,58 @@
     const svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg"
                       style="width:100%;height:auto;display:block;">${grid}${bars}</svg>`;
 
+    // ── ランキング計算 ──
+    function computeRanking(startMs, endMs) {
+      const counts = {};
+      books
+        .filter(b => b.status === 'finished' && b.createdAt >= startMs && b.createdAt <= endMs)
+        .forEach(b => {
+          const name = (b.reader || '').trim();
+          if (name) counts[name] = (counts[name] || 0) + 1;
+        });
+      return Object.entries(counts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([name, count]) => ({ name, count }));
+    }
+
+    // 過去30日ランキング
+    const ranking30 = computeRanking(now - 30 * msPerDay, now);
+
+    // 先月の受賞者（カレンダー月）
+    const nowDate = new Date(now);
+    const prevMonthStart = new Date(nowDate.getFullYear(), nowDate.getMonth() - 1, 1).getTime();
+    const prevMonthEnd   = new Date(nowDate.getFullYear(), nowDate.getMonth(),     1).getTime() - 1;
+    const rankingPrev    = computeRanking(prevMonthStart, prevMonthEnd);
+    const prevMonthLabel = new Date(prevMonthStart).toLocaleDateString('ja-JP', { month: 'long' });
+
+    // ── 台座HTML ──
+    function buildPodium(ranking) {
+      if (ranking.length === 0) return `<p class="gc-no-data">読了記録がまだありません</p>`;
+      // 表示順：2位(左)・1位(中)・3位(右)
+      const slots = [
+        { idx: 1, medal: '🥈', h: 42, bg: 'linear-gradient(180deg,#b5c0c8,#8fa0aa)', n: '2' },
+        { idx: 0, medal: '🥇', h: 58, bg: 'linear-gradient(180deg,#d4a843,#b8892a)', n: '1' },
+        { idx: 2, medal: '🥉', h: 30, bg: 'linear-gradient(180deg,#ca9668,#a87448)', n: '3' },
+      ].map(({ idx, medal, h, bg, n }) => {
+        const r = ranking[idx];
+        if (!r) return `<div class="gc-podium-slot gc-podium-empty"><div class="gc-podium-stand" style="height:${h}px;background:${bg};">${n}</div></div>`;
+        return `<div class="gc-podium-slot">
+          <div class="gc-podium-medal">${medal}</div>
+          <div class="gc-podium-name" title="${escapeHtml(r.name)}">${escapeHtml(r.name)}</div>
+          <div class="gc-podium-count">${r.count}冊</div>
+          <div class="gc-podium-stand" style="height:${h}px;background:${bg};">${n}</div>
+        </div>`;
+      }).join('');
+      return `<div class="gc-podium">${slots}</div>`;
+    }
+
+    // 先月受賞者
+    const prevMedals = ['🥇','🥈','🥉'];
+    const prevTop = rankingPrev.slice(0, 3);
+    const prevRowHTML = prevTop.length > 0
+      ? prevTop.map((r, i) => `<div class="gc-prev-item">${prevMedals[i]} <strong>${escapeHtml(r.name)}</strong>（${r.count}冊）</div>`).join('')
+      : `<div class="gc-prev-item" style="color:var(--ink-fade);">記録なし</div>`;
+
     document.getElementById('goalChartBody').innerHTML = `
       <div class="gc-total">
         <span class="gc-total-num">${total}</span>
@@ -6021,6 +6162,14 @@
       </div>
       <div class="mp-chart-label" style="margin-bottom:0.5rem;">日別読了数</div>
       ${svg}
+      <div class="gc-ranking-section">
+        <div class="gc-ranking-label">📚 過去30日の読書虫ランキング</div>
+        ${buildPodium(ranking30)}
+        <div class="gc-prev-section">
+          <div class="gc-prev-label">🏅 ${prevMonthLabel}の受賞者</div>
+          <div class="gc-prev-row">${prevRowHTML}</div>
+        </div>
+      </div>
     `;
     document.getElementById('goalChartOverlay').classList.add('is-open');
     document.body.style.overflow = 'hidden';

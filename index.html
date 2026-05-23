@@ -838,6 +838,37 @@
     line-height: 1;
   }
 
+  .like-avatars {
+    display: flex;
+    align-items: center;
+  }
+  .like-avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    margin-left: -7px;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    font-family: 'Noto Serif JP', serif;
+    flex-shrink: 0;
+    cursor: default;
+    transition: transform 0.15s;
+  }
+  .like-avatar:hover { transform: scale(1.15); z-index: 1; }
+  .like-avatars .like-avatar:first-child { margin-left: 0; }
+  .like-avatar-more {
+    background: var(--bg-deep) !important;
+    color: var(--ink-soft) !important;
+    font-size: 8px;
+    font-weight: 600;
+    border-color: var(--line);
+  }
+
   .comment-toggle {
     display: inline-flex;
     align-items: center;
@@ -4691,8 +4722,8 @@
           <div class="social-bar">
             <button class="like-btn ${hasLiked(book) ? 'liked' : ''}" onclick="toggleLike(event, '${book.id}')">
               <span class="heart">${hasLiked(book) ? '♥' : '♡'}</span>
-              <span>${(book.likes || []).length}</span>
             </button>
+            ${renderLikeAvatars(book.likes)}
             <button class="comment-toggle" onclick="toggleComments(event, '${book.id}')">
               <span>💬</span>
               <span>${(book.comments || []).length}</span>
@@ -4762,6 +4793,25 @@
   }
 
   // (toggleMemo deprecated — memo click now opens card popup)
+
+  // Deterministic color from name string
+  function nameColor(name) {
+    const palette = ['#b8432a','#5b8a6b','#8a6b46','#4a7a9b','#7a5b8a','#6b8a46','#8a4a6b'];
+    return palette[(name.charCodeAt(0) || 0) % palette.length];
+  }
+
+  // Render overlapping like-avatar circles
+  function renderLikeAvatars(likes) {
+    if (!likes || likes.length === 0) return '';
+    const MAX = 4;
+    const shown = likes.slice(0, MAX);
+    const rest = likes.length - MAX;
+    const circles = shown.map(name =>
+      `<div class="like-avatar" style="background:${nameColor(name)}" title="${escapeHtml(name)}">${escapeHtml(name.charAt(0))}</div>`
+    ).join('');
+    const more = rest > 0 ? `<div class="like-avatar like-avatar-more">+${rest}</div>` : '';
+    return `<div class="like-avatars">${circles}${more}</div>`;
+  }
 
   // Check if current user has liked this book
   function hasLiked(book) {
@@ -6292,20 +6342,27 @@
     event.stopPropagation();
     const me = ensureMyName();
     if (!me) return;
-    
+
     const book = books.find(b => b.id === id);
     if (!book) return;
-    
+
     const likes = book.likes || [];
     const liked = likes.includes(me);
-    
-    const updated = {
-      ...book,
-      likes: liked ? likes.filter(n => n !== me) : [...likes, me]
-    };
-    
+    const newLikes = liked ? likes.filter(n => n !== me) : [...likes, me];
+
     try {
-      await saveBook(updated);
+      if (window._db && window._fs && window._fs.updateDoc) {
+        // Firestore: likes フィールドだけ更新（ルールの hasOnly チェックを確実に通す）
+        const { doc, updateDoc } = window._fs;
+        await updateDoc(doc(window._db, 'books', id), { likes: newLikes });
+      } else {
+        // localStorage fallback
+        const updated = { ...book, likes: newLikes };
+        const idx = books.findIndex(b => b.id === id);
+        if (idx >= 0) books[idx] = updated;
+        localStorage.setItem('book:' + id, JSON.stringify(updated));
+        renderBooks();
+      }
     } catch (err) {
       console.error('Like error:', err);
       showToast('いいねに失敗しました');

@@ -669,6 +669,45 @@
     gap: 0;
   }
 
+  /* ── 本の帯：「こんな人へ」 ── */
+  .book-band {
+    margin: 0.75rem -1rem 0;
+    padding: 0.4rem 1rem;
+    background: linear-gradient(90deg, rgba(166,138,63,0.12), rgba(166,138,63,0.05));
+    border-top: 1px solid rgba(166,138,63,0.28);
+    border-bottom: 1px solid rgba(166,138,63,0.28);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .book-band-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.56rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--gold);
+    font-weight: 600;
+    margin-right: 0.45rem;
+    font-style: normal;
+    vertical-align: middle;
+  }
+  /* グリッド表示：帯を1行に圧縮 */
+  .books-grid.is-grid .book-band {
+    margin: 0.3rem -0.5rem 0;
+    padding: 0.28rem 0.5rem;
+    font-size: 0.6rem;
+    -webkit-line-clamp: 1;
+    text-align: left;
+  }
+  .books-grid.is-grid .book-band-label {
+    font-size: 0.5rem;
+  }
+
   /* Title block - fixed min-height so cards align vertically */
   .book-title-block {
     padding: 0.9rem 0 0.8rem;
@@ -4781,6 +4820,7 @@
           </div>
         </div>
 
+        ${book.recommend ? `<div class="book-band"><span class="book-band-label">こんな人へ</span>${escapeHtml(book.recommend)}</div>` : ''}
 
         <div class="book-title-block">
           <div class="book-title-wrap">
@@ -6164,7 +6204,7 @@
       <div class="mp-chart-label" style="margin-bottom:0.5rem;">日別読了数</div>
       ${svg}
       <div class="gc-ranking-section">
-        <div class="gc-ranking-label">🐛 今月の読書虫</div>
+        <div class="gc-ranking-label">今月の読書虫 🐛</div>
         ${buildPodium(ranking30)}
         <div class="gc-prev-section">
           <div class="gc-prev-label">🏅 ${prevMonthLabel}の受賞者</div>

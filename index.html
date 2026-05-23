@@ -4253,6 +4253,7 @@
         updateAuthUI();
         if (user && !user.isAnonymous) {
           await loadPlanStatus(user.uid);
+          loadUserProfile(user.uid).catch(() => {});
         }
         updateLimitBanner();
       });

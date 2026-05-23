@@ -5864,21 +5864,60 @@
     });
 
     const total = dayCounts.reduce((a, v) => a + v, 0);
-    const maxVal = Math.max(...dayCounts, 1);
+    const rawMax = Math.max(...dayCounts, 1);
+    // Round up to a "nice" y-axis ceiling
+    const yMax = rawMax <= 2 ? 2 : rawMax <= 4 ? 4 : rawMax <= 6 ? 6 :
+                 rawMax <= 8 ? 8 : rawMax <= 10 ? 10 : Math.ceil(rawMax / 5) * 5;
+    const yTicks = 4; // number of horizontal divisions
 
-    const barsHtml = dayCounts.map((cnt, i) => {
+    // SVG dimensions
+    const W = 300, H = 130;
+    const padL = 26, padR = 6, padT = 8, padB = 22;
+    const innerW = W - padL - padR;
+    const innerH = H - padT - padB;
+    const slotW = innerW / 30;
+    const barW = Math.max(2, slotW * 0.68);
+
+    // Grid lines + y-axis labels
+    let grid = '';
+    for (let t = 0; t <= yTicks; t++) {
+      const y = +(padT + innerH - (t / yTicks) * innerH).toFixed(1);
+      const val = Math.round((t / yTicks) * yMax);
+      grid += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}"
+                     stroke="#d4cdbe" stroke-width="${t === 0 ? 1 : 0.5}"/>
+               <text x="${padL - 4}" y="${y + 3.5}" text-anchor="end"
+                     font-size="7.5" fill="#8a7e70" font-family="monospace">${val}</text>`;
+    }
+
+    // Y-axis vertical line
+    grid += `<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + innerH}"
+                   stroke="#a89070" stroke-width="0.75"/>`;
+
+    // Bars + x-axis labels
+    let bars = '';
+    dayCounts.forEach((cnt, i) => {
       const daysAgo = 29 - i;
       const d = new Date(now - daysAgo * msPerDay);
-      const showLabel = (i % 7 === 0) || i === 29;
-      const label = showLabel
-        ? (daysAgo === 0 ? '今日' : `${d.getMonth() + 1}/${d.getDate()}`)
-        : '';
-      const h = cnt === 0 ? 2 : Math.max(6, Math.round((cnt / maxVal) * 100));
-      return `<div class="gc-bar-wrap">
-        <div class="gc-bar ${cnt === 0 ? 'empty' : ''}" style="height:${h}%;" title="${d.getMonth()+1}/${d.getDate()} ${cnt}冊"></div>
-        <div class="gc-bar-label">${label}</div>
-      </div>`;
-    }).join('');
+      const barH = cnt === 0 ? 1.5 : Math.max(3, (cnt / yMax) * innerH);
+      const x = +(padL + i * slotW + (slotW - barW) / 2).toFixed(2);
+      const y = +(padT + innerH - barH).toFixed(2);
+      const fill = cnt === 0 ? '#d4cdbe' : '#b8432a';
+      bars += `<rect x="${x}" y="${y}" width="${barW.toFixed(2)}" height="${barH.toFixed(2)}"
+                     fill="${fill}" rx="1">
+                 <title>${d.getMonth()+1}/${d.getDate()} ${cnt}冊</title>
+               </rect>`;
+
+      // X-axis label every 7 days + today
+      if (i % 7 === 0 || i === 29) {
+        const label = daysAgo === 0 ? '今日' : `${d.getMonth()+1}/${d.getDate()}`;
+        const lx = +(padL + i * slotW + slotW / 2).toFixed(1);
+        bars += `<text x="${lx}" y="${H - 3}" text-anchor="middle"
+                       font-size="7.5" fill="#8a7e70" font-family="monospace">${label}</text>`;
+      }
+    });
+
+    const svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg"
+                      style="width:100%;height:auto;display:block;">${grid}${bars}</svg>`;
 
     document.getElementById('goalChartBody').innerHTML = `
       <div class="gc-total">
@@ -5886,7 +5925,7 @@
         <span class="gc-total-label">冊 / 過去30日</span>
       </div>
       <div class="mp-chart-label" style="margin-bottom:0.5rem;">日別読了数</div>
-      <div class="gc-bars">${barsHtml}</div>
+      ${svg}
     `;
     document.getElementById('goalChartOverlay').classList.add('is-open');
     document.body.style.overflow = 'hidden';

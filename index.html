@@ -3483,6 +3483,10 @@
   // Signal that Firebase is ready
   window.firebaseReady = true;
   window.dispatchEvent(new Event('firebaseReady'));
+
+  // Expose Firestore helpers needed by magazine reader (regular script scope)
+  window._db = db;
+  window._fs = { collection, addDoc, onSnapshot, query, where, orderBy };
 </script>
 
 <script>
@@ -6149,8 +6153,10 @@
 
   function subscribeToMagComments(magId) {
     if (magCommentUnsub) magCommentUnsub();
+    if (!window._db || !window._fs) return;
+    const { collection, onSnapshot, query, where, orderBy } = window._fs;
     const q = query(
-      collection(db, 'magazineComments'),
+      collection(window._db, 'magazineComments'),
       where('magId', '==', magId),
       orderBy('createdAt', 'asc')
     );
@@ -6183,7 +6189,8 @@
     if (!me) return;
     input.value = '';
     try {
-      await addDoc(collection(db, 'magazineComments'), {
+      const { collection, addDoc } = window._fs;
+      await addDoc(collection(window._db, 'magazineComments'), {
         magId: currentMagId,
         author: me,
         text: text,

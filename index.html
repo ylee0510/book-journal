@@ -2683,13 +2683,13 @@
   }
   .mrh-title {
     font-family: 'Fraunces', serif;
-    font-style: italic;
+    font-weight: 300;
     font-size: 1rem;
-    font-weight: 600;
+    letter-spacing: -0.02em;
     color: var(--ink);
     line-height: 1;
   }
-  .mrh-title em { font-style: normal; color: var(--accent-soft); }
+  .mrh-title em { font-style: italic; color: var(--accent); font-weight: 400; }
   .mrh-vol {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.6rem;
@@ -2873,14 +2873,14 @@
     </div>
     <div class="magazine-shelf">
       <!-- Vol. 1 -->
-      <div class="magazine-cover" onclick="openMagazineReader('vol1')" title="Shelf Magazine Vol.1 — 本とタイミング">
+      <div class="magazine-cover" onclick="openMagazineReader('vol1')" title="Shelf Magazine Vol.1 — 本と、巡り合わせ">
         <div class="mc-top">
           <div class="mc-logo">Shelf<em>.</em></div>
           <div class="mc-label">Magazine</div>
         </div>
         <div class="mc-rule"></div>
         <div class="mc-vol">Vol<em>.</em> 1</div>
-        <div class="mc-essay">本とタイミング</div>
+        <div class="mc-essay">本と、巡り合わせ</div>
         <div class="mc-bottom"></div>
       </div>
     </div>
@@ -6015,7 +6015,7 @@
     vol1: {
       vol: 'Vol. 1',
       meta: '不定期連載　一編の余韻',
-      title: '本とタイミング',
+      title: '本と、巡り合わせ',
       paragraphs: [
         '良きタイミングでの良き本との出会いは、人生を変えるかもしれません。',
         'そう言うと、少し大げさに聞こえるかもしれません。<br>けれど実際には、一冊の本が人の考え方や行動の方向を変えることは、決して珍しいことではありません。',

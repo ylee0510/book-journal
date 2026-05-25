@@ -6644,20 +6644,20 @@
       const colorIdx = notes.findIndex(n => n.id === note.id) % STICKY_COLORS.length;
       const color = STICKY_COLORS[colorIdx];
       return `<div class="sticky-note sticky-note--${color}">
-        ${isOwner ? `<button class="sticky-note__delete" onclick="deleteStickyNote('${book.id}','${note.id}')">×</button>` : ''}
+        ${isOwner ? `<button type="button" class="sticky-note__delete" onclick="deleteStickyNote('${book.id}','${note.id}')">×</button>` : ''}
         ${(note.page != null && note.page !== '') ? `<div class="sticky-note__page">p. ${note.page}</div>` : ''}
         <div class="sticky-note__text">${escapeHtml(note.text)}</div>
       </div>`;
     }).join('');
 
     const addHTML = isOwner ? `
-      <button class="sticky-add-btn" onclick="toggleStickyForm('${book.id}')">＋ 付箋を追加</button>
+      <button type="button" class="sticky-add-btn" onclick="toggleStickyForm('${book.id}')">＋ 付箋を追加</button>
       <div class="sticky-form" id="stickyForm-${book.id}" style="display:none;">
         <input type="number" class="sticky-form__page" id="stickyPage-${book.id}" placeholder="ページ数（任意）" min="1">
         <textarea class="sticky-form__text" id="stickyText-${book.id}" placeholder="気になった一節やメモ..." maxlength="200"></textarea>
         <div class="sticky-form__actions">
-          <button class="sticky-form__submit" onclick="addStickyNote('${book.id}')">貼る</button>
-          <button class="sticky-form__cancel" onclick="toggleStickyForm('${book.id}')">キャンセル</button>
+          <button type="button" class="sticky-form__submit" onclick="addStickyNote('${book.id}')">貼る</button>
+          <button type="button" class="sticky-form__cancel" onclick="toggleStickyForm('${book.id}')">キャンセル</button>
         </div>
       </div>` : '';
 
@@ -6676,7 +6676,7 @@
       const colorIdx = editingStickyNotes.findIndex(n => n.id === note.id) % STICKY_COLORS.length;
       const color = STICKY_COLORS[colorIdx];
       return `<div class="sticky-note sticky-note--${color}">
-        <button class="sticky-note__delete" onclick="deleteStickyNoteFromEdit('${note.id}')">×</button>
+        <button type="button" class="sticky-note__delete" onclick="deleteStickyNoteFromEdit('${note.id}')">×</button>
         ${(note.page != null && note.page !== '') ? `<div class="sticky-note__page">p. ${note.page}</div>` : ''}
         <div class="sticky-note__text">${escapeHtml(note.text)}</div>
       </div>`;
@@ -6685,13 +6685,13 @@
     return `<div class="sticky-notes-section">
       <div class="sticky-notes-header">📌 付箋メモ</div>
       ${notesHTML}
-      <button class="sticky-add-btn" onclick="toggleEditStickyForm()">＋ 付箋を追加</button>
+      <button type="button" class="sticky-add-btn" onclick="toggleEditStickyForm()">＋ 付箋を追加</button>
       <div class="sticky-form" id="editStickyForm" style="display:none;">
         <input type="number" class="sticky-form__page" id="editStickyPage" placeholder="ページ数（任意）" min="1">
         <textarea class="sticky-form__text" id="editStickyText" placeholder="気になった一節やメモ..." maxlength="200"></textarea>
         <div class="sticky-form__actions">
-          <button class="sticky-form__submit" onclick="addStickyNoteToEdit()">貼る</button>
-          <button class="sticky-form__cancel" onclick="toggleEditStickyForm()">キャンセル</button>
+          <button type="button" class="sticky-form__submit" onclick="addStickyNoteToEdit()">貼る</button>
+          <button type="button" class="sticky-form__cancel" onclick="toggleEditStickyForm()">キャンセル</button>
         </div>
       </div>
     </div>`;

@@ -339,7 +339,7 @@
     display: flex;
     flex-direction: row;
     gap: 1.25rem;
-    padding: 1.25rem 1rem 1.5rem;
+    padding: 24px 1rem 1.5rem;
     overflow-x: auto;
     overflow-y: visible;
     -webkit-overflow-scrolling: touch;
@@ -1089,6 +1089,38 @@
   }
 
   .book-edit:hover { color: var(--gold); }
+
+  /* ==================== STICKY TABS (card) ==================== */
+  .sticky-tabs {
+    position: absolute;
+    top: -1px;
+    right: 18px;
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    transform: translateY(-100%);
+    cursor: pointer;
+    z-index: 2;
+  }
+  .books-grid.is-grid .sticky-tabs { display: none; }
+
+  .sticky-tab {
+    width: 26px;
+    border-radius: 3px 3px 0 0;
+    box-shadow: 1px -2px 5px rgba(0,0,0,0.13);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    transition: transform 0.15s ease;
+  }
+  .sticky-tab:hover { transform: translateY(-2px); }
+  .sticky-tab--yellow { background: #fff9d0; color: #8a7a00; }
+  .sticky-tab--pink   { background: #fde8e8; color: #a05050; }
+  .sticky-tab--blue   { background: #e8f0ff; color: #4060a8; }
+  .sticky-tab--green  { background: #e8f4e8; color: #3a7a3a; }
 
   /* ==================== EMPTY STATE ==================== */
   .empty-state {

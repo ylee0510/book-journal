@@ -5008,6 +5008,7 @@
     
     grid.innerHTML = filtered.map(book => `
       <article class="book-card" data-status="${book.status}" data-book-id="${book.id}" onclick="if(currentView==='grid')openCardPopup('${book.id}')">
+        ${renderStickyTabsHTML(book)}
         <div class="book-status-row">
           <div class="book-status">
             <span class="status-dot"></span>

@@ -1122,6 +1122,134 @@
   .sticky-tab--blue   { background: #e8f0ff; color: #4060a8; }
   .sticky-tab--green  { background: #e8f4e8; color: #3a7a3a; }
 
+  /* ==================== STICKY NOTES (popup / edit) ==================== */
+  .sticky-notes-section {
+    margin-top: 1.2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+  .sticky-notes-header {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    color: var(--ink-fade);
+    margin-bottom: 0.6rem;
+    text-transform: uppercase;
+  }
+  .sticky-note {
+    border-radius: 0 3px 3px 0;
+    padding: 7px 28px 7px 10px;
+    margin-bottom: 6px;
+    font-size: 0.72rem;
+    color: var(--ink);
+    line-height: 1.6;
+    position: relative;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.07);
+  }
+  .sticky-note--yellow { background: #fff9d0; border-left: 3px solid #f3d965; }
+  .sticky-note--pink   { background: #fde8e8; border-left: 3px solid #e88282; }
+  .sticky-note--blue   { background: #e8f0ff; border-left: 3px solid #8aabe8; }
+  .sticky-note--green  { background: #e8f4e8; border-left: 3px solid #82c882; }
+  .sticky-note__page {
+    font-size: 0.58rem;
+    color: var(--ink-fade);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 2px;
+  }
+  .sticky-note__text { word-break: break-word; white-space: pre-wrap; }
+  .sticky-note__delete {
+    position: absolute;
+    top: 5px;
+    right: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.7rem;
+    color: var(--ink-fade);
+    line-height: 1;
+    padding: 2px 4px;
+    opacity: 0.6;
+    transition: opacity 0.15s, color 0.15s;
+  }
+  .sticky-note__delete:hover { opacity: 1; color: var(--accent); }
+
+  .sticky-add-btn {
+    width: 100%;
+    margin-top: 6px;
+    background: transparent;
+    border: 1px dashed #c8b830;
+    border-radius: 3px;
+    padding: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: #8a7a00;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .sticky-add-btn:hover { background: #fffbe6; }
+
+  .sticky-form {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .sticky-form__page {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 5px 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink);
+    outline: none;
+  }
+  .sticky-form__page:focus { border-color: #c8b830; }
+  .sticky-form__text {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 6px 8px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.78rem;
+    color: var(--ink);
+    outline: none;
+    resize: vertical;
+    min-height: 64px;
+    line-height: 1.7;
+  }
+  .sticky-form__text:focus { border-color: #c8b830; }
+  .sticky-form__actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .sticky-form__submit {
+    background: #f3d965;
+    border: none;
+    border-radius: 2px;
+    padding: 5px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: #5a4a00;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .sticky-form__submit:hover { background: #e8c830; }
+  .sticky-form__cancel {
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 5px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--ink-fade);
+    cursor: pointer;
+  }
+  .sticky-form__cancel:hover { border-color: var(--ink-soft); color: var(--ink); }
+
   /* ==================== EMPTY STATE ==================== */
   .empty-state {
     grid-column: 1 / -1;

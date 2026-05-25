@@ -4301,6 +4301,7 @@
   };
 
   let currentView = 'shelf';
+  let currentPopupBookId = null;
   function setView(mode) {
     currentView = mode;
     const grid = document.getElementById('booksGrid');
@@ -4318,11 +4319,14 @@
 
   function openCardPopup(bookId, event) {
     if (event) event.stopPropagation();
+    currentPopupBookId = bookId;
     const book = books.find(b => b.id === bookId);
     if (!book) return;
     const statusLabel = { reading: '読書中', finished: '読了', wishlist: 'また読みたい' };
     const stars = book.rating ? '★'.repeat(book.rating) + '☆'.repeat(5 - book.rating) : '';
     const cats = getCategories(book).map(c => `<span class="book-category-tag" style="font-size:0.6rem;">${escapeHtml(normalizeCategory(c))}</span>`).join('');
+    const owner = isMyBook(book);
+    const hasStickyNotes = book.stickyNotes && book.stickyNotes.length > 0;
     document.getElementById('cardPopupContent').innerHTML = `
       ${book.coverUrl ? `<img class="card-popup-cover" src="${escapeHtml(book.coverUrl)}" alt="${escapeHtml(book.title)}">` : ''}
       <div class="card-popup-title">${escapeHtml(book.title)}</div>
@@ -4332,14 +4336,78 @@
       </div>
       ${book.memo ? `<div class="card-popup-memo">${linkify(book.memo)}</div>` : ''}
       ${book.recommend ? `<div class="card-popup-recommend"><strong>こんな人へ</strong> ${linkify(book.recommend)}</div>` : ''}
+      ${(owner || hasStickyNotes) ? renderStickyNotesHTML(book, owner) : ''}
     `;
     document.getElementById('cardPopupOverlay').classList.add('open');
   }
 
   function closeCardPopup(e) {
     if (e && e.target !== document.getElementById('cardPopupOverlay')) return;
+    currentPopupBookId = null;
     document.getElementById('cardPopupOverlay').classList.remove('open');
   }
+
+  window.toggleStickyForm = function(bookId) {
+    const form = document.getElementById('stickyForm-' + bookId);
+    if (!form) return;
+    const isHidden = form.style.display === 'none';
+    form.style.display = isHidden ? 'flex' : 'none';
+    if (isHidden) {
+      const textEl = document.getElementById('stickyText-' + bookId);
+      if (textEl) textEl.focus();
+    }
+  };
+
+  window.addStickyNote = async function(bookId) {
+    const pageEl = document.getElementById('stickyPage-' + bookId);
+    const textEl = document.getElementById('stickyText-' + bookId);
+    const text = textEl ? textEl.value.trim() : '';
+    if (!text) { showToast('メモを入力してください'); return; }
+
+    const pageVal = pageEl && pageEl.value !== '' ? parseInt(pageEl.value, 10) : null;
+    const book = books.find(b => b.id === bookId);
+    if (!book) return;
+
+    const note = {
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+      page: pageVal,
+      text: text,
+      color: STICKY_COLORS[(book.stickyNotes || []).length % STICKY_COLORS.length],
+      createdAt: Date.now()
+    };
+
+    const newNotes = [...(book.stickyNotes || []), note];
+    book.stickyNotes = newNotes;
+    openCardPopup(bookId);
+
+    try {
+      const { doc, updateDoc } = window._fs;
+      await updateDoc(doc(window._db, 'books', bookId), { stickyNotes: newNotes });
+    } catch (err) {
+      book.stickyNotes = newNotes.filter(n => n.id !== note.id);
+      openCardPopup(bookId);
+      showToast('付箋の保存に失敗しました: ' + (err.message || err));
+    }
+  };
+
+  window.deleteStickyNote = async function(bookId, noteId) {
+    const book = books.find(b => b.id === bookId);
+    if (!book) return;
+
+    const prevNotes = book.stickyNotes || [];
+    const newNotes = prevNotes.filter(n => n.id !== noteId);
+    book.stickyNotes = newNotes;
+    openCardPopup(bookId);
+
+    try {
+      const { doc, updateDoc } = window._fs;
+      await updateDoc(doc(window._db, 'books', bookId), { stickyNotes: newNotes });
+    } catch (err) {
+      book.stickyNotes = prevNotes;
+      openCardPopup(bookId);
+      showToast('付箋の削除に失敗しました: ' + (err.message || err));
+    }
+  };
 
   function showGuide() {
     document.getElementById('mainView').style.display = 'none';

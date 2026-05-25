@@ -3871,6 +3871,8 @@
         <input type="text" class="form-input" id="inputRecommend" placeholder="例:新しい挑戦をしたい人、人生に迷っている人">
       </div>
 
+      <div id="editStickySection"></div>
+
       <div class="form-group">
         <label class="form-label">Category / カテゴリ <span style="color:var(--ink-fade); font-weight:normal; text-transform:none; letter-spacing:0;">(任意・3つまで)</span></label>
         <div class="category-checkboxes" id="categoryCheckboxes">
@@ -4407,6 +4409,43 @@
       openCardPopup(bookId);
       showToast('付箋の削除に失敗しました: ' + (err.message || err));
     }
+  };
+
+  window.toggleEditStickyForm = function() {
+    const form = document.getElementById('editStickyForm');
+    if (!form) return;
+    const isHidden = form.style.display === 'none';
+    form.style.display = isHidden ? 'flex' : 'none';
+    if (isHidden) {
+      const textEl = document.getElementById('editStickyText');
+      if (textEl) textEl.focus();
+    }
+  };
+
+  window.addStickyNoteToEdit = function() {
+    const pageEl = document.getElementById('editStickyPage');
+    const textEl = document.getElementById('editStickyText');
+    const text = textEl ? textEl.value.trim() : '';
+    if (!text) { showToast('メモを入力してください'); return; }
+
+    const pageVal = pageEl && pageEl.value !== '' ? parseInt(pageEl.value, 10) : null;
+    const note = {
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+      page: pageVal,
+      text: text,
+      color: STICKY_COLORS[editingStickyNotes.length % STICKY_COLORS.length],
+      createdAt: Date.now()
+    };
+
+    editingStickyNotes.push(note);
+    const stickySection = document.getElementById('editStickySection');
+    if (stickySection) stickySection.innerHTML = renderEditStickySection();
+  };
+
+  window.deleteStickyNoteFromEdit = function(noteId) {
+    editingStickyNotes = editingStickyNotes.filter(n => n.id !== noteId);
+    const stickySection = document.getElementById('editStickySection');
+    if (stickySection) stickySection.innerHTML = renderEditStickySection();
   };
 
   function showGuide() {
@@ -6702,6 +6741,11 @@
       text.innerHTML = `<strong>現在の表紙</strong>${escapeHtml(book.title)}${book.author ? ' / ' + escapeHtml(book.author) : ''}`;
     }
     
+    // Sticky notes
+    editingStickyNotes = JSON.parse(JSON.stringify(book.stickyNotes || []));
+    const stickySection = document.getElementById('editStickySection');
+    if (stickySection) stickySection.innerHTML = renderEditStickySection();
+
     // Update modal UI for edit mode
     document.querySelector('.modal-title').innerHTML = '記録を編集<em>.</em>';
     document.getElementById('submitBtn').textContent = '更新する';
@@ -6717,6 +6761,9 @@
     currentCoverUrl = null;
     coverLocked = false;
     editingBookId = null;
+    editingStickyNotes = [];
+    const stickySection = document.getElementById('editStickySection');
+    if (stickySection) stickySection.innerHTML = '';
     titleCache = { baseQuery: '', items: [] };
     document.getElementById('coverPreview').style.display = 'none';
     document.getElementById('titleSuggestions').classList.remove('active');
@@ -6776,6 +6823,7 @@
         status: selectedStatus,
         rating: selectedRating,
         coverUrl: coverUrl || existing.coverUrl || null,
+        stickyNotes: editingStickyNotes,
         updatedAt: Date.now()
       };
       

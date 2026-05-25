@@ -1063,13 +1063,12 @@
     color: var(--ink-fade);
     cursor: pointer;
     padding: 0.3rem;
-    opacity: 0;
+    opacity: 1;
     transition: all 0.2s ease;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.7rem;
   }
 
-  .book-card:hover .book-delete { opacity: 1; }
   .book-delete:hover { color: var(--accent); }
 
   .book-actions {
@@ -1083,13 +1082,12 @@
     color: var(--ink-fade);
     cursor: pointer;
     padding: 0.3rem;
-    opacity: 0;
+    opacity: 1;
     transition: all 0.2s ease;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.7rem;
   }
 
-  .book-card:hover .book-edit { opacity: 1; }
   .book-edit:hover { color: var(--gold); }
 
   /* ==================== EMPTY STATE ==================== */
@@ -3491,29 +3489,36 @@
         <div class="guide-item">
           <span class="guide-item-num">01</span>
           <div class="guide-item-body">
-            <div class="guide-item-title">本を記録する</div>
-            <div class="guide-item-desc">右上の <em>本を記録する</em> ボタンから本のタイトル・著者・感想などを入力して記録できます。読書状態は <em>読書中</em> / <em>読了</em> / <em>また読みたい</em> から選べます。</div>
+            <div class="guide-item-title">本を記録する（ISBN / バーコード）</div>
+            <div class="guide-item-desc">トップページの <em>[ ＋ 本を記録する ]</em> ボタンから、本のISBN番号を入力するか、スマホのカメラでバーコードを読み取るだけで、本の情報が自動でセットされます。読書状態は <em>読書中</em> / <em>読了</em> / <em>また読みたい</em> から選べます。</div>
           </div>
         </div>
         <div class="guide-item">
           <span class="guide-item-num">02</span>
           <div class="guide-item-body">
-            <div class="guide-item-title">カテゴリで分類する</div>
-            <div class="guide-item-desc">記録時に <em>わくわく</em> <em>感動した</em> などのカテゴリを最大3つまで選択できます。カードにタグとして表示され、フィルターで絞り込みもできます。</div>
+            <div class="guide-item-title">本の「帯（レーベル）」をあなたが作る</div>
+            <div class="guide-item-desc">記録画面の <em>「こんな人におすすめ」</em> の欄は、その本にあなただけのオリジナルの「帯」を付けるイメージで自由に書き込んでみてください（例：「金曜日の夜に」「旅のお供に」など）。あなたの言葉が、本棚のカードの下部に素敵なレーベルとしてデザインされます。</div>
           </div>
         </div>
         <div class="guide-item">
           <span class="guide-item-num">03</span>
           <div class="guide-item-body">
-            <div class="guide-item-title">絞り込み・フィルター</div>
-            <div class="guide-item-desc">ステータスタブ（すべて / 読書中 / 読了 / また読みたい）で切り替えられます。カテゴリと作成者の絞り込みもできます。</div>
+            <div class="guide-item-title">カテゴリで分類する</div>
+            <div class="guide-item-desc">記録時に <em>わくわく</em> <em>感動した</em> <em>新しい視野</em> などのカテゴリを最大3つまで選択できます。カードにタグとして表示され、気分に合わせたフィルター絞り込みも可能です。</div>
           </div>
         </div>
         <div class="guide-item">
           <span class="guide-item-num">04</span>
           <div class="guide-item-body">
+            <div class="guide-item-title">絞り込み・フィルター</div>
+            <div class="guide-item-desc">上部のステータスタブ（<em>すべて</em> / <em>読書中</em> / <em>読了</em> / <em>みんなの目標</em>）や、カテゴリ・Reader（登録した人）ごとのメニューから、見たい本棚へ一瞬で切り替えられます。</div>
+          </div>
+        </div>
+        <div class="guide-item">
+          <span class="guide-item-num">05</span>
+          <div class="guide-item-body">
             <div class="guide-item-title">いいね・コメント</div>
-            <div class="guide-item-desc">カード下部の <em>♡</em> でいいねできます。<em>💬</em> でコメント欄が開き、みんなで感想を共有できます。</div>
+            <div class="guide-item-desc">カード下部の <em>♡</em> でリアクションができます。<em>💬</em> をタップするとコメント欄が開き、その本を起点にみんなでゆるやかに感想を共有し合えます。</div>
           </div>
         </div>
       </div>

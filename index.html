@@ -4846,6 +4846,7 @@
   }
 
   let books = [];
+  let booksLoaded = false;
   let currentFilter = 'all';
   let currentReaderFilter = 'all';
   let currentCategoryFilter = 'all';
@@ -4994,6 +4995,10 @@
       // Use real-time subscription — updates automatically when others add/edit/delete
       firebaseUnsubscribe = window.firebaseStorage.subscribe((items) => {
         books = items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        if (!booksLoaded) {
+          booksLoaded = true;
+          window.dispatchEvent(new Event('booksFirstLoaded'));
+        }
         renderBooks();
         const shelfParam = new URL(window.location.href).searchParams.get('shelf');
         if (shelfParam && !document.getElementById('publicShelfView').classList.contains('active')) {
@@ -6391,6 +6396,16 @@
   });
 
   function openGoalChart() {
+    // Race condition guard: Firebase data hasn't arrived yet — show loading and retry
+    if (!booksLoaded && window.firebaseStorage) {
+      document.getElementById('goalChartBody').innerHTML =
+        '<p style="text-align:center;padding:2rem 1rem;color:var(--ink-fade);">読み込み中…</p>';
+      document.getElementById('goalChartOverlay').classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('booksFirstLoaded', () => openGoalChart(), { once: true });
+      return;
+    }
+
     const msPerDay = 86400000;
     const now = Date.now();
     const dayCounts = Array(30).fill(0);

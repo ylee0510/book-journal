@@ -6615,6 +6615,9 @@
       document.getElementById('inputReader').value =
         (userProfile && userProfile.displayName) || '';
     }
+    editingStickyNotes = [];
+    const stickySection = document.getElementById('editStickySection');
+    if (stickySection) stickySection.innerHTML = renderEditStickySection();
     document.getElementById('modal').classList.add('active');
     setTimeout(() => document.getElementById('inputIsbn').focus(), 100);
   }
@@ -6867,6 +6870,7 @@
         status: selectedStatus,
         rating: selectedRating,
         coverUrl: coverUrl || null,
+        stickyNotes: editingStickyNotes,
         createdAt: Date.now()
       };
 

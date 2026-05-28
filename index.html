@@ -4055,6 +4055,8 @@
         <input type="text" class="form-input" id="inputRecommend" placeholder="例:新しい挑戦をしたい人、人生に迷っている人">
       </div>
 
+      <div id="editSharingSection"></div>
+
       <div id="editStickySection"></div>
 
       <div class="form-group" style="margin-top:1.25rem;">
@@ -6835,6 +6837,10 @@
       document.getElementById('inputReader').value =
         (userProfile && userProfile.displayName) || '';
     }
+    editingSharingTypes = [];
+    editingSharingLocation = '';
+    const sharingSection = document.getElementById('editSharingSection');
+    if (sharingSection) sharingSection.innerHTML = renderEditSharingSectionHTML();
     editingStickyNotes = [];
     const stickySection = document.getElementById('editStickySection');
     if (stickySection) stickySection.innerHTML = renderEditStickySection();
@@ -7097,6 +7103,12 @@
       text.innerHTML = `<strong>現在の表紙</strong>${escapeHtml(book.title)}${book.author ? ' / ' + escapeHtml(book.author) : ''}`;
     }
     
+    // Sharing
+    editingSharingTypes = [...(book.sharingTypes || [])];
+    editingSharingLocation = book.sharingLocation || '';
+    const sharingSection = document.getElementById('editSharingSection');
+    if (sharingSection) sharingSection.innerHTML = renderEditSharingSectionHTML();
+
     // Sticky notes
     editingStickyNotes = JSON.parse(JSON.stringify(book.stickyNotes || []));
     const stickySection = document.getElementById('editStickySection');
@@ -7117,6 +7129,10 @@
     currentCoverUrl = null;
     coverLocked = false;
     editingBookId = null;
+    editingSharingTypes = [];
+    editingSharingLocation = '';
+    const sharingSection = document.getElementById('editSharingSection');
+    if (sharingSection) sharingSection.innerHTML = '';
     editingStickyNotes = [];
     const stickySection = document.getElementById('editStickySection');
     if (stickySection) stickySection.innerHTML = '';
@@ -7179,6 +7195,9 @@
         status: selectedStatus,
         rating: selectedRating,
         coverUrl: coverUrl || existing.coverUrl || null,
+        sharingTypes: editingSharingTypes,
+        sharingLocation: editingSharingLocation,
+        sharingRequests: existing.sharingRequests || [],
         stickyNotes: editingStickyNotes,
         updatedAt: Date.now()
       };
@@ -7223,6 +7242,9 @@
         status: selectedStatus,
         rating: selectedRating,
         coverUrl: coverUrl || null,
+        sharingTypes: editingSharingTypes,
+        sharingLocation: editingSharingLocation,
+        sharingRequests: [],
         stickyNotes: editingStickyNotes,
         createdAt: Date.now()
       };

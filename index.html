@@ -1053,6 +1053,19 @@
     font-weight: 500;
   }
 
+  .book-number {
+    position: absolute;
+    bottom: 0.45rem;
+    right: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.5rem;
+    color: var(--ink-fade);
+    opacity: 0.4;
+    pointer-events: none;
+    user-select: none;
+    z-index: 1;
+  }
+
   .book-footer {
     display: flex;
     justify-content: space-between;
@@ -5506,7 +5519,12 @@
     }
 
     const statusLabel = { reading: 'Now Reading', finished: 'Finished', wishlist: 'To Read' };
-    
+
+    // 登録番号マップ（全冊・createdAt昇順）
+    const sortedAll = [...books].sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+    const bookNumber = {};
+    sortedAll.forEach((b, i) => { bookNumber[b.id] = i + 1; });
+
     grid.innerHTML = filtered.map(book => `
       <article class="book-card" data-status="${book.status}" data-book-id="${book.id}" onclick="if(currentView==='grid')openCardPopup('${book.id}')">
         ${renderStickyTabsHTML(book)}
@@ -5577,6 +5595,7 @@
             </div>
           </div>
         </div>
+        <div class="book-number">#${bookNumber[book.id]}</div>
       </article>
     `).join('');
     

@@ -1157,7 +1157,7 @@
   .sharing-stamps {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 0.25rem;
     margin-left: auto;
   }
 
@@ -1169,8 +1169,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
     flex-shrink: 0;
+  }
+  .sharing-stamps .sharing-stamp {
+    cursor: pointer;
+  }
+  .sharing-stamps .sharing-stamp:hover {
+    filter: brightness(0.93);
   }
   .sharing-stamp--give {
     border: 2px solid #5a8a5a;

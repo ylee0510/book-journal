@@ -24,7 +24,7 @@ service cloud.firestore {
                    && canAddBook(request.auth.uid);
       allow update: if request.auth != null && (
                      resource.data.uid == request.auth.uid
-                     || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'comments'])
+                     || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'comments', 'sharingRequests'])
                    );
       allow delete: if (request.auth != null && resource.data.uid == request.auth.uid) || isAdmin();
     }

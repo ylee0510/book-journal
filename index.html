@@ -1287,12 +1287,22 @@
     font-family: inherit;
   }
   .sharing-request-btn.raised {
-    opacity: 0.6;
-    cursor: default;
+    opacity: 0.7;
+    cursor: pointer;
     border-color: var(--line);
     color: var(--ink-fade);
     background: transparent;
   }
+  .sharing-request-btn.raised:hover {
+    opacity: 1;
+    border-color: #c0392b;
+    color: #c0392b;
+    background: #fff5f5;
+  }
+  .sharing-request-btn.raised .raised-label { display: inline; }
+  .sharing-request-btn.raised .cancel-label { display: none; }
+  .sharing-request-btn.raised:hover .raised-label { display: none; }
+  .sharing-request-btn.raised:hover .cancel-label { display: inline; }
 
   /* フォーム内「次の読者へ」セクション */
   .sharing-form-section {
@@ -4568,6 +4578,27 @@
     }
   };
 
+  window.cancelSharingRequest = async function(bookId) {
+    const book = books.find(b => b.id === bookId);
+    if (!book || !currentUser || currentUser.isAnonymous) return;
+    const prevRequests = book.sharingRequests || [];
+    const newRequests = prevRequests.filter(r => r.uid !== currentUser.uid);
+    // 楽観的更新
+    book.sharingRequests = newRequests;
+    openCardPopup(bookId);
+    try {
+      const { doc, updateDoc } = window._fs;
+      await updateDoc(doc(window._db, 'books', bookId), {
+        sharingRequests: newRequests,
+      });
+    } catch (err) {
+      console.error('cancelSharingRequest error:', err);
+      book.sharingRequests = prevRequests;
+      openCardPopup(bookId);
+      showToast('エラー: ' + (err.message || err.code || err));
+    }
+  };
+
   window.toggleStickyForm = function(bookId) {
     const form = document.getElementById('stickyForm-' + bookId);
     if (!form) return;
@@ -6940,7 +6971,7 @@
     if (!isOwner) {
       if (currentUser && !currentUser.isAnonymous) {
         btnHTML = alreadyRaised
-          ? `<button type="button" class="sharing-request-btn raised" disabled>手を挙げました ✓</button>`
+          ? `<button type="button" class="sharing-request-btn raised" onclick="cancelSharingRequest('${book.id}')"><span class="raised-label">手を挙げました ✓</span><span class="cancel-label">取り消す</span></button>`
           : `<button type="button" class="sharing-request-btn" onclick="addSharingRequest('${book.id}')">${btnLabel}</button>`;
       } else {
         btnHTML = `<p style="font-size:0.62rem;color:var(--ink-fade);text-align:center;margin-top:0.5rem;">ログインして手を挙げる</p>`;

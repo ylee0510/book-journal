@@ -5381,6 +5381,7 @@
               <span>💬</span>
               <span>${(book.comments || []).length}</span>
             </button>
+            ${renderSharingStampsHTML(book)}
           </div>
           <div class="comments-section" id="comments-${book.id}">
             ${renderComments(book)}

@@ -4523,6 +4523,7 @@
       ${book.memo ? `<div class="card-popup-memo">${linkify(book.memo)}</div>` : ''}
       ${book.recommend ? `<div class="card-popup-recommend"><strong>こんな人へ</strong> ${linkify(book.recommend)}</div>` : ''}
       ${(owner || hasStickyNotes) ? renderStickyNotesHTML(book, owner) : ''}
+      ${renderSharingSectionHTML(book)}
     `;
     document.getElementById('cardPopupOverlay').classList.add('open');
   }

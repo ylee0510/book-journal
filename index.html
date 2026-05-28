@@ -4533,6 +4533,25 @@
     document.getElementById('cardPopupOverlay').classList.remove('open');
   }
 
+  window.addSharingRequest = async function(bookId) {
+    const book = books.find(b => b.id === bookId);
+    if (!book || !currentUser || currentUser.isAnonymous) return;
+    const name = (userProfile && userProfile.displayName) || currentUser.displayName || '読書家';
+    const request = { uid: currentUser.uid, name, requestedAt: Date.now() };
+    // 楽観的更新
+    book.sharingRequests = [...(book.sharingRequests || []), request];
+    openCardPopup(bookId);
+    try {
+      await updateDoc(doc(window._db, 'books', bookId), {
+        sharingRequests: book.sharingRequests,
+      });
+    } catch (err) {
+      book.sharingRequests = (book.sharingRequests || []).filter(r => r.uid !== currentUser.uid);
+      openCardPopup(bookId);
+      showToast('エラーが発生しました');
+    }
+  };
+
   window.toggleStickyForm = function(bookId) {
     const form = document.getElementById('stickyForm-' + bookId);
     if (!form) return;
@@ -6820,6 +6839,139 @@
     document.getElementById('modal').classList.add('active');
     setTimeout(() => document.getElementById('inputIsbn').focus(), 100);
   }
+
+  // ==================== SHARING STAMPS ====================
+  const SHARING_CONFIG = {
+    give: {
+      label: '譲ります',
+      stampText: '譲り<br>ます',
+      desc: '読み終わったので、大切にしてくれる方に譲ります。',
+      color: '#2a6a2a',
+    },
+    lend: {
+      label: '貸します',
+      stampText: '貸し<br>ます',
+      desc: '読み終わったので、しばらく貸し出せます。大切にしてください。',
+      color: '#2a4a8a',
+    },
+    exchange: {
+      label: '交換します',
+      stampText: '交換<br>します',
+      desc: 'あなたの持っている素敵な本と、この本を交換しませんか？',
+      color: '#7a5a10',
+    },
+  };
+
+  function renderSharingStampsHTML(book) {
+    const types = book.sharingTypes || [];
+    if (types.length === 0) return '';
+    const stamps = types.map(type => {
+      const cfg = SHARING_CONFIG[type];
+      if (!cfg) return '';
+      return `<div class="sharing-stamp sharing-stamp--${type}" onclick="openCardPopup('${book.id}',event)">
+        <span class="sharing-stamp__text">${cfg.stampText}</span>
+      </div>`;
+    }).join('');
+    return `<div class="sharing-stamps">${stamps}</div>`;
+  }
+
+  function renderSharingSectionHTML(book) {
+    const types = book.sharingTypes || [];
+    if (types.length === 0) return '';
+
+    const itemsHTML = types.map(type => {
+      const cfg = SHARING_CONFIG[type];
+      if (!cfg) return '';
+      return `<div class="sharing-item">
+        <div class="sharing-stamp sharing-stamp--${type}">
+          <span class="sharing-stamp__text">${cfg.stampText}</span>
+        </div>
+        <div class="sharing-item-text">
+          <div class="sharing-item-label" style="color:${cfg.color};">${cfg.label}</div>
+          <div class="sharing-item-desc">${cfg.desc}</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    const locationHTML = book.sharingLocation ? `
+      <div class="sharing-location">
+        <div class="sharing-location-label">📍 受け取れる場所</div>
+        <div class="sharing-location-text">${escapeHtml(book.sharingLocation)}</div>
+      </div>` : '';
+
+    const requests = book.sharingRequests || [];
+    const requestsListHTML = requests.length === 0
+      ? '<div class="sharing-requests-list">まだいません。あなたが最初の手を挙げてみませんか？</div>'
+      : `<div class="sharing-requests-list">${requests.map(r => escapeHtml(r.name)).join('、')}</div>`;
+
+    const isOwner = isMyBook(book);
+    const alreadyRaised = currentUser && !currentUser.isAnonymous
+      && requests.some(r => r.uid === currentUser.uid);
+
+    let btnHTML = '';
+    if (!isOwner) {
+      if (currentUser && !currentUser.isAnonymous) {
+        btnHTML = alreadyRaised
+          ? `<button type="button" class="sharing-request-btn raised" disabled>手を挙げました ✓</button>`
+          : `<button type="button" class="sharing-request-btn" onclick="addSharingRequest('${book.id}')">🙋 借りたいです！</button>`;
+      } else {
+        btnHTML = `<p style="font-size:0.62rem;color:var(--ink-fade);text-align:center;margin-top:0.5rem;">ログインして手を挙げる</p>`;
+      }
+    }
+
+    return `<div class="sharing-section">
+      <div class="sharing-section-header">📚 次の読者へ</div>
+      ${itemsHTML}
+      ${locationHTML}
+      <div class="sharing-requests-label">🙋 手を挙げている人</div>
+      ${requestsListHTML}
+      ${btnHTML}
+    </div>`;
+  }
+
+  let editingSharingTypes = [];
+  let editingSharingLocation = '';
+
+  function renderEditSharingSectionHTML() {
+    const typeList = [
+      { id: 'give',     label: '譲ります',  activeClass: 'sharing-toggle--give-active'     },
+      { id: 'lend',     label: '貸します',  activeClass: 'sharing-toggle--lend-active'     },
+      { id: 'exchange', label: '交換します', activeClass: 'sharing-toggle--exchange-active' },
+    ];
+    const togglesHTML = typeList.map(t => {
+      const isActive = editingSharingTypes.includes(t.id);
+      return `<button type="button" class="sharing-toggle${isActive ? ' ' + t.activeClass : ''}" onclick="toggleSharingType('${t.id}')">${t.label}</button>`;
+    }).join('');
+
+    const locationHTML = editingSharingTypes.length > 0 ? `
+      <div>
+        <div style="font-size:0.6rem;color:var(--ink-fade);margin-bottom:0.3rem;">受け取れる場所（任意）</div>
+        <input type="text" class="form-input" id="sharingLocationInput" maxlength="100"
+               placeholder="例: 鎌倉駅周辺、読書会の場所など"
+               value="${escapeHtml(editingSharingLocation)}"
+               oninput="editingSharingLocation=this.value">
+      </div>` : '';
+
+    return `<div class="sharing-form-section">
+      <div class="sharing-form-label">次の読者へ（任意）</div>
+      <div class="sharing-toggle-wrap">${togglesHTML}</div>
+      ${locationHTML}
+    </div>`;
+  }
+
+  window.toggleSharingType = function(type) {
+    // 再レンダー前に場所入力値を保存
+    const locInput = document.getElementById('sharingLocationInput');
+    if (locInput) editingSharingLocation = locInput.value;
+
+    if (editingSharingTypes.includes(type)) {
+      editingSharingTypes = editingSharingTypes.filter(t => t !== type);
+    } else {
+      editingSharingTypes = [...editingSharingTypes, type];
+    }
+    const sharingSection = document.getElementById('editSharingSection');
+    if (sharingSection) sharingSection.innerHTML = renderEditSharingSectionHTML();
+  };
 
   // ==================== STICKY NOTES ====================
   const STICKY_COLORS = ['yellow', 'pink', 'blue', 'green'];

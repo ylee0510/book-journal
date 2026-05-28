@@ -343,7 +343,7 @@
     overflow-x: auto;
     overflow-y: visible;
     -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x proximity;
+    scroll-snap-type: x mandatory; /* desktop mouse: 1枚ずつスナップ */
     scrollbar-width: none;
     background-color: #dfd5c6;
     border-radius: 4px 4px 0 0;
@@ -351,6 +351,10 @@
     margin-bottom: 2.5rem;
   }
   .books-grid::-webkit-scrollbar { display: none; }
+  /* タッチ端末：本棚ビューはCSS snapを外しJSで制御 */
+  @media (pointer: coarse) {
+    .books-grid:not(.is-grid) { scroll-snap-type: none; }
+  }
 
   /* グリッドモード */
   .books-grid.is-grid {
@@ -5284,6 +5288,57 @@
       el.textContent = 'Est. 2026 — Personal Library';
     }
   }
+  // ── 本棚タッチスクロール（最低1カード保証＋慣性スナップ） ──
+  (function() {
+    const grid = document.getElementById('booksGrid');
+    if (!grid) return;
+
+    function cardWidth() {
+      const card = grid.querySelector('.book-card');
+      if (!card) return 200;
+      const gap = parseFloat(getComputedStyle(grid).columnGap
+                  || getComputedStyle(grid).gap) || 20;
+      return card.offsetWidth + gap;
+    }
+
+    let startCard = 0;
+    let startX = 0;
+    let moved = false;
+    let snapTimer = null;
+
+    grid.addEventListener('touchstart', e => {
+      if (grid.classList.contains('is-grid')) return;
+      const w = cardWidth();
+      startCard = Math.round(grid.scrollLeft / w);
+      startX = e.touches[0].clientX;
+      moved = false;
+      clearTimeout(snapTimer);
+    }, { passive: true });
+
+    grid.addEventListener('touchmove', () => {
+      moved = true;
+    }, { passive: true });
+
+    // 慣性スクロールが落ち着いた後にスナップ
+    grid.addEventListener('scroll', () => {
+      if (!moved || grid.classList.contains('is-grid')) return;
+      clearTimeout(snapTimer);
+      snapTimer = setTimeout(() => {
+        const w = cardWidth();
+        let target = Math.round(grid.scrollLeft / w);
+        // 最低1カード保証
+        if (grid.scrollLeft > startCard * w + 5) {
+          target = Math.max(target, startCard + 1);
+        } else if (grid.scrollLeft < startCard * w - 5) {
+          target = Math.min(target, startCard - 1);
+        }
+        target = Math.max(0, target);
+        moved = false;
+        grid.scrollTo({ left: target * w, behavior: 'smooth' });
+      }, 120);
+    }, { passive: true });
+  })();
+
   document.addEventListener('DOMContentLoaded', updateStorageModeIndicator);
   window.addEventListener('resize', adjustTitleFontSizes);
   window.addEventListener('firebaseReady', updateStorageModeIndicator);

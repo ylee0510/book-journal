@@ -4892,6 +4892,22 @@
     }
   }
 
+  async function syncSharingRequestName(newName) {
+    if (!currentUser || !books || !window._fs || !window._db) return;
+    const { doc, updateDoc } = window._fs;
+    const tasks = [];
+    for (const book of books) {
+      const requests = book.sharingRequests || [];
+      const myIdx = requests.findIndex(r => r.uid === currentUser.uid);
+      if (myIdx !== -1 && requests[myIdx].name !== newName) {
+        const updated = requests.map((r, i) => i === myIdx ? { ...r, name: newName } : r);
+        book.sharingRequests = updated;
+        tasks.push(updateDoc(doc(window._db, 'books', book.id), { sharingRequests: updated }));
+      }
+    }
+    if (tasks.length > 0) await Promise.all(tasks);
+  }
+
   async function saveMpProfile() {
     const name = document.getElementById('mpInputName').value.trim();
     const bio = document.getElementById('mpInputBio').value.trim();
@@ -4907,6 +4923,7 @@
       await window.firebaseAuth.saveProfile(currentUser.uid, userProfile);
       renderMpProfile(false);
       showToast('プロフィールを保存しました ✓');
+      syncSharingRequestName(name); // 名前変更をsharingRequestsに反映（非同期・バックグラウンド）
     } catch (e) {
       showToast('保存に失敗: ' + (e.message || e));
     }

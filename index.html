@@ -3190,6 +3190,45 @@
   }
 
   /* ==================== SITE FOOTER ==================== */
+  .changelog-section {
+    padding: 2rem 1.5rem 0;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .changelog-heading {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.22em;
+    color: var(--ink-fade);
+    text-transform: uppercase;
+    opacity: 0.65;
+    margin-bottom: 0.6rem;
+  }
+  .changelog-list {
+    list-style: none;
+    border-top: 1px solid var(--line);
+  }
+  .changelog-item {
+    display: flex;
+    gap: 0.85rem;
+    align-items: baseline;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--line);
+    opacity: 0.72;
+  }
+  .changelog-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.52rem;
+    color: var(--ink-fade);
+    flex-shrink: 0;
+    letter-spacing: 0.04em;
+  }
+  .changelog-desc {
+    font-size: 0.58rem;
+    color: var(--ink-fade);
+    line-height: 1.55;
+  }
+
   .site-footer {
     padding: 2.5rem 1rem 2rem;
     text-align: center;
@@ -3717,6 +3756,32 @@
       </div>
     </div>
     <div class="magazine-shelf-board"></div>
+  </section>
+
+  <section class="changelog-section">
+    <div class="changelog-heading">更新履歴</div>
+    <ul class="changelog-list">
+      <li class="changelog-item">
+        <span class="changelog-date">2026.05.28</span>
+        <span class="changelog-desc">次の読者へ — 本を譲る・貸す・交換するスタンプ機能</span>
+      </li>
+      <li class="changelog-item">
+        <span class="changelog-date">2026.05.25</span>
+        <span class="changelog-desc">付箋メモ — 本カードに私的なメモを貼る機能</span>
+      </li>
+      <li class="changelog-item">
+        <span class="changelog-date">2026.05.23</span>
+        <span class="changelog-desc">Shelf. Magazine 創刊 / 読書虫ランキング / みんなの目標グラフ / こんな人へ帯</span>
+      </li>
+      <li class="changelog-item">
+        <span class="changelog-date">2026.05.19</span>
+        <span class="changelog-desc">Google ログイン・マイページ・バーコードスキャン・ガイドページ</span>
+      </li>
+      <li class="changelog-item">
+        <span class="changelog-date">2026.04.21</span>
+        <span class="changelog-desc">Shelf. 試用開始</span>
+      </li>
+    </ul>
   </section>
 
   <footer class="site-footer">

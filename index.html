@@ -4380,7 +4380,7 @@
 
   // Expose Firestore helpers needed by magazine reader (regular script scope)
   window._db = db;
-  window._fs = { collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, query, where, orderBy };
+  window._fs = { collection, doc, addDoc, deleteDoc, getDocs, updateDoc, onSnapshot, query, where, orderBy };
 </script>
 
 <script>
@@ -5083,6 +5083,8 @@
     userProfile = { ...userProfile, goalYear: val };
     try {
       await window.firebaseAuth.saveProfile(currentUser.uid, { goalYear: val });
+      totalGoalCache = null; // 合計目標を再集計
+      loadTotalGoal();
       const myBooks = books.filter(isMyBook);
       renderMpGoal(myBooks);
       showToast('目標を更新しました ✓');
@@ -5711,18 +5713,15 @@
 
   // みんなの目標合計
   let totalGoalCache = null;
-  let totalGoalUids = '';
 
   async function loadTotalGoal() {
-    const uids = [...new Set(books.filter(b => b.uid).map(b => b.uid))].sort().join(',');
-    if (uids === totalGoalUids && totalGoalCache !== null) return;
-    totalGoalUids = uids;
-    const uidList = uids ? uids.split(',') : [];
-    const goals = await Promise.all(uidList.map(async uid => {
-      const p = await window.firebaseAuth.getProfile(uid);
-      return (p && p.goalYear) || 0;
-    }));
-    totalGoalCache = goals.reduce((s, v) => s + v, 0);
+    if (totalGoalCache !== null) return;
+    if (!window._fs || !window._db) return;
+    const { getDocs, collection } = window._fs;
+    const snap = await getDocs(collection(window._db, 'users'));
+    let total = 0;
+    snap.forEach(d => { total += (d.data().goalYear || 0); });
+    totalGoalCache = total;
     const el = document.getElementById('totalGoal');
     if (el) el.textContent = totalGoalCache || '—';
   }

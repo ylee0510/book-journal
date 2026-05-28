@@ -6945,11 +6945,11 @@
       <div class="gc-ranking-section">
         <div class="gc-ranking-label">今月の読書虫 🐛</div>
         ${buildPodium(ranking30)}
+        <p style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--ink-fade);opacity:0.55;text-align:right;margin-top:0.5rem;line-height:1.6;">※ 読書中の本は含まれず、読了数がカウントされます</p>
         <div class="gc-prev-section">
           <div class="gc-prev-label">🏅 ${prevMonthLabel}の受賞者</div>
           <div class="gc-prev-row">${prevRowHTML}</div>
         </div>
-        <p style="font-family:'JetBrains Mono',monospace;font-size:0.5rem;color:var(--ink-fade);opacity:0.55;text-align:center;margin-top:0.75rem;line-height:1.6;">※ 読書中の本は含まれず、読了数がカウントされます</p>
       </div>
     `;
     document.getElementById('goalChartOverlay').classList.add('is-open');

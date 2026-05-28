@@ -1151,6 +1151,184 @@
   .sticky-note--pink   { background: #fde8e8; border-left: 3px solid #e88282; }
   .sticky-note--blue   { background: #e8f0ff; border-left: 3px solid #8aabe8; }
   .sticky-note--green  { background: #e8f4e8; border-left: 3px solid #82c882; }
+
+  /* ===================== SHARING STAMPS ===================== */
+  /* ソーシャルバー内スタンプラッパー */
+  .sharing-stamps {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+  }
+
+  /* 1つの丸スタンプ */
+  .sharing-stamp {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .sharing-stamp--give {
+    border: 2px solid #5a8a5a;
+    background: #f0f8f0;
+    box-shadow: inset 0 0 0 1.5px #b8d8b8;
+  }
+  .sharing-stamp--lend {
+    border: 2px solid #5a6a9a;
+    background: #f0f2f8;
+    box-shadow: inset 0 0 0 1.5px #b8c4e0;
+  }
+  .sharing-stamp--exchange {
+    border: 2px solid #9a7a3a;
+    background: #faf4e8;
+    box-shadow: inset 0 0 0 1.5px #ddc880;
+  }
+  .sharing-stamp__text {
+    font-size: 0.42rem;
+    font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+    transform: rotate(-18deg);
+    display: block;
+    font-family: 'Noto Serif JP', serif;
+  }
+  .sharing-stamp--give .sharing-stamp__text     { color: #2a6a2a; }
+  .sharing-stamp--lend .sharing-stamp__text     { color: #2a4a8a; }
+  .sharing-stamp--exchange .sharing-stamp__text { color: #7a5a10; }
+
+  /* ポップアップ内「次の読者へ」セクション */
+  .sharing-section {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+  .sharing-section-header {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+  .sharing-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .sharing-item-text { flex: 1; }
+  .sharing-item-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+  .sharing-item-desc {
+    font-size: 0.63rem;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .sharing-location {
+    background: var(--bg-deep);
+    border-radius: 4px;
+    padding: 0.5rem 0.7rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.63rem;
+  }
+  .sharing-location-label {
+    font-size: 0.55rem;
+    color: var(--ink-fade);
+    margin-bottom: 0.2rem;
+  }
+  .sharing-location-text {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .sharing-requests-label {
+    font-size: 0.63rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+    margin-bottom: 0.4rem;
+  }
+  .sharing-requests-list {
+    font-size: 0.63rem;
+    color: var(--ink-fade);
+    margin-bottom: 0.7rem;
+    line-height: 1.6;
+  }
+  .sharing-request-btn {
+    width: 100%;
+    background: var(--bg-deep);
+    border: 1.5px solid #5a8a5a;
+    border-radius: 5px;
+    padding: 0.5rem;
+    font-size: 0.65rem;
+    color: #2a6a2a;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .sharing-request-btn.raised {
+    opacity: 0.6;
+    cursor: default;
+    border-color: var(--line);
+    color: var(--ink-fade);
+    background: transparent;
+  }
+
+  /* フォーム内「次の読者へ」セクション */
+  .sharing-form-section {
+    margin: 1rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px dashed #c8b46a;
+  }
+  .sharing-form-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .sharing-toggle-wrap {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.6rem;
+  }
+  .sharing-toggle {
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 0.3rem 0.75rem;
+    cursor: pointer;
+    font-size: 0.62rem;
+    color: var(--ink-soft);
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .sharing-toggle--give-active {
+    background: #f0f8f0;
+    border-color: #5a8a5a;
+    color: #2a6a2a;
+    font-weight: 700;
+  }
+  .sharing-toggle--lend-active {
+    background: #f0f2f8;
+    border-color: #5a6a9a;
+    color: #2a4a8a;
+    font-weight: 700;
+  }
+  .sharing-toggle--exchange-active {
+    background: #faf4e8;
+    border-color: #9a7a3a;
+    color: #7a5a10;
+    font-weight: 700;
+  }
+
   .sticky-note__page {
     font-size: 0.58rem;
     color: var(--ink-fade);

@@ -4727,6 +4727,7 @@
   };
 
   window.deleteStickyNote = async function(bookId, noteId) {
+    if (!confirm('この付箋を削除しますか？')) return;
     const book = books.find(b => b.id === bookId);
     if (!book) return;
 
@@ -4777,6 +4778,7 @@
   };
 
   window.deleteStickyNoteFromEdit = function(noteId) {
+    if (!confirm('この付箋を削除しますか？')) return;
     editingStickyNotes = editingStickyNotes.filter(n => n.id !== noteId);
     const stickySection = document.getElementById('editStickySection');
     if (stickySection) stickySection.innerHTML = renderEditStickySection();
@@ -7327,7 +7329,6 @@
     document.querySelector('.modal-title').innerHTML = '記録を編集<em>.</em>';
     document.getElementById('submitBtn').textContent = '更新する';
     document.getElementById('modal').classList.add('active');
-    document.getElementById('inputMemo').focus();
   };
 
   function closeModal() {

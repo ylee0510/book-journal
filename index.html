@@ -7168,7 +7168,7 @@
              <p class="sharing-comment-hint">受け渡し場所・日程は <button type="button" class="sharing-comment-link" onclick="openSharingComment('${book.id}')">💬 コメント欄</button> で調整できます</p>`
           : `<button type="button" class="sharing-request-btn" onclick="addSharingRequest('${book.id}')">${btnLabel}</button>`;
       } else {
-        btnHTML = `<p style="font-size:0.62rem;color:var(--ink-fade);text-align:center;margin-top:0.5rem;">ログインして手を挙げる</p>`;
+        btnHTML = `<button type="button" class="sharing-request-btn" onclick="handleSignIn()" style="opacity:0.75;">🔑 ログインして手を挙げる</button>`;
       }
     }
 

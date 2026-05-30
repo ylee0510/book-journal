@@ -1320,6 +1320,24 @@
   .sharing-request-btn.raised .cancel-label { display: none; }
   .sharing-request-btn.raised:hover .raised-label { display: none; }
   .sharing-request-btn.raised:hover .cancel-label { display: inline; }
+  .sharing-comment-hint {
+    font-size: 0.62rem;
+    color: var(--ink-fade);
+    text-align: center;
+    margin-top: 0.6rem;
+    line-height: 1.6;
+  }
+  .sharing-comment-link {
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: inherit;
+    color: var(--accent);
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
 
   /* フォーム内「次の読者へ」セクション */
   .sharing-form-section {
@@ -4662,6 +4680,21 @@
     }
   };
 
+  window.openSharingComment = function(bookId) {
+    // コメントセクションを開く
+    const section = document.getElementById('comments-' + bookId);
+    if (section && !section.classList.contains('open')) {
+      section.classList.add('open');
+    }
+    // ポップアップ内でコメント入力欄にスクロール＆フォーカス
+    const input = document.getElementById('comment-input-' + bookId);
+    if (!input) return;
+    setTimeout(() => {
+      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => input.focus(), 300);
+    }, 50);
+  };
+
   window.cancelSharingRequest = async function(bookId) {
     const book = books.find(b => b.id === bookId);
     if (!book || !currentUser || currentUser.isAnonymous) return;
@@ -7131,7 +7164,8 @@
     if (!isOwner) {
       if (currentUser && !currentUser.isAnonymous) {
         btnHTML = alreadyRaised
-          ? `<button type="button" class="sharing-request-btn raised" onclick="cancelSharingRequest('${book.id}')"><span class="raised-label">手を挙げました ✓</span><span class="cancel-label">取り消す</span></button>`
+          ? `<button type="button" class="sharing-request-btn raised" onclick="cancelSharingRequest('${book.id}')"><span class="raised-label">手を挙げました ✓</span><span class="cancel-label">取り消す</span></button>
+             <p class="sharing-comment-hint">受け渡し場所・日程は <button type="button" class="sharing-comment-link" onclick="openSharingComment('${book.id}')">💬 コメント欄</button> で調整できます</p>`
           : `<button type="button" class="sharing-request-btn" onclick="addSharingRequest('${book.id}')">${btnLabel}</button>`;
       } else {
         btnHTML = `<p style="font-size:0.62rem;color:var(--ink-fade);text-align:center;margin-top:0.5rem;">ログインして手を挙げる</p>`;

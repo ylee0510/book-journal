@@ -4248,7 +4248,7 @@
     onSnapshot, query, orderBy, where
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import {
-    getAuth, signInWithPopup, signInWithCredential, linkWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInAnonymously
+    getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, signInWithCredential, linkWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInAnonymously
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import {
     getFunctions, httpsCallable
@@ -4272,6 +4272,11 @@
   window.firebaseAuth = {
     async signInWithGoogle() {
       const provider = new GoogleAuthProvider();
+      // iOS Safari ではポップアップが動作しないためリダイレクト方式を使用
+      const isMobileSafari = /iP(hone|ad|od)/.test(navigator.userAgent);
+      if (isMobileSafari) {
+        return signInWithRedirect(auth, provider);
+      }
       return signInWithPopup(auth, provider);
     },
     async signOut() {
@@ -4391,6 +4396,9 @@
       window.location.href = data.url;
     },
   };
+
+  // iOSなどリダイレクト認証の結果を受け取る（signInWithPopupがリダイレクト方式にフォールバックした場合）
+  getRedirectResult(auth).catch(() => {});
 
   // Signal that Firebase is ready
   window.firebaseReady = true;

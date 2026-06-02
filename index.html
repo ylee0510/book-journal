@@ -4256,7 +4256,7 @@
 
   const firebaseConfig = {
     apiKey: "AIzaSyCdB46Ch67KosgVZewtV7rJBhLU4bWLesQ",
-    authDomain: "book-journal-community.web.app",
+    authDomain: "book-journal-community.firebaseapp.com",
     projectId: "book-journal-community",
     storageBucket: "book-journal-community.firebasestorage.app",
     messagingSenderId: "178116737495",
@@ -4397,8 +4397,12 @@
     },
   };
 
-  // iOSなどリダイレクト認証の結果を受け取る（signInWithPopupがリダイレクト方式にフォールバックした場合）
-  getRedirectResult(auth).catch(() => {});
+  // iOSリダイレクト認証の結果を受け取る
+  getRedirectResult(auth).then(result => {
+    if (result && result.user) console.log('redirect login ok:', result.user.email);
+  }).catch(err => {
+    if (err.code !== 'auth/no-auth-event') console.error('getRedirectResult error:', err.code, err.message);
+  });
 
   // Signal that Firebase is ready
   window.firebaseReady = true;
